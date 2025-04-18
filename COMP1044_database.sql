@@ -11,15 +11,6 @@ CREATE TABLE user_role(
     role_name VARCHAR(255) NOT NULL
 );
 
--- employee: the employee data of ABB Robotics
-CREATE TABLE employee(
-    employee_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    first_name VARCHAR(255) NOT NULL,
-    middle_name VARCHAR(255) DEFAULT NULL,
-    last_name VARCHAR(255) NOT NULL,
-
-);
-
 -- user: the person who can log in and access the CRM system
 CREATE TABLE user(
     user_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -40,21 +31,10 @@ CREATE TABLE individual(
     gender ENUM("Male", "Female") NOT NULL,
     honorifics ENUM("Mr.", "Ms.", "Mrs.", "Dr.", "Prof.") NOT NULL,
     relationship ENUM("Contact", "Lead", "Customer") NOT NULL DEFAULT "Contact",
-    country_code VARCHAR(8) NOT NULL,                   -- reference to the TABLE country
-    company_id INT DEFAULT NULL,                        -- reference to the TABLE company
-    individual_description TEXT
-);
-
--- gender: the gender employee and individual table refers to
-CREATE TABLE gender(
-    gender_id TINYINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    gender_text VARCHAR(64)
-);
-
--- honorifics: the form of address of employee and individual
-CREATE TABLE honorifics(
-    honorifics_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    honorifics_text VARCHAR(32)
+    country_code VARCHAR(10) DEFAULT NULL,                  -- reference to the TABLE country
+    company_id INT DEFAULT NULL,                            -- reference to the TABLE company
+    individual_description TEXT DEFAULT NULL,
+    registered_date DATETIME NOT NULL
 );
 
 -- phone: the phone numbers of individual
@@ -77,9 +57,25 @@ CREATE TABLE email(
 
 -- country: store the country code with respect to country name
 CREATE TABLE country(
-    country_code VARCHAR(8) PRIMARY KEY NOT NULL,
+    country_code VARCHAR(10) PRIMARY KEY NOT NULL,
     country_name VARCHAR(64) NOT NULL
 );
 -- make attribute `country_code` from table `individual` refer to the `country_code` in table `country`
-ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (country_code) REFERENCES country(country_code);
+ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (country_code) REFERENCES country(country_code) ON UPDATE SET NULL ON DELETE SET NULL;
 
+-- company: record the company
+CREATE TABLE company(
+    company_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    company_address VARCHAR(255) NOT NULL
+);
+-- make attribute `company_id` from table `individual` refer to the `company_id` in the table `company`
+ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES company(company_id) ON UPDATE SET NULL ON DELETE SET NULL;
+
+-- lead_individual: record which individual is lead and their status
+CREATE TABLE lead_individual(
+    individual_id INT UNIQUE NOT NULL,
+    lead_status ENUM("New", "Attempted to contact", "Contacted", "Junk lead", "Lost lead") NOT NULL DEFAULT "New",
+
+    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
