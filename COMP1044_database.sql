@@ -1,21 +1,31 @@
--- custom delimiter for writing procedure
-DELIMITER $$
+-- drop the old database schema (if exists) and replace it with a new one
+DROP DATABASE IF EXISTS uwucrm_abb_db;
+CREATE DATABASE uwucrm_abb_db;
 
--- check if a procedure with same name exists, if so, drop it
-DROP PROCEDURE IF EXISTS procedure_create_schema_uwuCRM_ABB $$
--- create a procedure to create the database schema
-CREATE PROCEDURE procedure_create_schema_uwuCRM_ABB()
-BEGIN
-    DECLARE EXIT HANDLER FOR 1007
-        BEGIN
+-- select the database
+USE uwucrm_abb_db;
 
-        END;
-    
-    CREATE DATABASE uwuCRM_ABB;
+-- role: used to identify different position of user
+CREATE TABLE role(
+    role_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    role_name VARCHAR(255) NOT NULL
+);
 
-END$$
+-- password: the password of user in hash code, and salt
+CREATE TABLE user_password(
+    user_password_id INT PRIMARY KEY NOT NULL,
+    password_salt VARCHAR(10) NOT NULL,
+    password_hash CHAR(64) NOT NULL
+);
 
--- set the delimiter back to default
-DELIMITER ;
+-- user: the person who can log in and access the CRM system
+CREATE TABLE user(
+    user_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    user_name VARCHAR(255) UNIQUE NOT NULL,
+    user_password_id INT NOT NULL,                      -- reference to the TABLE password
+    role_id INT NOT NULL,                               -- reference to the TABLE role
 
-CALL procedure_create_schema_uwuCRM_ABB();
+    FOREIGN KEY (user_password_id) REFERENCES user_password(user_password_id),
+    FOREIGN KEY (role_id) REFERENCES role(role_id)
+);
+
