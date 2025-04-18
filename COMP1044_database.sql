@@ -79,3 +79,29 @@ CREATE TABLE lead_individual(
 
     FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+-- activity: record the interaction between user and individual
+CREATE TABLE activity(
+    activity_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    activity_type ENUM("Call", "Meeting"),
+    host INT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    activity_subject VARCHAR(255) NOT NULL,
+    activity_description TEXT DEFAULT NULL,
+
+    -- the host can either from the user, or outsider
+    FOREIGN KEY (host) REFERENCES user(user_id),
+    FOREIGN KEY (host) REFERENCES individual(individual_id)
+);
+
+-- activity_history: record the activity history of each user and individual
+CREATE TABLE activity_history(
+    participant INT NOT NULL,
+    activity_id INT NOT NULL,
+
+    PRIMARY KEY (participant, activity_id),
+    -- the participant can be either user or individual
+    FOREIGN KEY (participant) REFERENCES user(user_id),
+    FOREIGN KEY (participant) REFERENCES individual(individual_id)
+);
