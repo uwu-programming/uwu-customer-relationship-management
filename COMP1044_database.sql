@@ -87,7 +87,7 @@ CREATE TABLE activity(
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     activity_subject VARCHAR(255) NOT NULL,
-    activity_description TEXT DEFAULT NULL,
+    activity_description TEXT DEFAULT NULL
 );
 
 -- individual_activity_history: record the activity history of each individual
@@ -96,7 +96,7 @@ CREATE TABLE individual_activity_history(
     activity_id INT NOT NULL,
 
     PRIMARY KEY (individual_id, activity_id),
-    FOREIGN KEY (individual) REFERENCES individual(individual_id)
+    FOREIGN KEY (individual_id) REFERENCES individual(individual_id)
 );
 
 -- user_activity_history: record the activity history of each user
@@ -119,4 +119,31 @@ CREATE TABLE conversion_history(
 
     FOREIGN KEY (user_id) REFERENCES user(user_id),
     FOREIGN KEY (individual_id) REFERENCES individual(individual_id)
+);
+
+-- task: record the plan made by the user
+CREATE TABLE task(
+    task_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    created_by INT NOT NULL,                            -- who created the task (can be admin or sales representative)
+    in_charged_by INT NOT NULL,                         -- who is in charged of the task
+    created_date DATETIME NOT NULL,
+    due_date DATETIME DEFAULT NULL,
+    closed_date DATETIME DEFAULT NULL,
+    task_priority ENUM("Low", "Normal", "High", "Urgent"),
+    task_status ENUM("Not started", "In progress", "Completed", "Cancelled"),
+    task_subject VARCHAR(255) NOT NULL,
+    task_description TEXT DEFAULT NULL,
+
+    FOREIGN KEY (created_by) REFERENCES user(user_id),
+    FOREIGN KEY (in_charged_by) REFERENCES user(user_id)
+);
+
+-- task_participant: the participant(s) (individual) of assigned task
+CREATE TABLE task_participant(
+    individual_id INT NOT NULL,
+    task_id INT NOT NULL,
+
+    PRIMARY KEY (individual_id, task_id),
+    FOREIGN KEY (individual_id) REFERENCES individual(individual_id),
+    FOREIGN KEY (task_id) REFERENCES task(task_id)
 );
