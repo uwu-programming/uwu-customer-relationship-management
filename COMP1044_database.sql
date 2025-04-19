@@ -96,7 +96,7 @@ CREATE TABLE individual_activity_history(
     activity_id INT NOT NULL,
 
     PRIMARY KEY (individual_id, activity_id),
-    FOREIGN KEY (individual_id) REFERENCES individual(individual_id)
+    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- user_activity_history: record the activity history of each user
@@ -105,7 +105,7 @@ CREATE TABLE user_activity_history(
     activity_id INT NOT NULL,
 
     PRIMARY KEY (user_id, activity_id),
-    FOREIGN KEY (user_id) REFERENCES user(user_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- conversion_history: record how each lead / contact switch from one type to another
@@ -117,8 +117,8 @@ CREATE TABLE conversion_history(
     convert_to ENUM("Contact", "New lead", "Attempted to contact lead", "Contacted lead", "Junk lead", "Lost lead", "Customer") NOT NULL,
     convert_time DATETIME NOT NULL,
 
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (individual_id) REFERENCES individual(individual_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- task: record the plan made by the user
@@ -134,8 +134,8 @@ CREATE TABLE task(
     task_subject VARCHAR(255) NOT NULL,
     task_description TEXT DEFAULT NULL,
 
-    FOREIGN KEY (created_by) REFERENCES user(user_id),
-    FOREIGN KEY (in_charged_by) REFERENCES user(user_id)
+    FOREIGN KEY (created_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (in_charged_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- task_participant: the participant(s) (individual) of assigned task
@@ -144,6 +144,6 @@ CREATE TABLE task_participant(
     task_id INT NOT NULL,
 
     PRIMARY KEY (individual_id, task_id),
-    FOREIGN KEY (individual_id) REFERENCES individual(individual_id),
-    FOREIGN KEY (task_id) REFERENCES task(task_id)
+    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES task(task_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
