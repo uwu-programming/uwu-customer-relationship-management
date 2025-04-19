@@ -15,7 +15,7 @@ CREATE TABLE user_role(
 CREATE TABLE user(
     user_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     user_name VARCHAR(255) NOT NULL,
-    password_salt VARCHAR(10) NOT NULL,
+    password_salt CHAR(10) NOT NULL,
     password_hash CHAR(64) NOT NULL,
     role_id INT NOT NULL,                               -- reference to the TABLE role
 
@@ -75,7 +75,7 @@ ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES compan
 -- lead_individual: record which individual is lead and their status
 CREATE TABLE lead_individual(
     individual_id INT UNIQUE NOT NULL,
-    lead_status ENUM("New", "Attempted to contact", "Contacted", "Junk lead", "Lost lead") NOT NULL DEFAULT "New",
+    lead_status ENUM("New", "Attempted to contact", "Contacted", "Junk lead", "Lost lead", "Converted to customer") NOT NULL DEFAULT "New",
 
     FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -84,24 +84,39 @@ CREATE TABLE lead_individual(
 CREATE TABLE activity(
     activity_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     activity_type ENUM("Call", "Meeting"),
-    host INT NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     activity_subject VARCHAR(255) NOT NULL,
     activity_description TEXT DEFAULT NULL,
-
-    -- the host can either from the user, or outsider
-    FOREIGN KEY (host) REFERENCES user(user_id),
-    FOREIGN KEY (host) REFERENCES individual(individual_id)
 );
 
--- activity_history: record the activity history of each user and individual
-CREATE TABLE activity_history(
-    participant INT NOT NULL,
+-- individual_activity_history: record the activity history of each individual
+CREATE TABLE individual_activity_history(
+    individual_id INT NOT NULL,
     activity_id INT NOT NULL,
 
-    PRIMARY KEY (participant, activity_id),
-    -- the participant can be either user or individual
-    FOREIGN KEY (participant) REFERENCES user(user_id),
-    FOREIGN KEY (participant) REFERENCES individual(individual_id)
+    PRIMARY KEY (individual_id, activity_id),
+    FOREIGN KEY (individual) REFERENCES individual(individual_id)
+);
+
+-- user_activity_history: record the activity history of each user
+CREATE TABLE user_activity_history(
+    user_id INT NOT NULL,
+    activity_id INT NOT NULL,
+
+    PRIMARY KEY (user_id, activity_id),
+    FOREIGN KEY (user_id) REFERENCES user(user_id)
+);
+
+-- conversion_history: record how each lead / contact switch from one type to another
+CREATE TABLE conversion_history(
+    conversion_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    user_id INT NOT NULL,
+    individual_id INT NOT NULL,
+    convert_from ENUM("Contact", "New lead", "Attempted to contact lead", "Contacted lead", "Junk lead", "Lost lead", "Customer") NOT NULL,
+    convert_to ENUM("Contact", "New lead", "Attempted to contact lead", "Contacted lead", "Junk lead", "Lost lead", "Customer") NOT NULL,
+    convert_time DATETIME NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (individual_id) REFERENCES individual(individual_id)
 );
