@@ -8,7 +8,8 @@ USE uwucrm_abb_db;
 -- role: used to identify different position of user
 CREATE TABLE user_role(
     role_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    role_name VARCHAR(255) NOT NULL
+    role_name VARCHAR(255) NOT NULL,
+    role_description TEXT DEFAULT NULL
 );
 
 -- user: the person who can log in and access the CRM system
@@ -75,6 +76,7 @@ ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES compan
 -- lead_individual: record which individual is lead and their status
 CREATE TABLE lead_individual(
     individual_id INT UNIQUE NOT NULL,
+    user_id INT NOT NULL,
     lead_status ENUM("New", "Attempted to contact", "Contacted", "Junk lead", "Lost lead", "Converted to customer") NOT NULL DEFAULT "New",
 
     FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -96,7 +98,8 @@ CREATE TABLE individual_activity_history(
     activity_id INT NOT NULL,
 
     PRIMARY KEY (individual_id, activity_id),
-    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (activity_id) REFERENCES activity(activity_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- user_activity_history: record the activity history of each user
@@ -105,7 +108,8 @@ CREATE TABLE user_activity_history(
     activity_id INT NOT NULL,
 
     PRIMARY KEY (user_id, activity_id),
-    FOREIGN KEY (user_id) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (activity_id) REFERENCES activity(activity_id)
 );
 
 -- conversion_history: record how each lead / contact switch from one type to another
