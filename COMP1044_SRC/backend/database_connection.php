@@ -1,7 +1,5 @@
 <?php
 
-require_once "static_data.php";
-
 $dsn = "mysql";
 $host = "localhost";
 $user = "root";

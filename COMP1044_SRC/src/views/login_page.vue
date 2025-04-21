@@ -1,6 +1,6 @@
 <script setup>
-    import login_div from './login_div.vue';
-    import decoration_div from './decoration_div.vue';
+    import login_div from '../components/login_page/login_div.vue';
+    import decoration_div from '../components/login_page/decoration_div.vue';
 </script>
 
 <template>

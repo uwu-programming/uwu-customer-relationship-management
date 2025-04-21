@@ -1,5 +1,12 @@
 <?php
+
+// start a new session
+session_start();
+
+// specify return type
 header('Content-Type: application/json');
+
+// connect to database
 require_once "database_connection.php";
 
 // $_SERVER is an array that contains data such as headers, paths, script locations
@@ -17,23 +24,29 @@ switch($_SERVER["REQUEST_METHOD"]){
 
 // verify user_id & password for login
 function login_crm($conn){
-    $data = json_decode(file_get_contents("php://input"));
-    $user_id = $data->user_id;
-    $password = $data->password;
-
-    $sql_query = "SELECT * FROM crm_user WHERE user_id = $user_id AND password_hash = '$password'";
-    $statement = $conn->prepare($sql_query);
     try {
+        // "php://": access I/O streams
+        // "php://input": get raw data from the request body
+        $data = json_decode(file_get_contents("php://input"));
+        $user_id = $data->user_id;
+        $password = $data->password;
+
+        $sql_query = "SELECT * FROM crm_user WHERE user_id = $user_id AND password_hash = '$password'";
+        $statement = $conn->prepare($sql_query);
         $statement->execute();
     } catch (PDOException $error){
 
     }
 
     $result = $statement->fetch(PDO::FETCH_ASSOC);
-    if ($result != NULL)
-        echo json_encode(["message" => "yes"]);
+    if ($result != NULL){
+        // store the logged in user in $_SESSION
+        $_SESSION["user"] = $result['user_id'];
+        $current_user = $result['user_id'];
+        echo json_encode(["message" => $_SESSION['user'] . "aaa"]);
+    }
     else
-        echo json_encode(["message" => "no"]);
+        echo json_encode(["message" => "no, $result"]);
 }
 
 ?>

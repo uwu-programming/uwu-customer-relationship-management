@@ -1,3 +1,3 @@
 <?php
-    static $default_path = "http://localhost/dist";
+    $default_path = getcwd();
 ?>

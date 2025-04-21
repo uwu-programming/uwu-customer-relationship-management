@@ -10,6 +10,7 @@
             alert(user_id.value);
             const response = await axios.post("../backend/login_api.php", {user_id: user_id.value, password: password.value});
             alert(response.status);
+            alert(response.data);
             alert(response.data["message"]);
         } catch (error){
             alert(error);
