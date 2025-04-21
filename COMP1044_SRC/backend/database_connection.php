@@ -15,6 +15,4 @@ try {
     die("Connection failed: " . $exception->getMessage());
 }
 
-header("Location: $default_path/index.html");
-
 ?>

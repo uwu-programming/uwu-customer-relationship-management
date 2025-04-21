@@ -5,19 +5,19 @@ CREATE DATABASE uwucrm_abb_db;
 -- select the database
 USE uwucrm_abb_db;
 
--- role: used to identify different position of user
+-- role: used to identify different position of crm_user
 CREATE TABLE user_role(
     role_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     role_name VARCHAR(255) NOT NULL,
     role_description TEXT DEFAULT NULL
 );
 
--- user: the person who can log in and access the CRM system
-CREATE TABLE user(
+-- crm_user: the person who can log in and access the CRM system
+CREATE TABLE crm_user(
     user_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     user_name VARCHAR(255) NOT NULL,
     password_salt CHAR(10) NOT NULL,
-    password_hash CHAR(64) NOT NULL,
+    password_hash VARCHAR(64) NOT NULL,
     role_id INT NOT NULL,                               -- reference to the TABLE role
 
     FOREIGN KEY (role_id) REFERENCES user_role(role_id)
@@ -108,8 +108,8 @@ CREATE TABLE user_activity_history(
     activity_id INT NOT NULL,
 
     PRIMARY KEY (user_id, activity_id),
-    FOREIGN KEY (user_id) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (activity_id) REFERENCES activity(activity_id)
+    FOREIGN KEY (user_id) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (activity_id) REFERENCES activity(activity_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- conversion_history: record how each lead / contact switch from one type to another
@@ -121,7 +121,7 @@ CREATE TABLE conversion_history(
     convert_to ENUM("Contact", "New lead", "Attempted to contact lead", "Contacted lead", "Junk lead", "Lost lead", "Customer") NOT NULL,
     convert_time DATETIME NOT NULL,
 
-    FOREIGN KEY (user_id) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -138,8 +138,8 @@ CREATE TABLE task(
     task_subject VARCHAR(255) NOT NULL,
     task_description TEXT DEFAULT NULL,
 
-    FOREIGN KEY (created_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (in_charged_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (created_by) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (in_charged_by) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- task_participant: the participant(s) (individual) of assigned task
