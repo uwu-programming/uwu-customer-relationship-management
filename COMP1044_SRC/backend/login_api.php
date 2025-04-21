@@ -4,7 +4,7 @@
 session_start();
 
 // specify return type
-header('Content-Type: application/json');
+header("Content-Type: application/json");
 
 // connect to database
 require_once "database_connection.php";

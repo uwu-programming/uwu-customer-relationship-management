@@ -14,9 +14,40 @@ INSERT INTO country
 INSERT INTO individual 
         (last_name, gender, honorifics, relationship, registered_date)
     VALUES
-        ("tokoyami", "Female", "Ms.", "Lead", NOW()),
-        ("tokino", "Female", "Ms.", "Lead", NOW()),
-        ("kiryu", "Female", "Ms.", "Lead", NOW());
+        ("Tokoyami", "Female", "Ms.", "Lead", NOW()),
+        ("Tokino", "Female", "Ms.", "Lead", NOW()),
+        ("Kiryu", "Female", "Ms.", "Lead", NOW()),
+        ("Hachi", "Female", "Ms.", "Lead", NOW()),
+        ("Natsuiro", "Female", "Ms.", "Lead", NOW()),
+        ("Yuzuka", "Female", "Ms.", "Lead", NOW()),
+        ("Yuni", "Female", "Ms.", "Lead", NOW()),
+        ("Sume", "Female", "Ms.", "Lead", NOW()),
+        ("Dazbee", "Female", "Ms.", "Lead", NOW()),
+        ("Aoiko", "Female", "Ms.", "Lead", NOW()),
+        ("Urara", "Female", "Ms.", "Lead", NOW()),
+        ("Myuk", "Female", "Ms.", "Lead", NOW()),
+        ("Mafumafu", "Male", "Mr.", "Lead", NOW()),
+        ("Yama", "Female", "Ms.", "Lead", NOW()),
+        ("Miyoshino", "Female", "Ms.", "Lead", NOW()),
+        ("Yanami", "Female", "Ms.", "Lead", NOW()),
+        ("Nukumizu", "Male", "Mr.", "Lead", NOW()),
+        ("Meari", "Female", "Ms.", "Lead", NOW()),
+        ("Rosu", "Female", "Ms.", "Lead", NOW()),
+        ("Rokudennashi", "Female", "Ms.", "Lead", NOW()),
+        ("Kasumi", "Female", "Ms.", "Lead", NOW()),
+        ("Ryushen", "Male", "Mr.", "Lead", NOW()),
+        ("Ryugasaki", "Female", "Ms.", "Lead", NOW()),
+        ("Tenma", "Female", "Ms.", "Lead", NOW()),
+        ("Andora", "Male", "Mr.", "Lead", NOW()),
+        ("Konaha", "Female", "Ms.", "Lead", NOW()),
+        ("Guiano", "Male", "Mr.", "Lead", NOW()),
+        ("Hizuki", "Female", "Ms.", "Lead", NOW()),
+        ("Amane", "Male", "Mr.", "Lead", NOW()),
+        ("Rui", "Female", "Ms.", "Lead", NOW()),
+        ("Orangestar", "Female", "Ms.", "Lead", NOW()),
+        ("Shishigami", "Female", "Ms.", "Lead", NOW()),
+        ("Yorushika", "Female", "Ms.", "Lead", NOW()),
+        ("Yunayu", "Female", "Ms.", "Lead", NOW());
 
 INSERT INTO phone
     VALUES
