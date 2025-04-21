@@ -31,9 +31,9 @@ function login_crm($conn){
 
     $result = $statement->fetch(PDO::FETCH_ASSOC);
     if ($result != NULL)
-        echo json_encode(["message" => $result['password_hash']]);
+        echo json_encode(["message" => "yes"]);
     else
-        echo json_encode(["message" => "$sql_query"]);
+        echo json_encode(["message" => "no"]);
 }
 
 ?>
