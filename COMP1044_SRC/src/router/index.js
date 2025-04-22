@@ -15,7 +15,7 @@ const router = createRouter({
             path: "/lead_page",
             name: "lead_page",
             component: lead_page
-        }
+        },
     ]
 });
 
