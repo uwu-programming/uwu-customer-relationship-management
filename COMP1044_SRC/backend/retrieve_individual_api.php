@@ -21,7 +21,7 @@ switch($_SERVER["REQUEST_METHOD"]){
 
 function retrieve_individual($conn){
     try {
-        $sql_query = "SELECT * FROM individual";
+        $sql_query = "SELECT * FROM individual LEFT JOIN company ON individual.company_id = company.company_id";
         $statement = $conn->prepare($sql_query);
         $statement->execute();
     } catch (PDOException $error){

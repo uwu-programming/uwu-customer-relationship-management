@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="flex h-100 bg-rose-400">
+    <div class="flex bg-rose-400 rounded-2xl">
         <lead_display_div></lead_display_div>
     </div>
 </template>
