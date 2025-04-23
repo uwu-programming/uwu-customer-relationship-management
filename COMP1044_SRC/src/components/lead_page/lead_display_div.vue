@@ -321,6 +321,12 @@
                                 <input @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'AND'" id="search_all" name="search_radio"/>
                             </div>
                         </div>
+
+                        <!-- Search button -->
+                         <div class="flex flex-row w-full justify-end">
+                            <button @click="search_data('GENERAL')" class="bg-pink-400 ml-3 hover:bg-pink-700">General search</button>
+                            <button @click="search_data('SPECIFIC')" class="bg-pink-400 ml-3 hover:bg-pink-700">Specific search</button>
+                         </div>
                     </div>
 
                 </div>
