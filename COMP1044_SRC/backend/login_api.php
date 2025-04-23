@@ -41,7 +41,9 @@ function login_crm($conn){
     $result = $statement->fetch(PDO::FETCH_ASSOC);
     if ($result != NULL){
         // store the logged in user in $_SESSION
-        $_SESSION["user"] = $result['user_id'];
+        $_SESSION['user_name'] = $result['user_name'];
+        $_SESSION['user_id'] = $result['user_id'];
+        $_SESSION['user_role'] = $result['role_id'];
         $current_user = $result['user_id'];
         echo json_encode(["message" => $_SESSION['user'] . "aaa"]);
     }

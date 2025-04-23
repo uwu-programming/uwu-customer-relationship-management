@@ -2,6 +2,8 @@
 
 session_start();
 
-echo $_SESSION["user"] . "bbb";
+echo "username: " . $_SESSION["user_name"] . "<br>";
+echo "user_id: " . $_SESSION["user_id"] . "<br>";
+echo "user_role: " . $_SESSION["user_role"];
 
 ?>

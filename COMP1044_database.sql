@@ -32,28 +32,14 @@ CREATE TABLE individual(
     gender ENUM("Male", "Female") NOT NULL,
     honorifics ENUM("Mr.", "Ms.", "Mrs.", "Dr.", "Prof.") NOT NULL,
     relationship ENUM("Contact", "Lead", "Customer") NOT NULL DEFAULT "Contact",
+    phone_number VARCHAR(255) UNIQUE DEFAULT NULL,
+    email_address VARCHAR(255) UNIQUE DEFAULT NULL,
     country_code VARCHAR(10) DEFAULT NULL,                  -- reference to the TABLE country
     company_id INT DEFAULT NULL,                            -- reference to the TABLE company
     individual_description TEXT DEFAULT NULL,
-    registered_date DATETIME NOT NULL
-);
+    registered_date DATETIME NOT NULL,
 
--- phone: the phone numbers of individual
-CREATE TABLE phone(
-    phone_number VARCHAR(20) UNIQUE NOT NULL,                           -- prevent duplicate phone numbers
-    type_of_phone ENUM("Personal", "Company") NOT NULL,
-    individual_id INT NOT NULL,
-
-    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
--- email: the email addresses of individual
-CREATE TABLE email(
-    email_address VARCHAR(255) UNIQUE NOT NULL,                         -- prevent duplicate email address
-    type_of_email ENUM("Personal", "Company") NOT NULL,
-    individual_id INT NOT NULL,
-
-    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
+    CONSTRAINT phone_or_email CHECK (phone_number IS NOT NULL OR email_address IS NOT NULL)
 );
 
 -- country: store the country code with respect to country name
