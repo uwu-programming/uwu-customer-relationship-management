@@ -29,104 +29,133 @@
             correspond: "individual_id",
             table: "individual.",
             class: css_class_attributes.individual_id,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         },
         honorifics: {
             name: "Honorifics",
             correspond: "honorifics",
             table: "individual.",
             class: css_class_attributes.honorifics,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         },
         last_name: {
             name: "Last name",
             correspond: "last_name",
             table: "individual.",
             class: css_class_attributes.name,
-            display: ref(true)
+            display: ref(true),
+            search_by: ref(false),
+            search_for: ref("")
         },
         middle_name: {
             name: "Middle name",
             correspond: "middle_name",
             table: "individual.",
             class: css_class_attributes.name,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         },
         first_name: {
             name: "First name",
             correspond: "first_name",
             table: "individual.",
             class: css_class_attributes.name,
-            display: ref(true)
+            display: ref(true),
+            search_by: ref(false),
+            search_for: ref("")
         },
         company_name: {
             name: "Company name",
             correspond: "company_name",
             table: "company.",
             class: css_class_attributes.company,
-            display: ref(true)
+            display: ref(true),
+            search_by: ref(false),
+            search_for: ref("")
         },
         phone_number: {
             name: "Phone number",
             correspond: "phone_number",
             table: "individual.",
             class: css_class_attributes.name,
-            display: ref(true)
+            display: ref(true),
+            search_by: ref(false),
+            search_for: ref("")
         },
         email_address: {
             name: "Email address",
             correspond: "email_address",
             table: "individual.",
             class: css_class_attributes.company,
-            display: ref(true)
+            display: ref(true),
+            search_by: ref(false),
+            search_for: ref("")
         },
         gender: {
             name: "Gender",
             correspond: "gender",
             table: "individual.",
             class: css_class_attributes.gender,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         },
         country: {
             name: "Country",
             correspond: "country_name",
             table: "country.",
             class: css_class_attributes.country,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         },
         company_address: {
             name: "Company address",
             correspond: "company_address",
             table: "company.",
             class: css_class_attributes.description,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         },
         company_description: {
             name: "Company description",
             correspond: "company_description",
             table: "company.",
             class: css_class_attributes.description,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         },
         individual_description: {
             name: "Individual description",
             correspond: "individual_description",
             table: "individual.",
             class: css_class_attributes.description,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         },
         registered_date: {
             name: "Registered date",
             correspond: "registered_date",
             table: "individual.",
             class: css_class_attributes.date,
-            display: ref(false)
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
         }
     };
 
     // check if at least one lead display attribute is selected
     const need_display = ref(true);
-    const check_need_display = () => {
+    // parameter(value): one of the object in lead_display_attributes 
+    const check_need_display = (value) => {
         // assume no display
         need_display.value = false;
         // loop through the object to see if any display is true
@@ -144,7 +173,11 @@
         if (!need_display.value)
             sort_attribute.value = "No attribute selected";
 
-        sort_data();
+        // set the search_by value of the passed object to false, and empty search requirement
+        value['search_by']['value'] = false;
+        value['search_for']['value'] = "";
+
+        search_data();
     }
 
     const get_current_display_attribute = () => {
@@ -161,7 +194,7 @@
     // retrieve all data from TABLE individual JOIN company
     const retrieve_all = async () => {
         try {
-            response.value = await axios.post("../backend/retrieve_lead_api.php", {sort: false});
+            response.value = await axios.post("../backend/retrieve_lead_api.php");
         } catch (error){
             alert(error);
         }
@@ -170,14 +203,39 @@
     // record ascending or descending
     const sort_attribute = ref("Please select an option");
     const sort_order = ref("ASCD");
-    // sort the data by order of an attribute
-    const sort_data = async () => {
+
+    // send request to filter out the data
+    const search_data = async () => {
         try {
-            response.value = await axios.post("../backend/retrieve_lead_api.php", {sort: true, sort_attribute: sort_attribute.value, sort_by: sort_order.value});
+            var search_array = [];
+            for (const value in lead_display_attributes){
+                if (lead_display_attributes[value]['search_by']['value']){
+                    search_array.push(
+                        lead_display_attributes[value]['table'] +
+                        lead_display_attributes[value]['correspond'] + ":" +
+                        (lead_display_attributes[value]['search_for']['value']).trim()
+                    );
+                }
+            }
+
+            response.value = await axios.post(
+                // send the request to:
+                "../backend/retrieve_lead_api.php", 
+                {
+                    sort: true, // set that it is a sort request
+                    sort_attribute: sort_attribute.value, // what attribute to sort by
+                    sort_by: sort_order.value, // what order to sort by
+                    requirement: JSON.stringify(search_array), // filter the requiremnt, convert the array into string
+                    filter: filter_type.value
+                }
+            );
         } catch (error){
             alert(error);
         }
     };
+
+    // keep track the type of filter
+    const filter_type = ref("OR");
 
     retrieve_all();
 </script>
@@ -208,26 +266,59 @@
         <div class="flex flex-col h-9/10 w-45/55 bg-violet-500 m-2">
             <div class="flex flex-col px-2 py-1 bg-rose-700 h-45/100">
                 <div class="">Filter Leads</div>
-                <div><input class="bg-white" type="text"></div>
-                <div class="flex flex-col h-85/100 overflow-auto">
-                    <div class="bg-amber-500">Display</div>
-                    <div v-for="value in lead_display_attributes" :key="value">
-                        <label :for="value['correspond'] + '_checkbox'">{{ value['name'] }} {{ value['display'].value }}</label>
-                        <input @click="value['display'].value = !value['display'].value" @change="check_need_display" v-model="value['display'].value" :id="value['correspond'] + '_checkbox'" v-bind:name="value['correspond'] + '_checkbox'" type="checkbox"/>
+                <div class="flex flex-row h-85/100">
+
+                    <!-- Select display section -->
+                    <div class="flex flex-col h-full w-3/10">
+                        <div class="bg-amber-500">Display</div>
+                        <div class="flex flex-col overflow-auto h-full bg-green-500">
+                            <div v-for="value in lead_display_attributes" :key="value">
+                                <label :for="value['correspond'] + '_display_checkbox'">{{ value['name'] }}</label>
+                                <input @click="value['display'].value = !value['display'].value" @change="check_need_display(value)" v-model="value['display'].value" :id="value['correspond'] + '_display_checkbox'" v-bind:name="value['correspond'] + '_display_checkbox'" type="checkbox"/>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Search section -->
+                    <div class="flex flex-col h-full w-7/10">
+                        <div class="bg-amber-500">Search by</div>
+                        <div class=""><input @change="" class="bg-white w-full" type="search"></div>
+
+                        <!-- Search by check box -->
+                        <div class="flex flex-col overflow-auto w-full h-full bg-green-500">
+                            <div class="flex flex-row" v-for="value in lead_display_attributes" :key="value">
+                                <label class="w-3/10" v-if="value['display'].value" :for="value['correspond'] + '_search_by_checkbox'">{{ value['name'] }}</label>
+                                <input v-if="value['display'].value" @change="search_data" @click="value['search_by'].value = !value['search_by'].value" v-model="value['search_by'].value" :id="value['correspond'] + '_search_by_checkbox'" v-bind:name="value['correspond'] + '_search_by_checkbox'" type="checkbox"/>
+                                <input @input="search_data" class="bg-gray-300 w-7/10" v-model="value['search_for'].value" v-if="value['display'].value" type="search"/>
+                            </div>
+                        </div>
+
+                        <!-- Filter search type -->
+                        <div class="flex flex-row w-full justify-between">
+                            <div class="w-max">Filter type:</div>
+                            <div class="flex flex-row justify-end w-fit self-end">
+                                <label for="search_one">Fulfill at least one</label>
+                                <input @change="search_data" type="radio" v-model="filter_type" :value="'OR'" id="search_one" name="search_radio" checked/>
+                                <label for="search_all">Fulfill all</label>
+                                <input @change="search_data" type="radio" v-model="filter_type" :value="'AND'" id="search_all" name="search_radio"/>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
+
                 <div class="flex flex-row">
-                    <div class="">Sort by</div>
-                    <select @change="sort_data" v-model="sort_attribute" id="select_sort_by">
+                    <div class="">Sort by:</div>
+                    <select @change="search_data" v-model="sort_attribute" id="select_sort_by">
                         <option disabled value="Please select an option" v-if="need_display">Please select an option</option>
                         <option disabled value="No attribute selected" v-else>No attribute selected</option>
                         <option v-for="value in get_current_display_attribute()" :value="value['table'] + value['correspond']">{{ value['name'] }}</option>
                     </select>
                     <div class="flex flex-row">
                         <label for="sort_ascd">Ascending</label>
-                        <input @change="sort_data" type="radio" v-model="sort_order" :value="'ASCD'" id="sort_ascd" name="sort_radio" checked/>
+                        <input @change="search_data" type="radio" v-model="sort_order" :value="'ASCD'" id="sort_ascd" name="sort_radio" checked/>
                         <label for="sort_desc">Descending</label>
-                        <input @change="sort_data" type="radio" v-model="sort_order" :value="'DESC'" id="sort_desc" name="sort_radio"/>
+                        <input @change="search_data" type="radio" v-model="sort_order" :value="'DESC'" id="sort_desc" name="sort_radio"/>
                     </div>
                 </div>
             </div>
