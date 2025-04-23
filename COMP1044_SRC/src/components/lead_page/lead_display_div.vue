@@ -132,7 +132,7 @@
 </script>
 
 <template>
-    <div v-if="lead_display_attributes.last_name.display.value" class="flex h-full w-full bg-black overflow-auto">
+    <div class="flex h-full w-full bg-black overflow-auto">
         <div class="flex flex-col h-9/10 w-55/100 max-w-max m-2 rounded-2xl border-1 overflow-auto">
             <div class="flex flex-row w-max bg-fuchsia-500 border-b-2">
                 <div class="flex flex-row w-max" v-for="value in lead_display_attributes" :key="value">
