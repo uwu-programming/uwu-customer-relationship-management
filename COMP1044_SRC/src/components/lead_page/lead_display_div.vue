@@ -27,84 +27,98 @@
         individual_id: {
             name: "Individual ID",
             correspond: "individual_id",
+            table: "individual.",
             class: css_class_attributes.individual_id,
             display: ref(false)
         },
         honorifics: {
             name: "Honorifics",
             correspond: "honorifics",
+            table: "individual.",
             class: css_class_attributes.honorifics,
             display: ref(false)
         },
         last_name: {
             name: "Last name",
             correspond: "last_name",
+            table: "individual.",
             class: css_class_attributes.name,
             display: ref(true)
         },
         middle_name: {
             name: "Middle name",
             correspond: "middle_name",
+            table: "individual.",
             class: css_class_attributes.name,
             display: ref(false)
         },
         first_name: {
             name: "First name",
             correspond: "first_name",
+            table: "individual.",
             class: css_class_attributes.name,
             display: ref(true)
         },
         company_name: {
             name: "Company name",
             correspond: "company_name",
+            table: "company.",
             class: css_class_attributes.company,
             display: ref(true)
         },
         phone_number: {
             name: "Phone number",
             correspond: "phone_number",
+            table: "individual.",
             class: css_class_attributes.name,
             display: ref(true)
         },
         email_address: {
             name: "Email address",
             correspond: "email_address",
+            table: "individual.",
             class: css_class_attributes.company,
             display: ref(true)
         },
         gender: {
             name: "Gender",
             correspond: "gender",
+            table: "individual.",
             class: css_class_attributes.gender,
             display: ref(false)
         },
         country: {
             name: "Country",
             correspond: "country_name",
+            table: "country.",
             class: css_class_attributes.country,
             display: ref(false)
         },
         company_address: {
             name: "Company address",
             correspond: "company_address",
+            table: "company.",
             class: css_class_attributes.description,
             display: ref(false)
         },
         company_description: {
             name: "Company description",
             correspond: "company_description",
+            table: "company.",
             class: css_class_attributes.description,
             display: ref(false)
         },
         individual_description: {
             name: "Individual description",
             correspond: "individual_description",
+            table: "individual.",
             class: css_class_attributes.description,
             display: ref(false)
         },
         registered_date: {
             name: "Registered date",
             correspond: "registered_date",
+            table: "individual.",
             class: css_class_attributes.date,
             display: ref(false)
         }
@@ -119,9 +133,18 @@
         for (const key in lead_display_attributes){
             if (lead_display_attributes[key]['display']['value']){
                 need_display.value = true;
-                break;
+            } else {
+                if (lead_display_attributes[key]['correspond'] == sort_attribute.value)
+                    sort_attribute.value = "Please select an option";
             }
         }
+
+        if (sort_attribute.value == "No attribute selected" && need_display.value)
+            sort_attribute.value = "Please select an option";
+        if (!need_display.value)
+            sort_attribute.value = "No attribute selected";
+
+        sort_data();
     }
 
     const get_current_display_attribute = () => {
@@ -145,18 +168,16 @@
     };
 
     // record ascending or descending
-    const sort_attribute = ref("default");
+    const sort_attribute = ref("Please select an option");
     const sort_order = ref("ASCD");
     // sort the data by order of an attribute
     const sort_data = async () => {
         try {
-            alert(sort_attribute.value);
-            alert(sort_order.value);
-            //response.value = await axios.post("../backend/retrieve_lead_api.php", {sort: true, sort_attribute: sort_attribute.value, sort_by: sort_order.value});
+            response.value = await axios.post("../backend/retrieve_lead_api.php", {sort: true, sort_attribute: sort_attribute.value, sort_by: sort_order.value});
         } catch (error){
             alert(error);
         }
-    }
+    };
 
     retrieve_all();
 </script>
@@ -192,21 +213,21 @@
                     <div class="bg-amber-500">Display</div>
                     <div v-for="value in lead_display_attributes" :key="value">
                         <label :for="value['correspond'] + '_checkbox'">{{ value['name'] }} {{ value['display'].value }}</label>
-                        <input @click="value['display'].value = !value['display'].value" @input="check_need_display" v-model="value['display'].value" :id="value['correspond'] + '_checkbox'" v-bind:name="value['correspond'] + '_checkbox'" type="checkbox"/>
+                        <input @click="value['display'].value = !value['display'].value" @change="check_need_display" v-model="value['display'].value" :id="value['correspond'] + '_checkbox'" v-bind:name="value['correspond'] + '_checkbox'" type="checkbox"/>
                     </div>
                 </div>
                 <div class="flex flex-row">
                     <div class="">Sort by</div>
-                    <select @input="sort_data" v-model="sort_attribute" id="select_sort_by">
-                        <option :value="default" v-if="need_display">Default</option>
-                        <option :value="none" v-else>No attribute selected</option>
-                        <option v-for="value in get_current_display_attribute()" :value="value['correspond']">{{ value['name'] }}</option>
+                    <select @change="sort_data" v-model="sort_attribute" id="select_sort_by">
+                        <option disabled value="Please select an option" v-if="need_display">Please select an option</option>
+                        <option disabled value="No attribute selected" v-else>No attribute selected</option>
+                        <option v-for="value in get_current_display_attribute()" :value="value['table'] + value['correspond']">{{ value['name'] }}</option>
                     </select>
                     <div class="flex flex-row">
                         <label for="sort_ascd">Ascending</label>
-                        <input type="radio" v-model="sort_order" :value="ASCD" id="sort_ascd" name="sort_radio" checked/>
+                        <input @change="sort_data" type="radio" v-model="sort_order" :value="'ASCD'" id="sort_ascd" name="sort_radio" checked/>
                         <label for="sort_desc">Descending</label>
-                        <input type="radio" v-model="sort_order" :value="DESC" id="sort_desc" name="sort_radio"/>
+                        <input @change="sort_data" type="radio" v-model="sort_order" :value="'DESC'" id="sort_desc" name="sort_radio"/>
                     </div>
                 </div>
             </div>

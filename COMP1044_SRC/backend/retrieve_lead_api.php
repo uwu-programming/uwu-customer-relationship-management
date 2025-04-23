@@ -40,7 +40,34 @@ function retrieve_individual($conn){
         }
 
         if ($post_data->sort == true) {
-            $sql_query = $sql_query . " ORDER BY individual.$post_data->sort_attribute $post_data->sort_by";
+            $desc_array = array();
+
+            $desc_individual_statement = $conn->prepare("DESC individual");
+            $desc_individual_statement->execute();
+
+            $desc_company_statement = $conn->prepare("DESC company");
+            $desc_company_statement->execute();
+
+            while ($row = $desc_individual_statement->fetch(PDO::FETCH_ASSOC)){
+                array_push($desc_array, $row);
+            }
+            while ($row = $desc_company_statement->fetch(PDO::FETCH_ASSOC)){
+                array_push($desc_array, $row);
+            }
+
+            foreach ($desc_array as $data){
+                // str_contains(string $haystack, string $needle): check if $needle exists in $haystack
+                // since we may pass "Please select an option", we need to do verification first
+                // explode(string $seperator, string $string): seperate $string by $seperator
+                // since we pass the table alongside with field name, we need to explode the string first
+                if (str_contains($post_data->sort_attribute, ".") && $data['Field'] == explode(".", $post_data->sort_attribute)[1]){
+                    $sql_query = $sql_query . " ORDER BY $post_data->sort_attribute";
+                    if ($post_data->sort_by == "DESC"){
+                        $sql_query = $sql_query . " $post_data->sort_by";
+                    }
+                    break;
+                }
+            }
         }
 
         $statement = $conn->prepare($sql_query);
