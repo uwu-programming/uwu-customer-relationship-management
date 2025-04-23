@@ -132,7 +132,7 @@
 </script>
 
 <template>
-    <div class="flex h-full w-full bg-black overflow-auto">
+    <div v-if="lead_display_attributes.last_name.display.value" class="flex h-full w-full bg-black overflow-auto">
         <div class="flex flex-col h-9/10 w-55/100 max-w-max m-2 rounded-2xl border-1 overflow-auto">
             <div class="flex flex-row w-max bg-fuchsia-500 border-b-2">
                 <div class="flex flex-row w-max" v-for="value in lead_display_attributes" :key="value">
@@ -144,7 +144,6 @@
                 <button class="w-max bg-sky-500 hover:bg-cyan-300 flex flex-row justify-between border-b-gray-300/80 border-b-1" v-if="response.status==200" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
                     <div class="w-max flex" v-for="value in lead_display_attributes" :key="value">   
                         <span v-if="value['display'].value" v-bind:class="value['class'] + css_class_attributes.display_span">{{ response_value[value['correspond']] }}</span>
-                        <span v-else>?</span>
                     </div>
                 </button>
             </div>
@@ -158,7 +157,7 @@
                     <div class="bg-amber-500">Display</div>
                     <div v-for="value in lead_display_attributes" :key="value">
                         <label :for="value['correspond'] + '_label'">{{ value['name'] }} {{ value['display'].value }}</label>
-                        <input v-model="value['display'].value" true-value=true false-value=false :id="value['correspond'] + '_label'" type="checkbox"/>
+                        <input @click="value['display'].value = !value['display'].value" v-model="value['display'].value" :id="value['correspond'] + '_label'" type="checkbox"/>
                     </div>
                 </div>
                 <div class="flex flex-row">
