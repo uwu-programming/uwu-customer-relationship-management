@@ -177,7 +177,7 @@
         value['search_by']['value'] = false;
         value['search_for']['value'] = "";
 
-        search_data();
+        search_data("SPECIFIC");
     }
 
     const get_current_display_attribute = () => {
@@ -200,21 +200,38 @@
         }
     };
 
+    // record general searching
+    const general_search = ref("");
     // record ascending or descending
     const sort_attribute = ref("Please select an option");
     const sort_order = ref("ASCD");
 
     // send request to filter out the data
-    const search_data = async () => {
+    const search_data = async (search_type) => {
         try {
+            // search requirement
             var search_array = [];
-            for (const value in lead_display_attributes){
-                if (lead_display_attributes[value]['search_by']['value']){
-                    search_array.push(
-                        lead_display_attributes[value]['table'] +
-                        lead_display_attributes[value]['correspond'] + ":" +
-                        (lead_display_attributes[value]['search_for']['value']).trim()
-                    );
+
+            // check the search type
+            if (search_type == 'GENERAL'){
+                for (const value in lead_display_attributes){
+                    if (lead_display_attributes[value]['display']['value']){
+                        search_array.push(
+                            lead_display_attributes[value]['table'] +
+                            lead_display_attributes[value]['correspond'] + ":" +
+                            (general_search['value']).trim()
+                        );
+                    }
+                }
+            }else{
+                for (const value in lead_display_attributes){
+                    if (lead_display_attributes[value]['search_by']['value']){
+                        search_array.push(
+                            lead_display_attributes[value]['table'] +
+                            lead_display_attributes[value]['correspond'] + ":" +
+                            (lead_display_attributes[value]['search_for']['value']).trim()
+                        );
+                    }
                 }
             }
 
@@ -226,7 +243,8 @@
                     sort_attribute: sort_attribute.value, // what attribute to sort by
                     sort_by: sort_order.value, // what order to sort by
                     requirement: JSON.stringify(search_array), // filter the requiremnt, convert the array into string
-                    filter: filter_type.value
+                    filter: filter_type.value,
+                    search_type: search_type
                 }
             );
         } catch (error){
@@ -282,14 +300,14 @@
                     <!-- Search section -->
                     <div class="flex flex-col h-full w-7/10">
                         <div class="bg-amber-500">Search by</div>
-                        <div class=""><input @change="" class="bg-white w-full" type="search"></div>
+                        <div class=""><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full" type="search"></div>
 
                         <!-- Search by check box -->
                         <div class="flex flex-col overflow-auto w-full h-full bg-green-500">
                             <div class="flex flex-row" v-for="value in lead_display_attributes" :key="value">
                                 <label class="w-3/10" v-if="value['display'].value" :for="value['correspond'] + '_search_by_checkbox'">{{ value['name'] }}</label>
                                 <input v-if="value['display'].value" @change="search_data" @click="value['search_by'].value = !value['search_by'].value" v-model="value['search_by'].value" :id="value['correspond'] + '_search_by_checkbox'" v-bind:name="value['correspond'] + '_search_by_checkbox'" type="checkbox"/>
-                                <input @input="search_data" class="bg-gray-300 w-7/10" v-model="value['search_for'].value" v-if="value['display'].value" type="search"/>
+                                <input @input="search_data('SPECIFIC')" class="bg-gray-300 w-7/10" v-model="value['search_for'].value" v-if="value['display'].value" type="search"/>
                             </div>
                         </div>
 
@@ -298,9 +316,9 @@
                             <div class="w-max">Filter type:</div>
                             <div class="flex flex-row justify-end w-fit self-end">
                                 <label for="search_one">Fulfill at least one</label>
-                                <input @change="search_data" type="radio" v-model="filter_type" :value="'OR'" id="search_one" name="search_radio" checked/>
+                                <input @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'OR'" id="search_one" name="search_radio" checked/>
                                 <label for="search_all">Fulfill all</label>
-                                <input @change="search_data" type="radio" v-model="filter_type" :value="'AND'" id="search_all" name="search_radio"/>
+                                <input @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'AND'" id="search_all" name="search_radio"/>
                             </div>
                         </div>
                     </div>
@@ -309,16 +327,16 @@
 
                 <div class="flex flex-row">
                     <div class="">Sort by:</div>
-                    <select @change="search_data" v-model="sort_attribute" id="select_sort_by">
+                    <select @change="search_data('SPECIFIC')" v-model="sort_attribute" id="select_sort_by">
                         <option disabled value="Please select an option" v-if="need_display">Please select an option</option>
                         <option disabled value="No attribute selected" v-else>No attribute selected</option>
                         <option v-for="value in get_current_display_attribute()" :value="value['table'] + value['correspond']">{{ value['name'] }}</option>
                     </select>
                     <div class="flex flex-row">
                         <label for="sort_ascd">Ascending</label>
-                        <input @change="search_data" type="radio" v-model="sort_order" :value="'ASCD'" id="sort_ascd" name="sort_radio" checked/>
+                        <input @change="search_data('SPECIFIC')" type="radio" v-model="sort_order" :value="'ASCD'" id="sort_ascd" name="sort_radio" checked/>
                         <label for="sort_desc">Descending</label>
-                        <input @change="search_data" type="radio" v-model="sort_order" :value="'DESC'" id="sort_desc" name="sort_radio"/>
+                        <input @change="search_data('SPECIFIC')" type="radio" v-model="sort_order" :value="'DESC'" id="sort_desc" name="sort_radio"/>
                     </div>
                 </div>
             </div>

@@ -30,6 +30,23 @@ function retrieve_individual($conn){
         // the SQL query to get all lead individual
         $sql_query = "SELECT * FROM individual LEFT JOIN company ON individual.company_id = company.company_id JOIN lead_individual ON individual.individual_id = lead_individual.individual_id";
         
+        // get FIELD of individual and company TABLE
+        $desc_individual_statement = $conn->prepare("DESC individual");
+        $desc_individual_statement->execute();
+
+        $desc_company_statement = $conn->prepare("DESC company");
+        $desc_company_statement->execute();
+
+        // store the FIELD value inside the array
+        $desc_array = array();
+
+        while ($row = $desc_individual_statement->fetch(PDO::FETCH_ASSOC)){
+            array_push($desc_array, $row);
+        }
+        while ($row = $desc_company_statement->fetch(PDO::FETCH_ASSOC)){
+            array_push($desc_array, $row);
+        }
+
         // check if user is an admin
         if ($current_user_role == 1){
             // get all users
@@ -59,7 +76,10 @@ function retrieve_individual($conn){
 
                     // add filter (AND / OR) if it is not the last requirement
                     if ($value != end($requirement_JSON))
-                        $sql_query = $sql_query . " $post_data->filter";
+                        if (array_key_exists("search_type", (array)$post_data) && $post_data->search_type == "GENERAL")
+                            $sql_query = $sql_query . " OR";
+                        else
+                            $sql_query = $sql_query . " $post_data->filter";
                 }
 
                 // close the query for non admin user
@@ -72,21 +92,6 @@ function retrieve_individual($conn){
         // array_key_exists(mixed $key, array $array): check if key exists in array
         // (array): type conversion, converting $post_data (a mixed type) to associative array
         if (array_key_exists("sort", (array)$post_data) && $post_data->sort == true) {
-            $desc_array = array();
-
-            $desc_individual_statement = $conn->prepare("DESC individual");
-            $desc_individual_statement->execute();
-
-            $desc_company_statement = $conn->prepare("DESC company");
-            $desc_company_statement->execute();
-
-            while ($row = $desc_individual_statement->fetch(PDO::FETCH_ASSOC)){
-                array_push($desc_array, $row);
-            }
-            while ($row = $desc_company_statement->fetch(PDO::FETCH_ASSOC)){
-                array_push($desc_array, $row);
-            }
-
             foreach ($desc_array as $data){
                 // str_contains(string $haystack, string $needle): check if $needle exists in $haystack
                 // since we may pass "Please select an option", we need to do verification first
