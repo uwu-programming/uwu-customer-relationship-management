@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div class="flex bg-rose-400 rounded-2xl">
+    <div class="flex h-screen w-screen min-w-300">
         <lead_display_div></lead_display_div>
     </div>
 </template>
