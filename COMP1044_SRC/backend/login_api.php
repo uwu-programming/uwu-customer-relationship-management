@@ -45,7 +45,7 @@ function login_crm($conn){
         $_SESSION['user_id'] = $result['user_id'];
         $_SESSION['user_role'] = $result['role_id'];
         $current_user = $result['user_id'];
-        echo json_encode(["message" => $_SESSION['user'] . "aaa"]);
+        echo json_encode(["message" => $_SESSION['user_name'] . "aaa"]);
     }
     else
         echo json_encode(["message" => "no, $result"]);

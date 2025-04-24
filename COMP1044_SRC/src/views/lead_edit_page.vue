@@ -28,5 +28,5 @@
 </script>
 
 <template>
-    
+    <div>{{ success_response }}</div>
 </template>
