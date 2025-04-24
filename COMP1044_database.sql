@@ -54,7 +54,8 @@ ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (country_code) REFERENCES coun
 CREATE TABLE company(
     company_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     company_name VARCHAR(255) NOT NULL,
-    company_address VARCHAR(255) NOT NULL
+    company_address VARCHAR(255) NOT NULL,
+    company_description TEXT DEFAULT NULL
 );
 -- make attribute `company_id` from table `individual` refer to the `company_id` in the table `company`
 ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES company(company_id) ON UPDATE SET NULL ON DELETE SET NULL;
@@ -75,7 +76,9 @@ CREATE TABLE activity(
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     activity_subject VARCHAR(255) NOT NULL,
-    activity_description TEXT DEFAULT NULL
+    activity_description TEXT DEFAULT NULL,
+
+    CONSTRAINT check_time CHECK (start_time < end_time)
 );
 
 -- individual_activity_history: record the activity history of each individual
