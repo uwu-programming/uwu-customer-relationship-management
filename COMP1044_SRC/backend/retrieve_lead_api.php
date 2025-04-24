@@ -71,8 +71,14 @@ function retrieve_lead($conn){
 
                 // loop through the requirement array
                 foreach ($requirement_JSON as $value){
+                    // seperate the requirement to TABLE and VALUE
                     $requirement_array = explode(":", $value);
-                    $sql_query = $sql_query . " $requirement_array[0] LIKE '%$requirement_array[1]%'";
+
+                    // check if it is a hard requirement (using = instead of LIKE)
+                    if (array_key_exists("hard_requirement", (array)$post_data))
+                        $sql_query = $sql_query . " $requirement_array[0] = $requirement_array[1]";
+                    else
+                        $sql_query = $sql_query . " $requirement_array[0] LIKE '%$requirement_array[1]%'";
 
                     // add filter (AND / OR) if it is not the last requirement
                     if ($value != end($requirement_JSON))
