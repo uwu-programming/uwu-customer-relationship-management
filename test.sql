@@ -61,6 +61,9 @@ INSERT INTO individual
         ("Orangestar", NULL, "Female", "Ms.", "Lead", NOW(), 1, "011232789", NULL, NULL),
         ("Shishigami", "Leona", "Female", "Ms.", "Lead", NOW(), 6, NULL, "leona@mail.com", NULL),
         ("Yorushika", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "yorushika@mail.com", NULL),
+        ("Tayori", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "tayori@mail.com", NULL),
+        ("Hanon", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "hanon@mail.com", NULL),
+        ("Hoshikawa", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "hoshiiisara@mail.com", NULL),
         ("Yunayu", NULL, "Female", "Ms.", "Lead", NOW(), 3, NULL, "yunayu@mail.com", NULL),
         ("Hyakumantenbara", "Salome", "Female", "Ms.", "Lead", NOW(), 3, NULL, "hyakumantensalome@mail.com", NULL);
 
@@ -96,12 +99,7 @@ INSERT INTO lead_individual
         (27, 3),
         (28, 2),
         (29, 2),
-        (30, 3),
-        (31, 3),
-        (32, 3),
-        (33, 3),
-        (34, 3),
-        (35, 3);
+        (30, 3);
 
 INSERT INTO activity
         (activity_type, start_time, end_time, activity_subject)

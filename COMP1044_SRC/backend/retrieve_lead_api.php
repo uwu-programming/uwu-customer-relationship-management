@@ -11,15 +11,15 @@ require "database_connection.php";
 
 switch($_SERVER["REQUEST_METHOD"]){
     case "POST":
-        retrieve_individual($conn);
+        retrieve_lead($conn);
         break;
     
     default:
-        retrieve_individual($conn);
+        retrieve_lead($conn);
         break;
 }
 
-function retrieve_individual($conn){
+function retrieve_lead($conn){
     try {
         $current_user_id = $_SESSION['user_id'];
         $current_user_role = $_SESSION['user_role'];

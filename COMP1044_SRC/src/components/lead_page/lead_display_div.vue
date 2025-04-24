@@ -1,6 +1,6 @@
 <script setup>
     import axios from "axios";
-    import {callWithAsyncErrorHandling, ref} from "vue";
+    import {ref} from "vue";
 
     const response = ref(); // lead data
 
@@ -328,6 +328,7 @@
     // the reference to keep track of current hovered user
     const current_hover_user = ref(
         {
+            individual_id: "NaN",
             last_name: "",
             middle_name: "",
             first_name_name: "",
@@ -348,7 +349,7 @@
 
     // the function to call when 'edit' button is clicked (pass the selected individual_id)
     const set_edit_individual = () => {
-        
+
     }
 
     retrieve_all();
@@ -367,11 +368,11 @@
                     </div>
                 </div>
                 <div class="flex flex-col w-max overflow-y-auto h-full" v-if="need_display && JSON.stringify(response.data) != '[]'">
-                    <button @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-sky-500 hover:bg-cyan-300 flex flex-row border-b-gray-300/80 border-b-1" v-if="response.status==200" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
+                    <router-link :to="{name: 'lead_edit_page', params: {individual_id: response_value['individual_id']}}" @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-sky-500 hover:bg-cyan-300 flex flex-row border-b-gray-300/80 border-b-1" v-if="response.status==200" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
                         <div class="w-max flex" v-for="value in lead_display_attributes" :key="value">   
                             <span v-if="value['display'].value" v-bind:class="value['class'] + css_class_attributes.display_span">{{ response_value[value['correspond']] }}</span>
                         </div>
-                    </button>
+                    </router-link>
                 </div>
                 <div class="flex bg-red-400 h-full w-full justify-center items-center" v-else-if="!need_display">
                     <span>No content available since no attribute is selected</span>
@@ -468,7 +469,7 @@
                     </div>
                 </div>
                 <div class="flex flex-row bg-cyan-700">
-                    <router-link @click="set_edit_individual" to="/" tag="button">Edit</router-link>
+                    <router-link :to="{name: 'lead_edit_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button">Edit</router-link>
                 </div>
             </div>
 
