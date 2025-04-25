@@ -115,6 +115,57 @@
         }
     }
 
+    const edit_attribute_right = {
+        lead_status: {
+            name: "Lead status",
+            correspond: "lead_status",
+            table: "lead_individual.",
+            class: css_class_attributes.normal_edit_attribute,
+            name_class: "",
+            input_class: "",
+            input: "",
+            value: ref(),
+            hover: ref(false),
+            changed: ref(false)
+        },
+        company: {
+            name: "Company",
+            correspond: "company_name",
+            table: "company.",
+            class: css_class_attributes.normal_edit_attribute,
+            name_class: "",
+            input_class: "",
+            input: input_attributes.text,
+            value: ref(),
+            hover: ref(false),
+            changed: ref(false)
+        },
+        company_address: {
+            name: "Company address",
+            correspond: "company_address",
+            table: "company.",
+            class: css_class_attributes.normal_edit_attribute,
+            name_class: "",
+            input_class: "",
+            input: input_attributes.text,
+            value: ref(),
+            hover: ref(false),
+            changed: ref(false)
+        },
+        company_description: {
+            name: "Company description",
+            correspond: "company_description",
+            table: "company.",
+            class: css_class_attributes.description_edit_attribute,
+            name_class: "",
+            input_class: "",
+            input: input_attributes.textarea,
+            value: ref(),
+            hover: ref(false),
+            changed: ref(false)
+        }
+    }
+
     // retrieve the lead to edit
     const get_lead_detail = async () => {
         try {
@@ -123,9 +174,10 @@
             success_response.value = (Object.keys(response.value.data)).length > 0;
 
             if (success_response.value){
-                for (const key in edit_attribute_left){
-                    edit_attribute_left[key]['value'].value = response.value.data[0][key];
-                }
+                for (const key in edit_attribute_left)
+                    edit_attribute_left[key]['value'].value = response.value.data[0][edit_attribute_left[key]['correspond']];
+                for (const key in edit_attribute_right)
+                    edit_attribute_right[key]['value'].value = response.value.data[0][edit_attribute_right[key]['correspond']];
             }
         } catch (error){
             alert(error);
@@ -136,11 +188,11 @@
 </script>
 
 <template>
-    <div>{{ success_response }}: {{ response.data[0]['last_name'] }} </div>
+    <div>{{ success_response }}: {{ response.data[0] }} </div>
 
-    <div class="flex flex-row">
+    <div class="flex flex-row w-screen">
         <!-- data at left side -->
-        <div class="flex flex-col">
+        <div class="flex flex-col w-1/2">
             <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
                 <div class="">{{ value['name'] }}</div>
                 <!-- the input field -->
@@ -153,8 +205,16 @@
         </div>
 
         <!-- data at right side -->
-        <div class="flex flex-col">
-
+        <div class="flex flex-col w-1/2">
+            <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
+                <div class="">{{ value['name'] }}</div>
+                <!-- the input field -->
+                <input v-if="value['input'] == 'text'" class="bg-rose-400 w-40" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                <textarea v-else-if="value['input'] == 'textarea'" v-model="value['value'].value"></textarea>
+                <span v-else>{{ value['value'] }}</span>
+                <!-- the label -->
+                <label v-if="value['input'] == 'text'" :for="value['correspond'] + '_input'" class="flex flex-row relative right-40"><div class="bg-violet-700/60 h-6 w-40 px-2 bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[auto_75%] bg-origin-content"></div></label>
+            </div>
         </div>
     </div>
 </template>
