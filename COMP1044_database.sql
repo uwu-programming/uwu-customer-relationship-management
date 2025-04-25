@@ -16,11 +16,18 @@ CREATE TABLE user_role(
 CREATE TABLE crm_user(
     user_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     user_name VARCHAR(255) NOT NULL,
-    password_salt CHAR(10) NOT NULL,
-    password_hash VARCHAR(64) NOT NULL,
     role_id INT NOT NULL,                               -- reference to the TABLE role
 
     FOREIGN KEY (role_id) REFERENCES user_role(role_id)
+);
+
+-- crm_user_login_info: store the login info (password_salt and password_hash)
+CREATE TABLE crm_user_login_info(
+    user_id INT UNIQUE NOT NULL,
+    password_salt CHAR(10) NOT NULL,
+    password_hash VARCHAR(64) NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES crm_user(user_id)
 );
 
 -- individual: includes all people outside from CRM users (contact, lead, customer)
@@ -38,7 +45,9 @@ CREATE TABLE individual(
     company_id INT DEFAULT NULL,                            -- reference to the TABLE company
     individual_description TEXT DEFAULT NULL,
     registered_date DATETIME NOT NULL,
+    created_by INT NOT NULL,
 
+    FOREIGN KEY (created_by) REFERENCES crm_user(user_id),
     CONSTRAINT phone_or_email CHECK (phone_number IS NOT NULL OR email_address IS NOT NULL)
 );
 
@@ -63,10 +72,10 @@ ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES compan
 -- lead_individual: record which individual is lead and their status
 CREATE TABLE lead_individual(
     individual_id INT UNIQUE NOT NULL,
-    user_id INT NOT NULL,
+    lead_owner_user_id INT NOT NULL,
     lead_status ENUM("New", "Attempted to contact", "Contacted", "Junk lead", "Lost lead", "Converted to customer") NOT NULL DEFAULT "New",
 
-    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (lead_owner_user_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- activity: record the interaction between user and individual

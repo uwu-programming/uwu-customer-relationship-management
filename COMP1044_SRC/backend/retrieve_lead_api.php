@@ -28,8 +28,10 @@ function retrieve_lead($conn){
         $post_data = json_decode(file_get_contents("php://input"));
 
         // the SQL query to get all lead individual
-        $sql_query = "SELECT * FROM individual LEFT JOIN company ON individual.company_id = company.company_id JOIN lead_individual ON individual.individual_id = lead_individual.individual_id";
-        
+        // bind with company, lead_individual, and user_role (user_id depends on lead_owner)
+        //$sql_query = "SELECT * FROM individual LEFT JOIN company ON individual.company_id = company.company_id JOIN lead_individual ON individual.individual_id = lead_individual.individual_id JOIN crm_user ON crm_user.user_id = lead_individual.lead_owner_user_id JOIN user_role ON crm_user.role_id = user_role.role_id";
+        $sql_query = "SELECT * FROM (SELECT * FROM individual LEFT JOIN company USING(company_id) LEFT JOIN lead_individual USING(individual_id)) t1 LEFT JOIN (SELECT * FROM crm_user) t2 ON t2.user_id = t1.lead_owner_user_id";
+
         // get FIELD of individual and company TABLE
         $desc_individual_statement = $conn->prepare("DESC individual");
         $desc_individual_statement->execute();

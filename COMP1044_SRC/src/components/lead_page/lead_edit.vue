@@ -100,18 +100,6 @@
             value: ref(),
             hover: ref(false),
             changed: ref(false)
-        },
-        registered_date: {
-            name: "Registered date",
-            correspond: "registered_date",
-            table: "individual.",
-            class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
-            input: input_attributes.none,
-            value: ref(),
-            hover: ref(false),
-            changed: ref(false)
         }
     }
 
@@ -166,6 +154,63 @@
         }
     }
 
+    const overview_attribute = {
+        lead_owner: {
+            name: "Lead owner",
+            correspond: "user_name",
+            table: "crm_user.",
+            class: css_class_attributes.description_edit_attribute,
+            name_class: "",
+            input_class: "",
+            value: ref(),
+            hover: ref(false),
+        },
+        lead_owner_id: {
+            name: "Lead owner ID",
+            correspond: "lead_owner_user_id",
+            table: "lead_individual.",
+            class: css_class_attributes.description_edit_attribute,
+            name_class: "",
+            input_class: "",
+            value: ref(),
+            hover: ref(false),
+        },
+        lead_status: {
+            name: "Lead status",
+            correspond: "lead_status",
+            table: "lead_individual.",
+            class: css_class_attributes.description_edit_attribute,
+            name_class: "",
+            input_class: "",
+            value: ref(),
+            hover: ref(false),
+        },
+        registered_date: {
+            name: "Registered date",
+            correspond: "registered_date",
+            table: "individual.",
+            class: css_class_attributes.normal_edit_attribute,
+            name_class: "",
+            input_class: "",
+            input: input_attributes.none,
+            value: ref(),
+            hover: ref(false),
+            changed: ref(false)
+        },
+        created_by: {
+            name: "Created by",
+            correspond: "user_name",
+            table: "crm_user",
+            class: css_class_attributes.normal_edit_attribute,
+            name_class: "",
+            input_class: "",
+            input: input_attributes.none,
+            value: ref(),
+            hover: ref(false),
+            changed: ref(false)
+        }
+    }
+
     // retrieve the lead to edit
     const get_lead_detail = async () => {
         try {
@@ -178,6 +223,8 @@
                     edit_attribute_left[key]['value'].value = response.value.data[0][edit_attribute_left[key]['correspond']];
                 for (const key in edit_attribute_right)
                     edit_attribute_right[key]['value'].value = response.value.data[0][edit_attribute_right[key]['correspond']];
+                    for (const key in overview_attribute)
+                    overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
             }
         } catch (error){
             alert(error);
@@ -190,32 +237,46 @@
 <template>
     <div>{{ success_response }}: {{ response.data[0] }} </div>
 
-    <div class="flex flex-row w-screen">
-        <!-- data at left side -->
-        <div class="flex flex-col w-1/2">
-            <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
-                <div class="">{{ value['name'] }}</div>
-                <!-- the input field -->
-                <input v-if="value['input'] == 'text'" class="bg-rose-400 w-40" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                <textarea v-else-if="value['input'] == 'textarea'" v-model="value['value'].value"></textarea>
-                <span v-else>{{ value['value'] }}</span>
-                <!-- the label -->
-                <label v-if="value['input'] == 'text'" :for="value['correspond'] + '_input'" class="flex flex-row relative right-40"><div class="bg-violet-700/60 h-6 w-40 px-2 bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[auto_75%] bg-origin-content"></div></label>
+    <div class="flex flex-col w-screen min-w-max overflow-auto">
+
+        <!-- basic display part -->
+        <div class="flex flex-col justify-center items-center min-w-240 overflow-auto px-20 py-10">
+            <div class="flex flex-row w-full bg-rose-700" v-for="value in overview_attribute">
+                <div>{{ value['name'] }}</div>
+                <div>{{ value['value'].value }}</div>
             </div>
         </div>
 
-        <!-- data at right side -->
-        <div class="flex flex-col w-1/2">
-            <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
-                <div class="">{{ value['name'] }}</div>
-                <!-- the input field -->
-                <input v-if="value['input'] == 'text'" class="bg-rose-400 w-40" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                <textarea v-else-if="value['input'] == 'textarea'" v-model="value['value'].value"></textarea>
-                <span v-else>{{ value['value'] }}</span>
-                <!-- the label -->
-                <label v-if="value['input'] == 'text'" :for="value['correspond'] + '_input'" class="flex flex-row relative right-40"><div class="bg-violet-700/60 h-6 w-40 px-2 bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[auto_75%] bg-origin-content"></div></label>
+        <!-- edit part -->
+        <div class="flex flex-row w-full">
+            <!-- data at left side -->
+            <div class="flex flex-col w-1/2">
+                <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
+                    <div class="">{{ value['name'] }}</div>
+                    <!-- the input field -->
+                    <input v-if="value['input'] == 'text'" class="bg-rose-400 w-40" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                    <textarea v-else-if="value['input'] == 'textarea'" v-model="value['value'].value"></textarea>
+                    <span v-else>{{ value['value'] }}</span>
+                    <!-- the label -->
+                    <label v-if="value['input'] == 'text'" :for="value['correspond'] + '_input'" class="flex flex-row relative right-40"><div class="bg-violet-700/60 h-6 w-40 px-2 bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[auto_75%] bg-origin-content"></div></label>
+                </div>
+            </div>
+
+            <!-- data at right side -->
+            <div class="flex flex-col w-1/2">
+                <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
+                    <div class="">{{ value['name'] }}</div>
+                    <!-- the input field -->
+                    <input v-if="value['input'] == 'text'" class="bg-rose-400 w-40" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                    <textarea v-else-if="value['input'] == 'textarea'" v-model="value['value'].value"></textarea>
+                    <span v-else>{{ value['value'] }}</span>
+                    <!-- the label -->
+                    <label v-if="value['input'] == 'text'" :for="value['correspond'] + '_input'" class="flex flex-row relative right-40"><div class="bg-violet-700/60 h-6 w-40 px-2 bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[auto_75%] bg-origin-content"></div></label>
+                </div>
             </div>
         </div>
+
+        <!--  -->
     </div>
 </template>
 

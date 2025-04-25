@@ -5,9 +5,15 @@ INSERT INTO user_role
 
 INSERT INTO crm_user 
     VALUES
-        (1, "uwu", "uwu", "uwu", 1),
-        (2, "owo", "owo", "owo", 2),
-        (3, "Bibidebadeboowa", "uwaaa", "weeee", 2);
+        (1, "UwwwU", 1),
+        (2, "OwwwO", 2),
+        (3, "Bibidebadeboowa", 2);
+
+INSERT INTO crm_user_login_info
+    VALUES
+        (1, "uwu", "uwu"),
+        (2, "owo", "owo"),
+        (3, "uwaaa", "weee");
 
 INSERT INTO country
     VALUES
@@ -26,49 +32,49 @@ INSERT INTO company
         (NULL, "Purrely", "Purr", '"Purrely" is a theme focused on using the namesake Level 1 monster "Purrely" to reveal a "Purrely" Quick-Play Spell Card from your hand with its effect, then Special Summoning a Rank 2 Xyz Monster which mentions that Quick-Play Spell in its text using "Purrely" and the revealed card as materials - from there, the objective is to stack further materials onto those Xyz Monsters through their effects. Each of the Rank 2 "Purrely" Xyz Monsters has a unique effect that gains a bonus effect if it has a specific "Purrely" Quick-Play Spell as a material; each one also shares an effect where, thrice per turn as a Quick Effect, you can attach activated "Purrely" Quick-Play Spells to that monster as material with a bonus effect depending on the Rank 2 in question - this varies from temporary removal of cards on the field to changing battle positions.');
 
 INSERT INTO individual 
-        (last_name, first_name, gender, honorifics, relationship, registered_date, company_id, phone_number, email_address, individual_description)
+        (last_name, first_name, gender, honorifics, relationship, registered_date, company_id, phone_number, email_address, individual_description, created_by)
     VALUES
-        ("Tokoyami", "Towa", "Female", "Ms.", "Lead", NOW(), 1, "0123456789", NULL, 'A young devil who is visiting human society to gain experience and develop her skills. But instead of studying, she became addicted to video games! After learning about a tool for communicating with humans called "streaming," she is trying it out to help with her studies.'),
-        ("Tokino", "Sora", "Female", "Ms.", "Lead", NOW(), 2, "0123456790", NULL, 'Tokino Sora (Lit. Sky of Time) is a female Japanese Virtual YouTuber and the founding member of hololive. While she debuted alone way before generations were established, she is currently part of "hololive 0th gen" alongside fellow solo debutants: Roboco-san, Sakura Miko, Hoshimachi Suisei and AZKi.'),
-        ("Kiryu", "Coco", "Female", "Ms.", "Lead", NOW(), 4, "0123123123", "coco@mail.com", 'Kiryu Coco was a female Japanese Virtual YouTuber associated with hololive, debuting as part of its fourth generation of VTubers alongside Tsunomaki Watame, Tokoyami Towa, Amane Kanata and Himemori Luna. Coco retired in July 2021 with a record-breaking graduation ceremony. She was known for her fluency in Japanese and English, her AsaCoco Live News and Reddit Meme Review shows, and for being the #1 superchat donation earner in the world. '),
-        ("Hachi", NULL, "Female", "Ms.", "Lead", NOW(), 1, "01247889131", NULL, 'Virtual Singer "HACHI" "To touch your heart with my voice."'),
-        ("Natsuiro", "Matsuri", "Female", "Ms.", "Lead", NOW(), 1, NULL, "matsurinatsuiro@mail.com", "'Wasshoi! hololive's symbol of purity and everyone's idol, Natsuiro Matsuri here!'A rookie member of her school cheerleading team. Her cheerful, energetic, and affectionate personality means she gets along with everyone and has lots of friends. Loves festivals, events, and other fun things."),
-        ("Yuzuka", NULL, "Female", "Ms.", "Lead", NOW(), 4, "0121231289", NULL, NULL),
-        ("Yuni", NULL, "Female", "Ms.", "Lead", NOW(), 4, "0124213789", NULL, NULL),
-        ("Sume", NULL, "Female", "Ms.", "Lead", NOW(), 7, "011231389", NULL, NULL),
-        ("Dazbee", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "dazbee@mail.com", NULL),
-        ("Aoiko", NULL, "Female", "Ms.", "Lead", NOW(), 8, NULL, "aoiko@mail.com", NULL),
-        ("Urara", NULL, "Female", "Ms.", "Lead", NOW(), 4, NULL, "urara@mail.com", NULL),
-        ("Myuk", NULL, "Female", "Ms.", "Lead", NOW(), 2, NULL, "myukkkk@mail.com", NULL),
-        ("Mafumafu", NULL, "Male", "Mr.", "Lead", NOW(), 9, "0123491923", NULL, NULL),
-        ("Yama", NULL, "Female", "Ms.", "Lead", NOW(), 2, NULL, "yamaaa@mail.com", NULL),
-        ("Miyoshino", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "miyomiyo@mail.com", NULL),
-        ("Yanami", "Anna", "Female", "Ms.", "Lead", NOW(), 6, "0123467654", "yanamiii@mail.com", NULL),
-        ("Nukumizu", "Kazuhiko", "Male", "Mr.", "Lead", NOW(), 1, "0128319312", "nukuhiko@mail.com", NULL),
-        ("Meari", NULL, "Female", "Ms.", "Lead", NOW(), 7, "01231224319", NULL, NULL),
-        ("Rosu", NULL, "Female", "Ms.", "Lead", NOW(), 1, "0138929221", NULL, NULL),
-        ("Rokudennashi", NULL, "Female", "Ms.", "Lead", NOW(), 1, "0123412131", "rokuden@mail.com", NULL),
-        ("Kasumi", NULL, "Female", "Ms.", "Lead", NOW(), 7, "0123213111", "kasu@mail.com", NULL),
-        ("Ryushen", NULL, "Male", "Mr.", "Lead", NOW(), 2, NULL, "ryushen11@mail.com", NULL),
-        ("Ryugasaki", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "ryuuugasaki@mail.com", NULL),
-        ("Tenma", NULL, "Female", "Ms.", "Lead", NOW(), 2, "01234535667", "tennnn@mail.com", NULL),
-        ("Andora", NULL, "Male", "Mr.", "Lead", NOW(), 6, "012678567331", "andora@mail.com", NULL),
-        ("Konaha", NULL, "Female", "Ms.", "Lead", NOW(), 8, NULL, "konoha@mail.com", NULL),
-        ("Guiano", NULL, "Male", "Mr.", "Lead", NOW(), 2, NULL, "guiano@mail.com", NULL),
-        ("Hizuki", NULL, "Female", "Ms.", "Lead", NOW(), 1, "0123637812", NULL, NULL),
-        ("Amane", "Ku", "Male", "Mr.", "Lead", NOW(), 2, "014212789", NULL, NULL),
-        ("Rui", NULL, "Female", "Ms.", "Lead", NOW(), 4, "0151126789", NULL, NULL),
-        ("Orangestar", NULL, "Female", "Ms.", "Lead", NOW(), 1, "011232789", NULL, NULL),
-        ("Shishigami", "Leona", "Female", "Ms.", "Lead", NOW(), 6, NULL, "leona@mail.com", NULL),
-        ("Yorushika", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "yorushika@mail.com", NULL),
-        ("Tayori", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "tayori@mail.com", NULL),
-        ("Hanon", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "hanon@mail.com", NULL),
-        ("Hoshikawa", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "hoshiiisara@mail.com", NULL),
-        ("Yunayu", NULL, "Female", "Ms.", "Lead", NOW(), 3, NULL, "yunayu@mail.com", NULL),
-        ("Hyakumantenbara", "Salome", "Female", "Ms.", "Lead", NOW(), 3, NULL, "hyakumantensalome@mail.com", NULL);
+        ("Tokoyami", "Towa", "Female", "Ms.", "Lead", NOW(), 1, "0123456789", NULL, 'A young devil who is visiting human society to gain experience and develop her skills. But instead of studying, she became addicted to video games! After learning about a tool for communicating with humans called "streaming," she is trying it out to help with her studies.', 1),
+        ("Tokino", "Sora", "Female", "Ms.", "Lead", NOW(), 2, "0123456790", NULL, 'Tokino Sora (Lit. Sky of Time) is a female Japanese Virtual YouTuber and the founding member of hololive. While she debuted alone way before generations were established, she is currently part of "hololive 0th gen" alongside fellow solo debutants: Roboco-san, Sakura Miko, Hoshimachi Suisei and AZKi.', 1),
+        ("Kiryu", "Coco", "Female", "Ms.", "Lead", NOW(), 4, "0123123123", "coco@mail.com", 'Kiryu Coco was a female Japanese Virtual YouTuber associated with hololive, debuting as part of its fourth generation of VTubers alongside Tsunomaki Watame, Tokoyami Towa, Amane Kanata and Himemori Luna. Coco retired in July 2021 with a record-breaking graduation ceremony. She was known for her fluency in Japanese and English, her AsaCoco Live News and Reddit Meme Review shows, and for being the #1 superchat donation earner in the world. ', 1),
+        ("Hachi", NULL, "Female", "Ms.", "Lead", NOW(), 1, "01247889131", NULL, 'Virtual Singer "HACHI" "To touch your heart with my voice."', 1),
+        ("Natsuiro", "Matsuri", "Female", "Ms.", "Lead", NOW(), 1, NULL, "matsurinatsuiro@mail.com", "'Wasshoi! hololive's symbol of purity and everyone's idol, Natsuiro Matsuri here!'A rookie member of her school cheerleading team. Her cheerful, energetic, and affectionate personality means she gets along with everyone and has lots of friends. Loves festivals, events, and other fun things.", 1),
+        ("Yuzuka", NULL, "Female", "Ms.", "Lead", NOW(), 4, "0121231289", NULL, NULL, 1),
+        ("Yuni", NULL, "Female", "Ms.", "Lead", NOW(), 4, "0124213789", NULL, NULL, 1),
+        ("Sume", NULL, "Female", "Ms.", "Lead", NOW(), 7, "011231389", NULL, NULL, 1),
+        ("Dazbee", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "dazbee@mail.com", NULL, 1),
+        ("Aoiko", NULL, "Female", "Ms.", "Lead", NOW(), 8, NULL, "aoiko@mail.com", NULL, 1),
+        ("Urara", NULL, "Female", "Ms.", "Lead", NOW(), 4, NULL, "urara@mail.com", NULL, 1),
+        ("Myuk", NULL, "Female", "Ms.", "Lead", NOW(), 2, NULL, "myukkkk@mail.com", NULL, 1),
+        ("Mafumafu", NULL, "Male", "Mr.", "Lead", NOW(), 9, "0123491923", NULL, NULL, 1),
+        ("Yama", NULL, "Female", "Ms.", "Lead", NOW(), 2, NULL, "yamaaa@mail.com", NULL, 1),
+        ("Miyoshino", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "miyomiyo@mail.com", NULL, 1),
+        ("Yanami", "Anna", "Female", "Ms.", "Lead", NOW(), 6, "0123467654", "yanamiii@mail.com", NULL, 1),
+        ("Nukumizu", "Kazuhiko", "Male", "Mr.", "Lead", NOW(), 1, "0128319312", "nukuhiko@mail.com", NULL, 1),
+        ("Meari", NULL, "Female", "Ms.", "Lead", NOW(), 7, "01231224319", NULL, NULL, 1),
+        ("Rosu", NULL, "Female", "Ms.", "Lead", NOW(), 1, "0138929221", NULL, NULL, 1),
+        ("Rokudennashi", NULL, "Female", "Ms.", "Lead", NOW(), 1, "0123412131", "rokuden@mail.com", NULL, 1),
+        ("Kasumi", NULL, "Female", "Ms.", "Lead", NOW(), 7, "0123213111", "kasu@mail.com", NULL, 1),
+        ("Ryushen", NULL, "Male", "Mr.", "Lead", NOW(), 2, NULL, "ryushen11@mail.com", NULL, 1),
+        ("Ryugasaki", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "ryuuugasaki@mail.com", NULL, 1),
+        ("Tenma", NULL, "Female", "Ms.", "Lead", NOW(), 2, "01234535667", "tennnn@mail.com", NULL, 1),
+        ("Andora", NULL, "Male", "Mr.", "Lead", NOW(), 6, "012678567331", "andora@mail.com", NULL, 1),
+        ("Konaha", NULL, "Female", "Ms.", "Lead", NOW(), 8, NULL, "konoha@mail.com", NULL, 1),
+        ("Guiano", NULL, "Male", "Mr.", "Lead", NOW(), 2, NULL, "guiano@mail.com", NULL, 1),
+        ("Hizuki", NULL, "Female", "Ms.", "Lead", NOW(), 1, "0123637812", NULL, NULL, 1),
+        ("Amane", "Ku", "Male", "Mr.", "Lead", NOW(), 2, "014212789", NULL, NULL, 1),
+        ("Rui", NULL, "Female", "Ms.", "Lead", NOW(), 4, "0151126789", NULL, NULL, 1),
+        ("Orangestar", NULL, "Female", "Ms.", "Lead", NOW(), 1, "011232789", NULL, NULL, 1),
+        ("Shishigami", "Leona", "Female", "Ms.", "Lead", NOW(), 6, NULL, "leona@mail.com", NULL, 1),
+        ("Yorushika", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "yorushika@mail.com", NULL, 1),
+        ("Tayori", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "tayori@mail.com", NULL, 1),
+        ("Hanon", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "hanon@mail.com", NULL, 1),
+        ("Hoshikawa", NULL, "Female", "Ms.", "Contact", NOW(), 3, NULL, "hoshiiisara@mail.com", NULL, 1),
+        ("Yunayu", NULL, "Female", "Ms.", "Lead", NOW(), 3, NULL, "yunayu@mail.com", NULL, 1),
+        ("Hyakumantenbara", "Salome", "Female", "Ms.", "Lead", NOW(), 3, NULL, "hyakumantensalome@mail.com", NULL, 1);
 
 INSERT INTO lead_individual
-        (individual_id, user_id)
+        (individual_id, lead_owner_user_id)
     VALUES
         (1, 2),
         (2, 2),
