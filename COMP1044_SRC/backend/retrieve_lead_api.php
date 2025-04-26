@@ -56,7 +56,7 @@ function retrieve_lead($conn){
             
         } else {
             // only get lead that is under this particular user
-            $sql_query = $sql_query . " WHERE lead_individual.user_id = $current_user_id";
+            $sql_query = $sql_query . " WHERE lead_owner_user_id = $current_user_id";
         }
 
         // check if the request asked to filter data
