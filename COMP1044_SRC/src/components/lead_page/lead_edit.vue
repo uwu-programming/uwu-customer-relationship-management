@@ -16,15 +16,30 @@
 
     // referenceable CSS attribute
     const css_class_attributes = {
-        normal_edit_attribute: "flex flex-row",
-        description_edit_attribute: "flex flex-col"
+        edit_attribute_area: "flex flex-col w-max h-max bg-amber-300 mx-5 px-5 py-2 my-2",
+
+        normal_edit_attribute: "flex flex-row items-center mb-1",
+        description_edit_attribute: "flex flex-row mb-1",
+        normal_label: "w-48 flex justify-end px-2 py-1 mx-1 bg-violet-500 border-2",
+        text_input: "h-8 w-75 mx-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500",
+        text_area_input: "w-75 h-40 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
+        paragraph_input: "flex w-75 h-40 mx-1 px-2 py-2 overflow-auto",
+        paragraph_input_short: "flex w-75 h-20 mx-1 px-2 py-2 overflow-auto",
+
+        save_button: "hover:cursor-pointer w-5 h-5 mx-1 text-white bg-green-600 rounded-full flex justify-center items-center",
+        cancel_button: "hover:cursor-pointer w-5 h-5 mx-1 text-white bg-red-700 rounded-full flex justify-center items-center",
     }
 
     // refferenceable input attribute
     const input_attributes = {
         text: "text",
         textarea: "textarea",
-        none: "none"
+        none: "none",
+        paragraph: "paragraph",
+
+        name_pattern: "[A-Z]{1}([a-z]+)",
+        phone_pattern: "[0-9]{8,20}",
+        email_pattern: "([a-z,0-9]{2,})@([a-z,0-9]{2,}).([a-z]{2,})",
     }
 
     // ref to store the display attribute
@@ -34,9 +49,10 @@
             correspond: "last_name",
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
             input: input_attributes.text,
+            pattern: input_attributes.name_pattern,
             value: ref(),
             hover: ref(false),
             changed: ref(false)
@@ -46,9 +62,10 @@
             correspond: "middle_name",
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
             input: input_attributes.text,
+            pattern: input_attributes.name_pattern,
             value: ref(),
             hover: ref(false),
             changed: ref(false)
@@ -58,9 +75,10 @@
             correspond: "first_name",
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
             input: input_attributes.text,
+            pattern: input_attributes.name_pattern,
             value: ref(),
             hover: ref(false),
             changed: ref(false)
@@ -70,9 +88,10 @@
             correspond: "phone_number",
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
             input: input_attributes.text,
+            pattern: input_attributes.phone_pattern,
             value: ref(),
             hover: ref(false),
             changed: ref(false)
@@ -82,9 +101,10 @@
             correspond: "email_address",
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
             input: input_attributes.text,
+            pattern: input_attributes.email_pattern,
             value: ref(),
             hover: ref(false),
             changed: ref(false)
@@ -94,8 +114,8 @@
             correspond: "individual_description",
             table: "individual.",
             class: css_class_attributes.description_edit_attribute,
-            name_class: "",
-            input_class: "",
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_area_input,
             input: input_attributes.textarea,
             value: ref(),
             hover: ref(false),
@@ -109,9 +129,9 @@
             correspond: "lead_status",
             table: "lead_individual.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
-            input: "",
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
+            input: input_attributes.none,
             value: ref(),
             hover: ref(false),
             changed: ref(false)
@@ -121,8 +141,8 @@
             correspond: "company_name",
             table: "company.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
             input: input_attributes.text,
             value: ref(),
             hover: ref(false),
@@ -132,10 +152,10 @@
             name: "Company address",
             correspond: "company_address",
             table: "company.",
-            class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
-            input_class: "",
-            input: input_attributes.text,
+            class: css_class_attributes.description_edit_attribute,
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.paragraph_input_short,
+            input: input_attributes.paragraph,
             value: ref(),
             hover: ref(false),
             changed: ref(false)
@@ -145,9 +165,9 @@
             correspond: "company_description",
             table: "company.",
             class: css_class_attributes.description_edit_attribute,
-            name_class: "",
-            input_class: "",
-            input: input_attributes.textarea,
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.paragraph_input,
+            input: input_attributes.paragraph,
             value: ref(),
             hover: ref(false),
             changed: ref(false)
@@ -157,10 +177,10 @@
     const overview_attribute = {
         lead_owner: {
             name: "Lead owner",
-            correspond: "user_name",
+            correspond: "lead_owner_name",
             table: "crm_user.",
             class: css_class_attributes.description_edit_attribute,
-            name_class: "",
+            name_class: css_class_attributes.normal_label,
             input_class: "",
             value: ref(),
             hover: ref(false),
@@ -170,7 +190,7 @@
             correspond: "lead_owner_user_id",
             table: "lead_individual.",
             class: css_class_attributes.description_edit_attribute,
-            name_class: "",
+            name_class: css_class_attributes.normal_label,
             input_class: "",
             value: ref(),
             hover: ref(false),
@@ -180,7 +200,7 @@
             correspond: "lead_status",
             table: "lead_individual.",
             class: css_class_attributes.description_edit_attribute,
-            name_class: "",
+            name_class: css_class_attributes.normal_label,
             input_class: "",
             value: ref(),
             hover: ref(false),
@@ -190,31 +210,29 @@
             correspond: "registered_date",
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
+            name_class: css_class_attributes.normal_label,
             input_class: "",
             input: input_attributes.none,
             value: ref(),
             hover: ref(false),
-            changed: ref(false)
         },
         created_by: {
             name: "Created by",
-            correspond: "user_name",
-            table: "crm_user",
+            correspond: "created_by_name",
+            table: "crm_user.",
             class: css_class_attributes.normal_edit_attribute,
-            name_class: "",
+            name_class: css_class_attributes.normal_label,
             input_class: "",
             input: input_attributes.none,
             value: ref(),
             hover: ref(false),
-            changed: ref(false)
         }
     }
 
     // retrieve the lead to edit
     const get_lead_detail = async () => {
         try {
-            response.value = await axios.post("../backend/retrieve_lead_api.php", {requirement: JSON.stringify(["individual.individual_id:" + props.individual_id]), hard_requirement: true});
+            response.value = await axios.post("../backend/retrieve_lead_api.php", {requirement: JSON.stringify(["individual_id:" + props.individual_id]), hard_requirement: true});
             // check if the retrieve is success (by checking if the object has key)
             success_response.value = (Object.keys(response.value.data)).length > 0;
 
@@ -231,16 +249,19 @@
         }
     }
 
+    // input validation
+    
+
     get_lead_detail();
 </script>
 
 <template>
     <div>{{ success_response }}: {{ response.data[0] }} </div>
 
-    <div class="flex flex-col w-screen min-w-max overflow-auto">
+    <div class="flex flex-col w-screen min-w-max overflow-auto justify-center items-center bg-green-500">
 
         <!-- basic display part -->
-        <div class="flex flex-col justify-center items-center min-w-240 overflow-auto px-20 py-10">
+        <div class="flex flex-col min-w-300 overflow-auto px-20 py-10">
             <div class="flex flex-row w-full bg-rose-700" v-for="value in overview_attribute">
                 <div>{{ value['name'] }}</div>
                 <div>{{ value['value'].value }}</div>
@@ -248,30 +269,54 @@
         </div>
 
         <!-- edit part -->
-        <div class="flex flex-row w-full">
-            <!-- data at left side -->
-            <div class="flex flex-col w-1/2">
-                <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
-                    <div class="">{{ value['name'] }}</div>
-                    <!-- the input field -->
-                    <input v-if="value['input'] == 'text'" class="bg-rose-400 w-40" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                    <textarea v-else-if="value['input'] == 'textarea'" v-model="value['value'].value"></textarea>
-                    <span v-else>{{ value['value'] }}</span>
-                    <!-- the label -->
-                    <label v-if="value['input'] == 'text'" :for="value['correspond'] + '_input'" class="flex flex-row relative right-40"><div class="bg-violet-700/60 h-6 w-40 px-2 bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[auto_75%] bg-origin-content"></div></label>
+         <div class="flex w-full bg-red-600 justify-center">
+            <div class="flex flex-row min-w-320 w-max m-4 bg-red-800 justify-center">
+                <!-- data at left side -->
+                <div :class="css_class_attributes.edit_attribute_area">
+                    <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
+                        <label :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
+                        <!-- the input field -->
+                        <input :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                        <textarea @input="value['changed'].value = true" v-else-if="value['input'] == 'textarea'" :class="value['input_class']" v-model="value['value'].value"></textarea>
+                        <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
+                        <span v-else :class="value['input_class']">{{ value['value'] }}</span>
+                        <div v-if="value['changed'].value" class="flex flex-row h-max">
+                            <button :class="css_class_attributes.save_button">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                            </button>
+                            <button :class="css_class_attributes.cancel_button">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- data at right side -->
-            <div class="flex flex-col w-1/2">
-                <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
-                    <div class="">{{ value['name'] }}</div>
-                    <!-- the input field -->
-                    <input v-if="value['input'] == 'text'" class="bg-rose-400 w-40" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                    <textarea v-else-if="value['input'] == 'textarea'" v-model="value['value'].value"></textarea>
-                    <span v-else>{{ value['value'] }}</span>
-                    <!-- the label -->
-                    <label v-if="value['input'] == 'text'" :for="value['correspond'] + '_input'" class="flex flex-row relative right-40"><div class="bg-violet-700/60 h-6 w-40 px-2 bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[auto_75%] bg-origin-content"></div></label>
+                <!-- data at right side -->
+                <div :class="css_class_attributes.edit_attribute_area">
+                    <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
+                        <label :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
+                        <!-- the input field -->
+                        <input @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                        <textarea @input="value['changed'].value = true" v-else-if="value['input'] == 'textarea'" :class="value['input_class']" v-model="value['value'].value"></textarea>
+                        <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
+                        <span v-else :class="value['input_class']">{{ value['value'] }}</span>
+                        <div v-if="value['changed'].value" class="flex flex-row h-max">
+                            <button :class="css_class_attributes.save_button">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                            </button>
+                            <button :class="css_class_attributes.cancel_button">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

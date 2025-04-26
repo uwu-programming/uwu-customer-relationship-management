@@ -78,6 +78,24 @@
             search_by: ref(false),
             search_for: ref("")
         },
+        lead_owner: {
+            name: "Lead owner",
+            correspond: "lead_owner_name",
+            table: "crm_user.",
+            class: css_class_attributes.name,
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
+        },
+        lead_owner_user_id: {
+            name: "Lead owner user id",
+            correspond: "lead_owner_user_id",
+            table: "lead_individual.",
+            class: css_class_attributes.individual_id,
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref(false)
+        },
         lead_status: {
             name: "Lead status",
             correspond: "lead_status",
@@ -153,6 +171,15 @@
         registered_date: {
             name: "Registered date",
             correspond: "registered_date",
+            table: "individual.",
+            class: css_class_attributes.date,
+            display: ref(false),
+            search_by: ref(false),
+            search_for: ref("")
+        },
+        created_by: {
+            name: "Created by user",
+            correspond: "created_by_name",
             table: "individual.",
             class: css_class_attributes.date,
             display: ref(false),
@@ -287,7 +314,6 @@
                 for (const value in lead_display_attributes){
                     if (lead_display_attributes[value]['display']['value']){
                         search_array.push(
-                            lead_display_attributes[value]['table'] +
                             lead_display_attributes[value]['correspond'] + ":" +
                             (general_search['value']).trim()
                         );
@@ -297,7 +323,6 @@
                 for (const value in lead_display_attributes){
                     if (lead_display_attributes[value]['search_by']['value']){
                         search_array.push(
-                            lead_display_attributes[value]['table'] +
                             lead_display_attributes[value]['correspond'] + ":" +
                             (lead_display_attributes[value]['search_for']['value']).trim()
                         );
@@ -388,7 +413,7 @@
                 <select @change="search_data('SPECIFIC')" v-model="sort_attribute" id="select_sort_by">
                     <option disabled value="Please select an option" v-if="need_display">Please select an option</option>
                     <option disabled value="No attribute selected" v-else>No attribute selected</option>
-                    <option v-for="value in get_current_display_attribute()" :value="value['table'] + value['correspond']">{{ value['name'] }}</option>
+                    <option v-for="value in get_current_display_attribute()" :value="value['correspond']">{{ value['name'] }}</option>
                 </select>
                 <div class="flex flex-row">
                     <label for="sort_ascd">Ascending</label>
@@ -407,7 +432,7 @@
                     <!-- Select display section -->
                     <div class="flex flex-col h-full w-3/10">
                         <div class="bg-amber-500">Display</div>
-                        <div class="flex flex-col overflow-auto h-full bg-green-500">
+                        <div class="flex flex-col overflow-auto h-8/10 bg-green-500">
                             <div v-for="value in lead_display_attributes" :key="value">
                                 <label :for="value['correspond'] + '_display_checkbox'">{{ value['name'] }}</label>
                                 <input @click="value['display'].value = !value['display'].value" @change="check_need_display(value)" v-model="value['display'].value" :id="value['correspond'] + '_display_checkbox'" v-bind:name="value['correspond'] + '_display_checkbox'" type="checkbox"/>
