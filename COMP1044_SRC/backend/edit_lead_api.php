@@ -57,7 +57,7 @@ function edit_lead($conn){
             $update_statement = $conn->prepare($update_query);
             $update_statement->execute();
 
-            http_response_code(400);
+            http_response_code(204);
             echo json_encode(array("message" => "Update successfull"));
         }
 

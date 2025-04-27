@@ -10,6 +10,9 @@
     // store the response from API request
     const response = ref();
     const user = ref();
+    const gender_option = ref();
+    const honorifics_option = ref();
+    const lead_status_option = ref();
 
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
@@ -21,14 +24,14 @@
         normal_edit_attribute: "flex flex-row mb-1 items-center",
         description_edit_attribute: "flex flex-row mb-1",
         normal_label: "w-48 flex justify-end px-2 py-1 mx-1 bg-violet-500 border-2",
-        text_input: "h-8 w-75 mx-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500",
-        text_area_input: "w-75 h-40 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
-        paragraph_input: "flex w-75 h-40 mx-1 px-2 py-2 overflow-auto",
-        paragraph_input_short: "flex w-75 h-20 mx-1 px-2 py-2 overflow-auto",
+        text_input: "h-8 w-100 mx-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
+        text_area_input: "w-100 h-40 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
+        paragraph_input: "flex w-100 h-40 mx-1 px-2 py-2 overflow-auto",
+        paragraph_input_short: "flex w-100 h-20 mx-1 px-2 py-2 overflow-y-scroll",
 
         tooltip_show: "visible",
         tooltip_hide: "hidden",
-        tooltip: "flex w-75 h-12 bg-rose-600 absolute z-2 m-1 -top-15 py-1 px-2",
+        tooltip: "flex w-100 h-14 bg-rose-600 absolute z-2 m-1 -top-16 py-1 px-2 text-xs whitespace-pre-line",
 
         save_button: "hover:cursor-pointer w-5 h-5 mx-1 text-white bg-green-600 rounded-full flex justify-center items-center",
         cancel_button: "hover:cursor-pointer w-5 h-5 mx-1 text-white bg-red-700 rounded-full flex justify-center items-center",
@@ -40,6 +43,7 @@
         textarea: "textarea",
         none: "none",
         paragraph: "paragraph",
+        fixed_select: "fixed_select",
 
         name_pattern: "[A-Z]{1}([a-zA-Z]*)$",
         phone_pattern: "[0-9]{8,20}$",
@@ -48,6 +52,9 @@
         name: "name",
         email: "email",
         phone: "phone",
+
+        name_format_wrong: "Bad name format, please try again. \n(Name must start with capital letter, and does not include numbers or special character)",
+        
     }
 
     // ref to store the display attribute
@@ -93,6 +100,38 @@
             input_class: css_class_attributes.text_input,
             input: input_attributes.text,
             pattern: input_attributes.name_pattern,
+            value: ref(),
+            hover: ref(false),
+            changed: ref(false),
+            has_error: ref(false),
+            tooltip_visible: ref(css_class_attributes.tooltip_hide),
+            tooltip_message: ref("")
+        },
+        gender: {
+            name: "Gender",
+            correspond: "gender",
+            table: "individual.",
+            class: css_class_attributes.normal_edit_attribute,
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
+            input: input_attributes.fixed_select,
+            option_list: ref(gender_option),
+            value: ref(),
+            hover: ref(false),
+            changed: ref(false),
+            has_error: ref(false),
+            tooltip_visible: ref(css_class_attributes.tooltip_hide),
+            tooltip_message: ref("")
+        },
+        honorifics: {
+            name: "Honorifics",
+            correspond: "honorifics",
+            table: "individual.",
+            class: css_class_attributes.normal_edit_attribute,
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
+            input: input_attributes.fixed_select,
+            option_list: ref(honorifics_option),
             value: ref(),
             hover: ref(false),
             changed: ref(false),
@@ -157,7 +196,8 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_input,
-            input: input_attributes.none,
+            input: input_attributes.fixed_select,
+            option_list: ref(lead_status_option),
             value: ref(),
             hover: ref(false),
             changed: ref(false),
@@ -172,7 +212,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_input,
-            input: input_attributes.text,
+            input: input_attributes.paragraph,
             value: ref(),
             hover: ref(false),
             changed: ref(false),
@@ -268,20 +308,33 @@
     }
 
     // retrieve the lead to edit
-    const get_lead_detail = async () => {
+    const get_lead_detail = async (attribute) => {
         try {
             response.value = await axios.post("../backend/retrieve_lead_api.php", {requirement: JSON.stringify(["individual_id:" + props.individual_id]), hard_requirement: true});
             // check if the retrieve is success (by checking if the object has key)
             success_response.value = (Object.keys(response.value.data)).length > 0;
 
-            if (success_response.value){
+            if (success_response.value && attribute == null){
                 for (const key in edit_attribute_left)
                     edit_attribute_left[key]['value'].value = response.value.data[0][edit_attribute_left[key]['correspond']];
                 for (const key in edit_attribute_right)
                     edit_attribute_right[key]['value'].value = response.value.data[0][edit_attribute_right[key]['correspond']];
                     for (const key in overview_attribute)
                     overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
+            } else if (success_response.value){
+                attribute['value']['value'] = response.value.data[0][attribute['correspond']];
             }
+        } catch (error){
+            alert(error);
+        }
+    }
+
+    // get select option of lead status
+    const get_lead_status_option = async () => {
+        try {
+            const lead_status_option_response = await axios.post("../backend/retrieve_lead_status_option.php", {data: "option"});
+            // it should be an object (array), keys are index
+            lead_status_option['value'] = lead_status_option_response.data;
         } catch (error){
             alert(error);
         }
@@ -302,9 +355,18 @@
                     update_value: "'" + attribute['value']['value'] + "'"
                 }
             );
-            if (edit_response.status == 204)
+            if (edit_response.status == 204){
+                alert("success");
+                get_lead_detail(attribute);
+                attribute['changed']['value'] = false;
+            }
         } else {
             attribute['has_error']['value'] = true;
+            attribute['tooltip_visible']['value'] = true;
+            
+            if (attribute['pattern'] == input_attributes.name_pattern){
+                attribute['tooltip_message']['value'] = input_attributes.name_format_wrong;
+            }
         }
     }
 
@@ -315,7 +377,13 @@
         attribute['value']['value'] = response.value.data[0][attribute['correspond']];
     }
 
-    get_lead_detail();
+    // initialize / update to get data
+    const initialize = async () => {
+        get_lead_detail();
+        get_lead_status_option();
+    }
+
+    initialize();
 </script>
 
 <template>
@@ -333,19 +401,19 @@
 
         <!-- edit part -->
          <div class="flex w-full bg-red-600 justify-center">
-            <div class="flex flex-row min-w-320 w-max m-4 bg-red-800 justify-center">
+            <div class="flex flex-row min-w-max w-max m-4 bg-red-800 justify-center">
                 <!-- data at left side -->
                 <div :class="css_class_attributes.edit_attribute_area">
                     <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
                         <label :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                         <!-- the input field -->
                         <div class="relative">
-                            <input @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
                             <textarea @input="value['changed'].value = true" v-else-if="value['input'] == 'textarea'" :class="value['input_class']" v-model="value['value'].value"></textarea>
                             <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
                             <span v-else :class="value['input_class']">{{ value['value'] }}</span>
                             <!-- tooltip content-->
-                            <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]"></div>
+                            <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
                         </div>
                         <div v-if="value['changed'].value" class="flex flex-row h-max">
                             <button @click="text_update(value)" :class="css_class_attributes.save_button">
@@ -368,15 +436,18 @@
                         <label :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                         <!-- the input field -->
                         <div class="relative">
-                            <input @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
                             <textarea @input="value['changed'].value = true" v-else-if="value['input'] == 'textarea'" :class="value['input_class']" v-model="value['value'].value"></textarea>
                             <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
+                            <select v-else-if="value['input'] == 'fixed_select'">
+                                <option v-for="option in value['option_list']['value']">{{ option }}</option>
+                            </select>
                             <span v-else :class="value['input_class']">{{ value['value'] }}</span>
                             <!-- tooltip content-->
-                            <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]"></div>
+                            <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
                         </div>
                         <div v-if="value['changed'].value" class="flex flex-row h-max">
-                            <button :class="css_class_attributes.save_button">
+                            <button @click="text_update(value)" :class="css_class_attributes.save_button">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                 </svg>
