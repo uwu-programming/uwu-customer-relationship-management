@@ -118,6 +118,7 @@ CREATE TABLE conversion_history(
     convert_from ENUM("Contact", "New lead", "Attempted to contact lead", "Contacted lead", "Junk lead", "Lost lead", "Customer") NOT NULL,
     convert_to ENUM("Contact", "New lead", "Attempted to contact lead", "Contacted lead", "Junk lead", "Lost lead", "Customer") NOT NULL,
     convert_time DATETIME NOT NULL,
+    conversion_message TEXT NOT NULL,
 
     FOREIGN KEY (user_id) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
