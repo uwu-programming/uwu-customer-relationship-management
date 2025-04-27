@@ -8,11 +8,11 @@
     });
 
     // store the response from API request
-    const response = ref();
-    const user = ref();
-    const gender_option = ref();
-    const honorifics_option = ref();
-    const lead_status_option = ref();
+    const response = ref("");
+    const user = ref("");
+    const gender_option = ref("");
+    const honorifics_option = ref("");
+    const lead_status_option = ref("");
 
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
@@ -27,6 +27,7 @@
         text_input: "h-8 w-100 mx-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
         text_area_input: "w-100 h-40 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
         text_area_input_short: "w-100 h-25 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
+        select_input: "h-8 w-100 mx-1 border-2 cursor-pointer focus:cursor-text px-2 pr-4 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
         paragraph_input: "flex w-100 h-40 mx-1 px-2 py-2 overflow-auto",
         paragraph_input_short: "flex w-100 h-20 mx-1 px-2 py-2 overflow-y-scroll",
 
@@ -68,7 +69,7 @@
             input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.name_pattern,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -85,7 +86,7 @@
             input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.name_pattern,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -102,7 +103,7 @@
             input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.name_pattern,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -115,11 +116,11 @@
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
-            input_class: css_class_attributes.text_input,
+            input_class: css_class_attributes.select_input,
             input: input_attributes.fixed_select,
             trait: input_attributes.trait_select,
             option_list: ref(gender_option),
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -132,11 +133,11 @@
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
-            input_class: css_class_attributes.text_input,
+            input_class: css_class_attributes.select_input,
             input: input_attributes.fixed_select,
             trait: input_attributes.trait_select,
             option_list: ref(honorifics_option),
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -153,7 +154,7 @@
             input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.phone_pattern,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -170,7 +171,7 @@
             input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.email_pattern,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -186,7 +187,7 @@
             input_class: css_class_attributes.text_area_input,
             input: input_attributes.textarea,
             trait: input_attributes.trait_text,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -202,11 +203,11 @@
             table: "lead_individual.",
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
-            input_class: css_class_attributes.text_input,
+            input_class: css_class_attributes.select_input,
             input: input_attributes.fixed_select,
             trait: input_attributes.trait_select,
             option_list: ref(lead_status_option),
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -222,7 +223,7 @@
             input_class: css_class_attributes.text_area_input_short,
             input: input_attributes.textarea,
             trait: input_attributes.trait_text,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -238,7 +239,7 @@
             input_class: css_class_attributes.text_input,
             input: input_attributes.paragraph,
             trait: input_attributes.trait_select,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -253,7 +254,7 @@
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.paragraph_input_short,
             input: input_attributes.paragraph,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -268,7 +269,7 @@
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.paragraph_input,
             input: input_attributes.paragraph,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -285,7 +286,7 @@
             class: css_class_attributes.description_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: "",
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
         },
         lead_owner_id: {
@@ -295,7 +296,7 @@
             class: css_class_attributes.description_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: "",
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
         },
         lead_status: {
@@ -305,7 +306,7 @@
             class: css_class_attributes.description_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: "",
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
         },
         registered_date: {
@@ -316,7 +317,7 @@
             name_class: css_class_attributes.normal_label,
             input_class: "",
             input: input_attributes.none,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
         },
         created_by: {
@@ -327,7 +328,7 @@
             name_class: css_class_attributes.normal_label,
             input_class: "",
             input: input_attributes.none,
-            value: ref(),
+            value: ref(""),
             hover: ref(false),
         }
     }
@@ -392,7 +393,7 @@
         if (attribute != null){
             attribute['changed']['value'] = true;
             if (attribute['correspond'] == "lead_status"){
-                edit_attribute_right['lead_conversion_message']['changed'] = true;
+                edit_attribute_right['lead_conversion_message']['changed']['value']= true;
             }
         }
     }
@@ -400,36 +401,77 @@
     // input validation & update
     const validate_update_data = async (attribute) => {
         if (attribute['trait'] == "text"){
-            const reg_exp = new RegExp(attribute['pattern']);
-            if (reg_exp.test(attribute['value']['value'])){
-                attribute['has_error']['value'] = false;
-                const edit_response = await axios.post(
-                    "../backend/edit_lead_api.php",
-                    {
-                        individual_id: props.individual_id,
-                        update_table: (attribute['table']).slice(0, -1),
-                        update_attribute: (attribute['correspond']),
-                        update_value: "'" + attribute['value']['value'] + "'"
+            if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+                attribute['changed']['value'] = false;
+            } else {
+                const reg_exp = new RegExp(attribute['pattern']);
+                if (reg_exp.test(attribute['value']['value'])){
+                    attribute['has_error']['value'] = false;
+                    const edit_response = await axios.post(
+                        "../backend/edit_lead_api.php",
+                        {
+                            individual_id: props.individual_id,
+                            update_table: (attribute['table']).slice(0, -1),
+                            update_attribute: (attribute['correspond']),
+                            update_value: "'" + attribute['value']['value'] + "'"
+                        }
+                    );
+                    if (edit_response.status == 204){
+                        alert("success");
+                        get_lead_detail(attribute);
+                        attribute['changed']['value'] = false;
+                    } else {
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_message']['value'] = edit_response.data.message;
                     }
-                );
-                if (edit_response.status == 204){
-                    alert("success");
-                    get_lead_detail(attribute);
-                    attribute['changed']['value'] = false;
                 } else {
                     attribute['has_error']['value'] = true;
-                    attribute['tooltip_message']['value'] = edit_response.data.message;
-                }
-            } else {
-                attribute['has_error']['value'] = true;
-                attribute['tooltip_visible']['value'] = true;
-                
-                if (attribute['pattern'] == input_attributes.name_pattern){
-                    attribute['tooltip_message']['value'] = input_attributes.name_format_wrong;
+                    attribute['tooltip_visible']['value'] = true;
+                    
+                    if (attribute['pattern'] == input_attributes.name_pattern){
+                        attribute['tooltip_message']['value'] = input_attributes.name_format_wrong;
+                    }
                 }
             }
         } else if (attribute['trait'] == "select"){
-
+            if (attribute['correspond'] == "lead_status"){
+                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+                    attribute['changed']['value'] = false;
+                    attribute['has_error']['value'] = false;
+                    edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
+                    edit_attribute_right['lead_conversion_message']['has_error']['value'] = false;
+                    edit_attribute_right['lead_conversion_message']['value']['value'];
+                } else {
+                    if (typeof(edit_attribute_right['lead_conversion_message']['value']['value']) == "undefined" || (edit_attribute_right['lead_conversion_message']['value']['value']).trim() == ""){
+                        edit_attribute_right['lead_conversion_message']['has_error']['value'] = true;
+                        attribute['has_error']['value'] = true;
+                        edit_attribute_right['lead_conversion_message']['tooltip_message']['value'] = "Lead conversion message can't be empty";
+                        attribute['tooltip_message']['value'] = "Lead conversion message can't be empty";
+                    }
+                }
+            } else {
+                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+                    attribute['changed']['value'] = false;
+                } else {
+                    const edit_response = await axios.post(
+                        "../backend/edit_lead_api.php",
+                        {
+                            individual_id: props.individual_id,
+                            update_table: (attribute['table']).slice(0, -1),
+                            update_attribute: attribute['correspond'],
+                            update_value: "'" + attribute['value']['value'] + "'"
+                        }
+                    );
+                    if (edit_response.status == 204){
+                        alert("success");
+                        get_lead_detail(attribute);
+                        attribute['changed']['value'] = false;
+                    } else {
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_message']['value'] = edit_response.data.message;
+                    }
+                }
+            }
         }
     }
 
@@ -440,8 +482,9 @@
         attribute['value']['value'] = response.value.data[0][attribute['correspond']];
 
         if (attribute['correspond'] == "lead_status"){
-            edit_attribute_right['lead_conversion_message']['changed'] = false;
-            edit_attribute_right['lead_conversion_message']['value'] = "";
+            edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
+            edit_attribute_right['lead_conversion_message']['has_error']['value'] = false;
+            edit_attribute_right['lead_conversion_message']['value']['value'] = "";
         }
     }
 
@@ -475,13 +518,13 @@
                 <!-- data at left side -->
                 <div :class="css_class_attributes.edit_attribute_area">
                     <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
-                        <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed'] == true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
+                        <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                         <!-- the input field -->
                         <div class="relative">
                             <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                            <textarea @input="value['changed'].value = true" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed'] == true))" :class="value['input_class']" v-model="value['value'].value"></textarea>
+                            <textarea @input="value['changed'].value = true" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value"></textarea>
                             <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
-                            <select @input="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']">
+                            <select @input="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']">
                                 <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
                             </select>
                             <!-- tooltip content-->
@@ -505,13 +548,13 @@
                 <!-- data at right side -->
                 <div :class="css_class_attributes.edit_attribute_area">
                     <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
-                        <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed'] == true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
+                        <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                         <!-- the input field -->
                         <div class="relative">
                             <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                            <textarea @input="value['changed'].value = true" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed'] == true))" :class="value['input_class']" v-model="value['value'].value"></textarea>
+                            <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value"></textarea>
                             <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
-                            <select @input="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']">
+                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @input="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']">
                                 <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
                             </select>
                             <!-- tooltip content-->
