@@ -11,15 +11,15 @@ require "database_connection.php";
 
 switch($_SERVER["REQUEST_METHOD"]){
     case "POST":
-        retrieve_lead_status_option($conn);
+        retrieve_gender($conn);
         break;
 
     default:
-        retrieve_lead_status_option($conn);
+        retrieve_gender($conn);
         break;
 }
 
-function retrieve_lead_status_option($conn){
+function retrieve_gender($conn){
     try {
         $sql_query = "DESC individual";
         $sql_statement = $conn->prepare($sql_query);
@@ -34,7 +34,7 @@ function retrieve_lead_status_option($conn){
         }
 
         // check get type
-        if (array_key_exists("data", (array)$post_data) || true){
+        if (array_key_exists("data", (array)$post_data)){
             // if the request is to get field
             if (true || $post_data->data == "option"){
                 $field_string = "";

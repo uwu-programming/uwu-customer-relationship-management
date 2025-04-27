@@ -24,7 +24,7 @@ INSERT INTO company
         (1, "UwU", "UwU Land", 'hololive, hololive Indonesia, hololive English, and hololive DEV_IS are VTuber groups under the VTuber company hololive production, with a combined total of 70 million fans on YouTube.'),
         (2, "OwO", "OwO Land", "We broadcast the weekly 3D animation 'holo no graffiti' that showcases the daily lives of the talents, in addition to variety programs that bring out the talents' charm not ordinarily seen in their usual streams."),
         (3, "Tokyo tokkyo kyoka kyokucho kyo kyokyo kyoka kyoka kyohi", "Tokyo", NULL),
-        (4, "Nyanyame nyanyajyuunyanya-do no nyarabi de nyakunyaku inyanyaku nyanyahan nyanyadai nyanynaku nyarabete nyaganyagame", "nya", "Once per turn: You can detach 1 material from this card, then target 1 monster in your opponent's GY; Special Summon it to your opponent's field. If a monster(s) is Special Summoned to your opponent's field, while you control this monster (except during the Damage Step): You can target 1 face-up monster your opponent controls; Special Summon 1 monster with the same Type or Attribute from your hand, Deck, or GY. You can only use this effect of 'Number 29: Mannequin Cat' once per turn."),
+        (4, "Nyanyame nyanyajyuunyanya-do no nyarabi de nyakunyaku", "nya", "Once per turn: You can detach 1 material from this card, then target 1 monster in your opponent's GY; Special Summon it to your opponent's field. If a monster(s) is Special Summoned to your opponent's field, while you control this monster (except during the Damage Step): You can target 1 face-up monster your opponent controls; Special Summon 1 monster with the same Type or Attribute from your hand, Deck, or GY. You can only use this effect of 'Number 29: Mannequin Cat' once per turn."),
         (NULL, "Hololive", "Japan", NULL),
         (NULL, "Bomb bomb", "Mars", NULL),
         (NULL, "Skystriker", "Sentou", "All Sky Striker Spells, with the exception of the Continuous Multirole, Field Area Zero and Quick-Play Lemnis Gate, cannot be activated while you control a Monster in the Main Monster Zones and gain extra effects while you have 3 or more Spell cards in your GY."),
@@ -113,3 +113,5 @@ INSERT INTO activity
         ("Meeting", "2024-12-03 11:28:09", "2024-12-03 12:28:09", "Meeting dayo"),
         ("Meeting", "2023-01-23 6:28:09", "2023-01-23 7:08:23", "Some meeting idk"),
         ("Call", "2021-09-17 10:12:39", "2021-09-17 10:18:21", "Call with client");
+
+-- UPDATE lead_individual SET lead_status = 'Contacted' WHERE individual_id = 6;

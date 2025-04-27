@@ -13,6 +13,7 @@
     const gender_option = ref("");
     const honorifics_option = ref("");
     const lead_status_option = ref("");
+    const company_option = ref("");
 
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
@@ -27,9 +28,11 @@
         text_input: "h-8 w-100 mx-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
         text_area_input: "w-100 h-40 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
         text_area_input_short: "w-100 h-25 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
-        select_input: "h-8 w-100 mx-1 border-2 cursor-pointer focus:cursor-text px-2 pr-4 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
+        select_input: "h-8 w-100 mx-1 border-2 cursor-pointer px-2 pr-4 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
         paragraph_input: "flex w-100 h-40 mx-1 px-2 py-2 overflow-auto",
         paragraph_input_short: "flex w-100 h-20 mx-1 px-2 py-2 overflow-y-scroll",
+        variable_select_input: "h-8 w-100 mx-1 border-2 cursor-pointer px-2 pr-4 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
+        option_input: "",
 
         tooltip_show: "visible",
         tooltip_hide: "hidden",
@@ -46,6 +49,8 @@
         none: "none",
         paragraph: "paragraph",
         fixed_select: "fixed_select",
+        variable_select: "variable_select",
+
 
         name_pattern: "[A-Z]{1}([a-zA-Z]*)$",
         phone_pattern: "[0-9]{8,20}$",
@@ -236,10 +241,11 @@
             table: "company.",
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
-            input_class: css_class_attributes.text_input,
-            input: input_attributes.paragraph,
+            input_class: css_class_attributes.variable_select_input,
+            input: input_attributes.variable_select,
             trait: input_attributes.trait_select,
             value: ref(""),
+            option_list: ref(company_option),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -343,9 +349,10 @@
             if (success_response.value && attribute == null){
                 for (const key in edit_attribute_left)
                     edit_attribute_left[key]['value'].value = response.value.data[0][edit_attribute_left[key]['correspond']];
-                for (const key in edit_attribute_right)
+                for (const key in edit_attribute_right){
                     edit_attribute_right[key]['value'].value = response.value.data[0][edit_attribute_right[key]['correspond']];
-                    for (const key in overview_attribute)
+                }
+                for (const key in overview_attribute)
                     overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
             } else if (success_response.value){
                 attribute['value']['value'] = response.value.data[0][attribute['correspond']];
@@ -358,7 +365,7 @@
     // get select option of lead status
     const get_lead_status_option = async () => {
         try {
-            const lead_status_option_response = await axios.post("../backend/retrieve_lead_status_option_api.php", {data: "option"});
+            const lead_status_option_response = await axios.post("../backend/retrieve_lead_status_api.php", {data: "option"});
             // it should be an object (array), keys are index
             lead_status_option['value'] = lead_status_option_response.data;
         } catch (error){
@@ -369,9 +376,9 @@
     // get select option of gender
     const get_gender_option = async () => {
         try {
-            const lead_status_option_response = await axios.post("../backend/retrieve_gender_option_api.php", {data: "option"});
+            const gender_option_response = await axios.post("../backend/retrieve_gender_api.php", {data: "option"});
             // it should be an object (array), keys are index
-            gender_option['value'] = lead_status_option_response.data;
+            gender_option['value'] = gender_option_response.data;
         } catch (error){
             alert(error);
         }
@@ -380,9 +387,23 @@
     // get select option of honorifics
     const get_honorifics_option = async () => {
         try {
-            const lead_status_option_response = await axios.post("../backend/retrieve_honorifics_option_api.php", {data: "option"});
+            const honorifics_option_response = await axios.post("../backend/retrieve_honorifics_api.php", {data: "option"});
             // it should be an object (array), keys are index
-            honorifics_option['value'] = lead_status_option_response.data;
+            honorifics_option['value'] = honorifics_option_response.data;
+        } catch (error){
+            alert(error);
+        }
+    }
+
+    // get select option of honorifics
+    const get_company_option = async () => {
+        try {
+            const company_option_response = await axios.post("../backend/retrieve_company_api.php", {data: "option"});
+            
+            // should be [object Object]
+            // first layer key is index (0,1,...)
+            // second layer keys are: [company_id, company_name, company_address, company_description]
+            company_option['value'] = company_option_response.data;
         } catch (error){
             alert(error);
         }
@@ -494,13 +515,15 @@
         get_lead_status_option();
         get_gender_option();
         get_honorifics_option();
+        get_company_option();
     }
 
     initialize();
 </script>
 
 <template>
-    <div>{{ success_response }}: {{ response.data[0] }} </div>
+    <div>{{ success_response }}: {{ response.data[0] }}</div>
+    <div>{{ edit_attribute_right['company']['value']['value'] }}</div>
 
     <div class="flex flex-col w-screen min-w-max overflow-auto justify-center items-center bg-green-500">
 
@@ -556,6 +579,9 @@
                             <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
                             <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @input="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']">
                                 <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
+                            </select>
+                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @input="select_changed(value)" v-else-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
+                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['company_name']"> {{ option['company_name'] }} </option>
                             </select>
                             <!-- tooltip content-->
                             <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
