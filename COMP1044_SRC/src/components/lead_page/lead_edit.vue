@@ -416,6 +416,9 @@
                     alert("success");
                     get_lead_detail(attribute);
                     attribute['changed']['value'] = false;
+                } else {
+                    attribute['has_error']['value'] = true;
+                    attribute['tooltip_message']['value'] = edit_response.data.message;
                 }
             } else {
                 attribute['has_error']['value'] = true;
@@ -426,7 +429,7 @@
                 }
             }
         } else if (attribute['trait'] == "select"){
-            
+
         }
     }
 
