@@ -39,7 +39,7 @@ INSERT INTO individual
         ("Kiryu", "Coco", "Female", "Ms.", "Lead", NOW(), 4, "0123123123", "coco@mail.com", 'Kiryu Coco was a female Japanese Virtual YouTuber associated with hololive, debuting as part of its fourth generation of VTubers alongside Tsunomaki Watame, Tokoyami Towa, Amane Kanata and Himemori Luna. Coco retired in July 2021 with a record-breaking graduation ceremony. She was known for her fluency in Japanese and English, her AsaCoco Live News and Reddit Meme Review shows, and for being the #1 superchat donation earner in the world. ', 1),
         ("Hachi", NULL, "Female", "Ms.", "Lead", NOW(), 1, "01247889131", NULL, 'Virtual Singer "HACHI" "To touch your heart with my voice."', 1),
         ("Natsuiro", "Matsuri", "Female", "Ms.", "Lead", NOW(), 1, NULL, "matsurinatsuiro@mail.com", "'Wasshoi! hololive's symbol of purity and everyone's idol, Natsuiro Matsuri here!'A rookie member of her school cheerleading team. Her cheerful, energetic, and affectionate personality means she gets along with everyone and has lots of friends. Loves festivals, events, and other fun things.", 1),
-        ("Yuzuka", NULL, "Female", "Ms.", "Lead", NOW(), 4, "0121231289", NULL, NULL, 1),
+        ("Yuzuka", NULL, "Female", "Ms.", "Lead", NOW(), NULL, "0121231289", NULL, NULL, 1),
         ("Yuni", NULL, "Female", "Ms.", "Lead", NOW(), 4, "0124213789", NULL, NULL, 1),
         ("Sume", NULL, "Female", "Ms.", "Lead", NOW(), 7, "011231389", NULL, NULL, 1),
         ("Dazbee", NULL, "Female", "Ms.", "Lead", NOW(), 1, NULL, "dazbee@mail.com", NULL, 1),

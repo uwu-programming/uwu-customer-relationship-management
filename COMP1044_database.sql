@@ -64,7 +64,9 @@ CREATE TABLE company(
     company_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     company_name VARCHAR(255) NOT NULL,
     company_address VARCHAR(255) NOT NULL,
-    company_description TEXT DEFAULT NULL
+    company_description TEXT DEFAULT NULL,
+
+    UNIQUE (company_name, company_address)
 );
 -- make attribute `company_id` from table `individual` refer to the `company_id` in the table `company`
 ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES company(company_id) ON UPDATE SET NULL ON DELETE SET NULL;

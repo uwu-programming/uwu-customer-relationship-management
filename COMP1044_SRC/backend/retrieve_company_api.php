@@ -21,12 +21,18 @@ switch($_SERVER["REQUEST_METHOD"]){
 
 function retrieve_company($conn){
     try {
-        $sql_query = "SELECT * FROM company";
-        $sql_statement = $conn->prepare($sql_query);
-        $sql_statement->execute();
-
         // get the POST JSON (expected data: {data})
         $post_data = json_decode(file_get_contents("php://input"));
+
+        $sql_query = "SELECT * FROM company";
+
+        // for filter
+        if (array_key_exists("filter", (array)$post_data)){
+            $sql_query = $sql_query . " WHERE company_name LIKE '%$post_data->filter%'";
+        }
+
+        $sql_statement = $conn->prepare($sql_query);
+        $sql_statement->execute();
 
         $result = array();
         while ($row = $sql_statement->fetch(PDO::FETCH_ASSOC)){

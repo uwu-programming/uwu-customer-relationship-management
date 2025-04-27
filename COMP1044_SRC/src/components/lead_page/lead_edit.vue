@@ -14,6 +14,7 @@
     const honorifics_option = ref("");
     const lead_status_option = ref("");
     const company_option = ref("");
+    const chosen_company_id = ref("");
 
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
@@ -24,8 +25,9 @@
 
         normal_edit_attribute: "flex flex-row mb-1 items-center",
         description_edit_attribute: "flex flex-row mb-1",
+        search_select_edit_attribute: "flex flex-row mb-1",
         normal_label: "w-48 flex justify-end px-2 py-1 mx-1 bg-violet-500 border-2",
-        text_input: "h-8 w-100 mx-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
+        text_input: "h-8 w-100 mx-1 mb-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
         text_area_input: "w-100 h-40 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
         text_area_input_short: "w-100 h-25 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
         select_input: "h-8 w-100 mx-1 border-2 cursor-pointer px-2 pr-4 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
@@ -33,13 +35,16 @@
         paragraph_input_short: "flex w-100 h-20 mx-1 px-2 py-2 overflow-y-scroll",
         variable_select_input: "h-8 w-100 mx-1 border-2 cursor-pointer px-2 pr-4 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
         option_input: "",
+        search_input: "h-8 w-100 mx-1 mb-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
+
+        error_input: "bg-red-700",
 
         tooltip_show: "visible",
         tooltip_hide: "hidden",
         tooltip: "flex w-100 h-14 bg-rose-600 absolute z-2 m-1 -top-16 py-1 px-2 text-xs whitespace-pre-line",
 
-        save_button: "hover:cursor-pointer w-5 h-5 mx-1 text-white bg-green-600 rounded-full flex justify-center items-center",
-        cancel_button: "hover:cursor-pointer w-5 h-5 mx-1 text-white bg-red-700 rounded-full flex justify-center items-center",
+        save_button: "hover:cursor-pointer w-5 h-5 m-1 text-white bg-green-600 rounded-full flex justify-center items-center",
+        cancel_button: "hover:cursor-pointer w-5 h-5 m-1 text-white bg-red-700 rounded-full flex justify-center items-center",
     }
 
     // refferenceable input attribute
@@ -52,7 +57,7 @@
         variable_select: "variable_select",
 
 
-        name_pattern: "[A-Z]{1}([a-zA-Z]*)$",
+        name_pattern: "[A-Z]{1}([a-zA-Z ]*)([a-zA-Z]+)$",
         phone_pattern: "[0-9]{8,20}$",
         email_pattern: "([a-z,0-9]{2,})@([a-z,0-9]{2,}).([a-z]{2,})$",
 
@@ -237,14 +242,15 @@
         },
         company: {
             name: "Company",
-            correspond: "company_name",
+            correspond: "company_id",
             table: "company.",
-            class: css_class_attributes.normal_edit_attribute,
+            class: css_class_attributes.search_select_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.variable_select_input,
             input: input_attributes.variable_select,
             trait: input_attributes.trait_select,
             value: ref(""),
+            search_value: ref(""),
             option_list: ref(company_option),
             hover: ref(false),
             changed: ref(false),
@@ -396,14 +402,23 @@
     }
 
     // get select option of honorifics
-    const get_company_option = async () => {
+    const get_company_option = async (search_value) => {
         try {
-            const company_option_response = await axios.post("../backend/retrieve_company_api.php", {data: "option"});
-            
-            // should be [object Object]
-            // first layer key is index (0,1,...)
-            // second layer keys are: [company_id, company_name, company_address, company_description]
-            company_option['value'] = company_option_response.data;
+            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
+                const company_option_response = await axios.post("../backend/retrieve_company_api.php", {data: "option"});
+                
+                // should be [object Object]
+                // first layer key is index (0,1,...)
+                // second layer keys are: [company_id, company_name, company_address, company_description]
+                company_option['value'] = company_option_response.data;
+            } else {
+                const company_option_response = await axios.post("../backend/retrieve_company_api.php", {data: "option", filter: search_value});
+                
+                // should be [object Object]
+                // first layer key is index (0,1,...)
+                // second layer keys are: [company_id, company_name, company_address, company_description]
+                company_option['value'] = company_option_response.data;
+            }
         } catch (error){
             alert(error);
         }
@@ -415,6 +430,20 @@
             attribute['changed']['value'] = true;
             if (attribute['correspond'] == "lead_status"){
                 edit_attribute_right['lead_conversion_message']['changed']['value']= true;
+            } else if (attribute['correspond'] == "company_id"){
+                // display company address and description on changed
+                for (const key in company_option['value']){
+                    if (company_option['value'][key]['company_id'] == attribute['value']['value']){
+                        edit_attribute_right['company_address']['value']['value'] = company_option['value'][key]['company_address'];
+                        edit_attribute_right['company_description']['value']['value'] = company_option['value'][key]['company_description'];
+                        chosen_company_id['value'] = company_option['value'][key]['company_id'];
+                    }
+                }
+
+                if (attribute['value']['value'] == null){
+                    edit_attribute_right['company_address']['value']['value'] = "";
+                    edit_attribute_right['company_description']['value']['value'] = "";
+                }
             }
         }
     }
@@ -426,7 +455,13 @@
                 attribute['changed']['value'] = false;
             } else {
                 const reg_exp = new RegExp(attribute['pattern']);
-                if (reg_exp.test(attribute['value']['value'])){
+                if (typeof((attribute['value']['value']).trim()) == "undefined" || (attribute['value']['value']).trim() == ""){
+                    if ((attribute['correspond'] == "last_name" && response['value']['data'][0]['first_name'] == null) || (attribute['correspond'] == "first_name" && response['value']['data'][0]['last_name'] == null)){
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_visible']['value'] = true;
+                        attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+                    }
+                } else if (reg_exp.test(attribute['value']['value'])){
                     attribute['has_error']['value'] = false;
                     const edit_response = await axios.post(
                         "../backend/edit_lead_api.php",
@@ -443,6 +478,7 @@
                         attribute['changed']['value'] = false;
                     } else {
                         attribute['has_error']['value'] = true;
+                        attribute['tooltip_visible']['value'] = true;
                         attribute['tooltip_message']['value'] = edit_response.data.message;
                     }
                 } else {
@@ -470,6 +506,8 @@
                         attribute['tooltip_message']['value'] = "Lead conversion message can't be empty";
                     }
                 }
+            } else if (attribute['correspond'] == 'company_id'){
+
             } else {
                 if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
                     attribute['changed']['value'] = false;
@@ -506,6 +544,10 @@
             edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
             edit_attribute_right['lead_conversion_message']['has_error']['value'] = false;
             edit_attribute_right['lead_conversion_message']['value']['value'] = "";
+        } else if (attribute['correspond'] == 'company_id'){
+            edit_attribute_right['company_address']['value']['value'] = response.value.data[0][attribute['company_address']];
+            edit_attribute_right['company_description']['value']['value'] = response.value.data[0][attribute['company_description']];
+            chosen_company_id['value'] = response.value.data[0][attribute['company_id']];
         }
     }
 
@@ -544,14 +586,22 @@
                         <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                         <!-- the input field -->
                         <div class="relative">
-                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                            <textarea @input="value['changed'].value = true" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value"></textarea>
-                            <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
-                            <select @input="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']">
+                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'border-red-700 border-4':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                            <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
+                            <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
+                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
                                 <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
                             </select>
                             <!-- tooltip content-->
                             <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
+                        </div>
+                        <!-- for company -->
+                        <div class="flex flex-col">
+                            <input @input="get_company_option(value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" placeholder="Search for company name..." v-model="value['search_value']['value']"/>
+                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
+                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['company_id']"> {{ option['company_name'] }} </option>
+                                <option :class="css_class_attributes.option_input" :value="null">NULL</option>
+                            </select>
                         </div>
                         <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
                             <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
@@ -574,17 +624,22 @@
                         <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                         <!-- the input field -->
                         <div class="relative">
-                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="value['input_class']" v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                            <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value"></textarea>
-                            <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']">{{ value['value'].value }}</div>
-                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @input="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']">
+                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'border-red-700 border-4':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                            <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
+                            <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
+                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
                                 <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
-                            </select>
-                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @input="select_changed(value)" v-else-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
-                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['company_name']"> {{ option['company_name'] }} </option>
                             </select>
                             <!-- tooltip content-->
                             <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
+                        </div>
+                        <!-- for company -->
+                        <div class="flex flex-col">
+                            <input @input="get_company_option(value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" placeholder="Search for company name..." v-model="value['search_value']['value']"/>
+                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
+                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['company_id']"> {{ option['company_name'] }} </option>
+                                <option :class="css_class_attributes.option_input" :value="null">NULL</option>
+                            </select>
                         </div>
                         <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
                             <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
