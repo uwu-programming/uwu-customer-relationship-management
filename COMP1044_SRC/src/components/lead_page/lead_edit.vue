@@ -12,6 +12,7 @@
     const user = ref("");
     const gender_option = ref("");
     const honorifics_option = ref("");
+    const country_option = ref("");
     const lead_status_option = ref("");
     const company_option = ref("");
     const chosen_company_id = ref("");
@@ -188,6 +189,27 @@
             tooltip_visible: ref(css_class_attributes.tooltip_hide),
             tooltip_message: ref("")
         },
+        country: {
+            name: "Country",
+            correspond: "country_code",
+            table: "individual.",
+            class: css_class_attributes.search_select_edit_attribute,
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.variable_select_input,
+            input: input_attributes.variable_select,
+            trait: input_attributes.trait_select,
+            value: ref(""),
+            value_name: ref("country_name"),
+            search_value: ref(""),
+            search_placeholder: ref("Search for country name..."),
+            search_function: ref(""),
+            option_list: ref(country_option),
+            hover: ref(false),
+            changed: ref(false),
+            has_error: ref(false),
+            tooltip_visible: ref(css_class_attributes.tooltip_hide),
+            tooltip_message: ref("")
+        },
         individual_description: {
             name: "Individual description",
             correspond: "individual_description",
@@ -243,14 +265,17 @@
         company: {
             name: "Company",
             correspond: "company_id",
-            table: "company.",
+            table: "individual.",
             class: css_class_attributes.search_select_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.variable_select_input,
             input: input_attributes.variable_select,
             trait: input_attributes.trait_select,
             value: ref(""),
+            value_name: ref("company_name"),
             search_value: ref(""),
+            search_placeholder: ref("Search for company name..."),
+            search_function: ref(""),
             option_list: ref(company_option),
             hover: ref(false),
             changed: ref(false),
@@ -362,6 +387,8 @@
                     overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
             } else if (success_response.value){
                 attribute['value']['value'] = response.value.data[0][attribute['correspond']];
+                for (const key in overview_attribute)
+                    overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
             }
         } catch (error){
             alert(error);
@@ -401,6 +428,31 @@
         }
     }
 
+    // get select option of country
+    const get_country_option = async (search_value) => {
+        try {
+            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
+                const country_option_response = await axios.post("../backend/retrieve_country_api.php", {data: "option"});
+                
+                // should be [object Object]
+                // first layer key is index (0,1,...)
+                // second layer keys are: [country_code, country_name]
+                country_option['value'] = country_option_response.data;
+            } else {
+                const country_option_response = await axios.post("../backend/retrieve_country_api.php", {data: "option", filter: search_value});
+                
+                // should be [object Object]
+                // first layer key is index (0,1,...)
+                // second layer keys are: [country_code, country_name]
+                country_option['value'] = country_option_response.data;
+            }
+        } catch (error){
+            alert(error);
+        }
+    }
+    // bind the function to country
+    edit_attribute_left['country']['search_function']['value'] = get_country_option;
+
     // get select option of honorifics
     const get_company_option = async (search_value) => {
         try {
@@ -423,6 +475,8 @@
             alert(error);
         }
     }
+    // bind the function to company
+    edit_attribute_right['company']['search_function']['value'] = get_company_option;
 
     // detect changes
     const select_changed = (attribute) => {
@@ -450,7 +504,7 @@
 
     // input validation & update
     const validate_update_data = async (attribute) => {
-        if (attribute['trait'] == "text"){
+        if (attribute['trait'] == "text"){ // for text related
             if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
                 attribute['changed']['value'] = false;
             } else {
@@ -460,6 +514,26 @@
                         attribute['has_error']['value'] = true;
                         attribute['tooltip_visible']['value'] = true;
                         attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+                    } else if ((attribute['correspond'] == "phone_number" && response['value']['data'][0]['email_address'] == null) || (attribute['correspond'] == "email_address" && response['value']['data'][0]['phone_number'] == null)){
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_visible']['value'] = true;
+                        attribute['tooltip_message']['value'] = "Phone number and email address cannot be empty at the same time.\nPlease try again.";
+                    } else { // allow empty value
+                        attribute['has_error']['value'] = false;
+                        const edit_response = await axios.post(
+                            "../backend/edit_lead_api.php",
+                            {
+                                individual_id: props.individual_id,
+                                update_table: (attribute['table']).slice(0, -1),
+                                update_attribute: (attribute['correspond']),
+                                update_value: null
+                            }
+                        );
+                        if (edit_response.status == 204){
+                            alert("success");
+                            get_lead_detail(attribute);
+                            attribute['changed']['value'] = false;
+                        }
                     }
                 } else if (reg_exp.test(attribute['value']['value'])){
                     attribute['has_error']['value'] = false;
@@ -477,6 +551,7 @@
                         get_lead_detail(attribute);
                         attribute['changed']['value'] = false;
                     } else {
+                        // covered duplicate value
                         attribute['has_error']['value'] = true;
                         attribute['tooltip_visible']['value'] = true;
                         attribute['tooltip_message']['value'] = edit_response.data.message;
@@ -487,29 +562,74 @@
                     
                     if (attribute['pattern'] == input_attributes.name_pattern){
                         attribute['tooltip_message']['value'] = input_attributes.name_format_wrong;
+                    } else if (attribute['pattern'] == input_attributes.email_pattern){
+                        attribute['tooltip_message']['value'] = "The entered email address format is invalid.\nPlease try again. (Format: 'local-part@domain')";
+                    } else if (attribute['pattern'] == input_attributes.phone_pattern){
+                        attribute['tooltip_message']['value'] = "The entered phone number format is invalid.\nPlease try again. (Format: number between range (8, 20) without special character)";
                     }
                 }
             }
-        } else if (attribute['trait'] == "select"){
-            if (attribute['correspond'] == "lead_status"){
-                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+        } else if (attribute['trait'] == "select"){ // select type input
+            if (attribute['correspond'] == "lead_status"){ // lead status
+                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){ // check if reselect the same value
                     attribute['changed']['value'] = false;
                     attribute['has_error']['value'] = false;
                     edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
                     edit_attribute_right['lead_conversion_message']['has_error']['value'] = false;
                     edit_attribute_right['lead_conversion_message']['value']['value'];
                 } else {
-                    if (typeof(edit_attribute_right['lead_conversion_message']['value']['value']) == "undefined" || (edit_attribute_right['lead_conversion_message']['value']['value']).trim() == ""){
+                    if (typeof(edit_attribute_right['lead_conversion_message']['value']['value']) == "undefined" || (edit_attribute_right['lead_conversion_message']['value']['value']).trim() == ""){ // check to prevent empty conversion message
                         edit_attribute_right['lead_conversion_message']['has_error']['value'] = true;
                         attribute['has_error']['value'] = true;
                         edit_attribute_right['lead_conversion_message']['tooltip_message']['value'] = "Lead conversion message can't be empty";
                         attribute['tooltip_message']['value'] = "Lead conversion message can't be empty";
+                    } else {
+                        const edit_response = await axios.post(
+                            "../backend/edit_lead_api.php",
+                            {
+                                individual_id: props.individual_id,
+                                update_table: (attribute['table']).slice(0, -1),
+                                update_attribute: attribute['correspond'],
+                                update_value: "'" + attribute['value']['value'] + "'",
+                                convert_from: "'" + response['value']['data'][0]['lead_status'] + "'",
+                                conversion_message: "'" + edit_attribute_right['lead_conversion_message']['value']['value'] + "'"
+                            }
+                        );
+                        if (edit_response.status == 204){
+                            alert("success");
+                            get_lead_detail(attribute);
+                            attribute['changed']['value'] = false;
+                            edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
+                            edit_attribute_right['lead_conversion_message']['value']['value'] = "";
+                        } else {
+                            alert(edit_response.data.message);
+                        }
                     }
                 }
-            } else if (attribute['correspond'] == 'company_id'){
-
-            } else {
+            } else if (attribute['correspond'] == 'company_id' || attribute['correspond'] == 'country_code'){ // for company
                 if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+                    attribute['changed']['value'] = false;
+                } else {
+                    const edit_response = await axios.post(
+                        "../backend/edit_lead_api.php",
+                        {
+                            individual_id: props.individual_id,
+                            update_table: (attribute['table']).slice(0, -1),
+                            update_attribute: attribute['correspond'],
+                            update_value: attribute['value']['value']
+                        }
+                    );
+                    if (edit_response.status == 204){
+                        alert("success");
+                        get_lead_detail(attribute);
+                        attribute['changed']['value'] = false;
+                    } else {
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_message']['value'] = edit_response.data.message;
+                    }
+                }
+            } else {
+                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){ // gender & honorifics
                     attribute['changed']['value'] = false;
                 } else {
                     const edit_response = await axios.post(
@@ -558,6 +678,7 @@
         get_gender_option();
         get_honorifics_option();
         get_company_option();
+        get_country_option();
     }
 
     initialize();
@@ -595,11 +716,11 @@
                             <!-- tooltip content-->
                             <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
                         </div>
-                        <!-- for company -->
+                        <!-- for searchable select -->
                         <div class="flex flex-col">
-                            <input @input="get_company_option(value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" placeholder="Search for company name..." v-model="value['search_value']['value']"/>
+                            <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
                             <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
-                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['company_id']"> {{ option['company_name'] }} </option>
+                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
                                 <option :class="css_class_attributes.option_input" :value="null">NULL</option>
                             </select>
                         </div>
@@ -633,11 +754,11 @@
                             <!-- tooltip content-->
                             <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
                         </div>
-                        <!-- for company -->
+                        <!-- for searchable select -->
                         <div class="flex flex-col">
-                            <input @input="get_company_option(value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" placeholder="Search for company name..." v-model="value['search_value']['value']"/>
+                            <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
                             <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
-                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['company_id']"> {{ option['company_name'] }} </option>
+                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
                                 <option :class="css_class_attributes.option_input" :value="null">NULL</option>
                             </select>
                         </div>

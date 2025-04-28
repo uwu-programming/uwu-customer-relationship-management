@@ -52,7 +52,7 @@ function edit_lead($conn){
         }
 
         if ($valid && $post_data->update_table == "individual"){
-            if ($post_data->update_attribute == "phone_number" || $post_data->update_attribute == "email_address"){
+            if (($post_data->update_attribute == "phone_number" || $post_data->update_attribute == "email_address") && $post_data->update_value != NULL){
                 $check_duplicate_query = "SELECT * FROM individual WHERE $post_data->update_attribute = $post_data->update_value";
                 $check_duplicate_statement = $conn->prepare($check_duplicate_query);
                 $check_duplicate_statement->execute();
@@ -73,13 +73,53 @@ function edit_lead($conn){
             }
 
             if ($valid) {
-                $update_query = "UPDATE $post_data->update_table SET $post_data->update_attribute = $post_data->update_value WHERE individual_id = $post_data->individual_id";
+                if ($post_data->update_value != NULL){
+                    $update_query = "UPDATE $post_data->update_table SET $post_data->update_attribute = $post_data->update_value WHERE individual_id = $post_data->individual_id";
+                } else {
+                    $update_query = "UPDATE $post_data->update_table SET $post_data->update_attribute = NULL WHERE individual_id = $post_data->individual_id";
+                }
                 $update_statement = $conn->prepare($update_query);
                 $update_statement->execute();
 
                 http_response_code(204);
                 echo json_encode(array("message" => "Update successfull"));
             }
+        } else if ($valid && $post_data->update_table == "lead_individual"){
+            // insert into convrsion history
+            // check if it is converted to customer:
+            if ($post_data->update_value == "'Converted to customer'"){
+                $convert_to = "'Customer'";
+                $update_query = "UPDATE individual SET relationship = 'Customer' WHERE individual_id = $post_data->individual_id";
+                $update_statement = $conn->prepare($update_query);
+                $update_statement->execute();
+            } else {
+                $convert_to = $post_data->update_value;
+                // update the lead status
+                $update_query = "UPDATE $post_data->update_table SET $post_data->update_attribute = $post_data->update_value WHERE individual_id = $post_data->individual_id";
+                $update_statement = $conn->prepare($update_query);
+                $update_statement->execute();
+            }
+
+            // check if it is converted from customer
+            if ($post_data->convert_from == "'Converted to customer'"){
+                $convert_from = "'Customer'";
+                $update_query = "UPDATE individual SET relationship = 'Lead' WHERE individual_id = $post_data->individual_id";
+                $update_statement = $conn->prepare($update_query);
+                $update_statement->execute();
+            } else {
+                $convert_from = $post_data->convert_from;
+                // update the lead status
+                $update_query = "UPDATE $post_data->update_table SET $post_data->update_attribute = $post_data->update_value WHERE individual_id = $post_data->individual_id";
+                $update_statement = $conn->prepare($update_query);
+                $update_statement->execute();
+            }
+
+            $insert_query = "INSERT INTO conversion_history (user_id, individual_id, convert_from, convert_to, convert_time, conversion_message) VALUES ($current_user_id, $post_data->individual_id, $convert_from, $convert_to, NOW(), $post_data->conversion_message)";
+            $insert_statement = $conn->prepare($insert_query);
+            $insert_statement->execute();
+
+            http_response_code(204);
+            echo json_encode(array("message" => "Update successfull"));
         }
 
     } catch (PDOException $error){

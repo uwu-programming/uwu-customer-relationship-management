@@ -75,7 +75,7 @@ ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES compan
 CREATE TABLE lead_individual(
     individual_id INT UNIQUE NOT NULL,
     lead_owner_user_id INT NOT NULL,
-    lead_status ENUM("New", "Attempted to contact", "Contacted", "Junk lead", "Lost lead", "Converted to customer") NOT NULL DEFAULT "New",
+    lead_status ENUM("New lead", "Attempted to contact lead", "Contacted lead", "Junk lead", "Lost lead", "Converted to customer") NOT NULL DEFAULT "New lead",
 
     FOREIGN KEY (lead_owner_user_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
