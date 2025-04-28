@@ -381,9 +381,9 @@
 </script>
 
 <template>
-    <div class="flex h-full w-full bg-black overflow-auto justify-center">
+    <div class="flex min-h-max min-w-max max-w-screen h-screen bg-black overflow-auto justify-center">
         <!-- Display content -->
-        <div class="flex flex-col h-full w-55/100 min-w-180 max-w-max m-2 border-1">
+        <div class="flex flex-col h-full w-180 min-w-180 max-w-180 min-h-160 m-2 border-2 border-rose-500">
             <div class="flex flex-col h-full rounded-2xl border-1 overflow-auto">
                 <div class="flex flex-row w-max min-w-180 min-h-8 bg-fuchsia-500 border-b-2">
                     <div class="flex flex-row w-max" v-for="value in lead_display_attributes" :key="value" v-if="need_display">
@@ -425,29 +425,30 @@
             </div>
         </div>
 
-        <div class="flex flex-col h-full w-45/55 min-w-220 max-w-max bg-violet-500 m-2">
-            <div class="flex flex-col px-2 py-1 bg-rose-700 h-45/100">
-                <div class="">Filter Leads</div>
-                <div class="flex flex-row h-full">
+        <!-- right side -->
+        <div class="flex flex-col min-h-max max-h-max w-180 max-w-180 min-w-180 bg-violet-500 m-2">
+            <div class="flex flex-col px-2 py-1 bg-rose-200">
+                <div class="h-max">Filter Leads</div>
+                <div class="flex flex-row">
 
                     <!-- Select display section -->
-                    <div class="flex flex-col h-full w-3/10 max-w-max">
-                        <div class="bg-amber-500">Display</div>
-                        <div class="flex flex-col overflow-auto h-8/10 bg-green-500">
-                            <div v-for="value in lead_display_attributes" :key="value">
-                                <label :for="value['correspond'] + '_display_checkbox'">{{ value['name'] }}</label>
-                                <input @click="value['display'].value = !value['display'].value" @change="check_need_display(value)" v-model="value['display'].value" :id="value['correspond'] + '_display_checkbox'" v-bind:name="value['correspond'] + '_display_checkbox'" type="checkbox"/>
+                    <div class="flex flex-col min-h-72 max-h-72 w-35/100 border-3 border-pink-700 rounded-xs mx-1">
+                        <div class="h-max border-pink-700 px-3 py-1 border-b-3 font-bold bg-pink-500">Display</div>
+                        <div class="flex flex-col overflow-auto bg-rose-100">
+                            <div class="flex flex-row justify-between mx-2 border-b-2 border-pink-700/60 last:border-none" v-for="value in lead_display_attributes" :key="value">
+                                <label class="w-full px-1 py-1 mr-2 font-medium" :for="value['correspond'] + '_display_checkbox'">{{ value['name'] }}</label>
+                                <input class="mx-2 accent-pink-700" @click="value['display'].value = !value['display'].value" @change="check_need_display(value)" v-model="value['display'].value" :id="value['correspond'] + '_display_checkbox'" v-bind:name="value['correspond'] + '_display_checkbox'" type="checkbox"/>
                             </div>
                         </div>
                     </div>
 
                     <!-- Search section -->
-                    <div class="flex flex-col h-full w-7/10 max-w-max">
-                        <div class="bg-amber-500">Search by</div>
-                        <div class=""><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full" type="search"></div>
+                    <div class="flex flex-col min-h-72 max-h-72 w-65/100 border-3 border-pink-700 rounded-xs mx-1">
+                        <div class="h-max border-pink-700 px-3 py-1 border-b-3 font-bold bg-pink-500">Search by</div>
+                        <div class="flex justify-center items-center"><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full rounded-full focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 mx-2 my-1 px-4 border-2 border-pink-700 cursor-pointer focus:cursor-texts hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content overflow-auto text-nowrap truncate" type="search"></div>
 
                         <!-- Search by check box -->
-                        <div class="flex flex-col overflow-auto w-full bg-green-500 h-6/10">
+                        <div class="flex flex-col overflow-auto w-full h-6/10">
                             <div class="flex flex-row" v-for="value in lead_display_attributes" :key="value">
                                 <label class="w-3/10" v-if="value['display'].value" :for="value['correspond'] + '_search_by_checkbox'">{{ value['name'] }}</label>
                                 <input v-if="value['display'].value" @change="search_data" @click="value['search_by'].value = !value['search_by'].value" v-model="value['search_by'].value" :id="value['correspond'] + '_search_by_checkbox'" v-bind:name="value['correspond'] + '_search_by_checkbox'" type="checkbox"/>
@@ -475,7 +476,7 @@
                 </div>
             </div>
 
-            <div class="flex flex-col px-2 py-1 bg-green-600 h-55/100">
+            <div class="flex flex-col px-2 py-1 bg-green-600 h-55/100 w-full">
                 <div>Preview detail</div>
                 <div class="flex flex-row">
                     <div class="w-1/2 h-full bg-sky-900 flex flex-col">

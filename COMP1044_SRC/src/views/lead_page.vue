@@ -3,7 +3,5 @@
 </script>
 
 <template>
-    <div class="flex h-screen w-screen min-w-300">
-        <lead_display_div></lead_display_div>
-    </div>
+    <lead_display_div></lead_display_div>
 </template>
