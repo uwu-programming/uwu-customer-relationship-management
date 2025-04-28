@@ -20,6 +20,11 @@
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
 
+    // check if delete is activated
+    const delete_prompt = ref(false);
+    const delete_success_prompt = ref(false);
+    const success_operation_prompt = ref(false);
+
     // referenceable CSS attribute
     const css_class_attributes = {
         edit_attribute_area: "flex flex-col w-max h-max mx-5 px-5 py-2 my-2",
@@ -42,7 +47,7 @@
 
         tooltip_show: "visible",
         tooltip_hide: "hidden",
-        tooltip: "flex w-100 h-14 bg-rose-500 border-2 border-rose-800 absolute z-2 m-1 -top-16 left-2 py-1 px-2 text-xs whitespace-pre-line rounded-sm",
+        tooltip: "text-white flex w-100 h-14 bg-rose-700 border-2 border-rose-900 absolute z-2 m-1 -top-16 left-2 py-1 px-2 text-xs whitespace-pre-line rounded-sm",
 
         save_button: "hover:cursor-pointer w-5 h-5 m-1 text-white bg-green-600 rounded-full flex justify-center items-center",
         cancel_button: "hover:cursor-pointer w-5 h-5 m-1 text-white bg-red-700 rounded-full flex justify-center items-center",
@@ -541,7 +546,7 @@
                             }
                         );
                         if (edit_response.status == 204){
-                            alert("success");
+                            success_operation_prompt['value'] = true;
                             get_lead_detail(attribute);
                             attribute['changed']['value'] = false;
                         }
@@ -558,7 +563,7 @@
                         }
                     );
                     if (edit_response.status == 204){
-                        alert("success");
+                        success_operation_prompt['value'] = true;
                         get_lead_detail(attribute);
                         attribute['changed']['value'] = false;
                     } else {
@@ -607,7 +612,7 @@
                             }
                         );
                         if (edit_response.status == 204){
-                            alert("success");
+                            success_operation_prompt['value'] = true;
                             get_lead_detail(attribute);
                             attribute['changed']['value'] = false;
                             edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
@@ -631,7 +636,7 @@
                         }
                     );
                     if (edit_response.status == 204){
-                        alert("success");
+                        success_operation_prompt['value'] = true;
                         get_lead_detail(attribute);
                         attribute['changed']['value'] = false;
                     } else {
@@ -653,7 +658,7 @@
                         }
                     );
                     if (edit_response.status == 204){
-                        alert("success");
+                        success_operation_prompt['value'] = true;
                         get_lead_detail(attribute);
                         attribute['changed']['value'] = false;
                     } else {
@@ -682,6 +687,29 @@
         }
     }
 
+    // delete lead
+    const delete_lead = async () => {
+        delete_prompt['value'] = false;
+
+        const delete_response = await axios.post(
+            "../backend/edit_lead_api.php",
+            {
+                individual_id: props.individual_id,
+                update_table: null,
+                update_attribute: null,
+                update_value: null,
+                operation: "DELETE"
+            }
+        );
+
+        if (delete_response.status == 204){
+            delete_success_prompt['value'] = true;
+            initialize();
+        } else {
+            alert(delete_response.data.message);
+        }
+    }
+
     // initialize / update to get data
     const initialize = async () => {
         get_lead_detail();
@@ -696,103 +724,143 @@
 </script>
 
 <template>
-    <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto justify-center items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
+    <div class="flex flex-col w-max h-max">
+        <!-- sticky top bar -->
+        <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
+            <router-link :to="{name: 'lead_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
+            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Lead editing page</div>
+            <button @click="delete_prompt = true" v-if="success_response" class="text-white font-semibold bg-rose-600 hover:bg-rose-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Delete</button>
+            <div v-else class="w-34"></div>
+        </div>
 
-        <!-- basic display part -->
-        <div class="flex flex-col m-2">
-            <div class="flex flex-col min-w-340 max-w-full overflow-auto px-2 py-2 bg-rose-100 rounded-md">
-                <div class="flex flex-row w-ful" v-for="value in overview_attribute">
-                    <div class="flex w-60 m-1 justify-end items-end font-bold border-pink-700 border-b-1">{{ value['name'] }}</div>
-                    <div class="flex w-full m-1 ml-8 px-2 border-pink-700 border-b-1">{{ value['value'].value }}</div>
+        <div v-if="delete_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
+            <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
+                <div class="m-4 font-bold text-lg">Are you sure you want to remove this individual?</div>
+                <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
+                    <button @click="delete_lead()" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Yes</button>
+                    <button @click="delete_prompt = false" class="w-28 mx-4 px-6 py-1 bg-red-600 rounded-full hover:text-fuchsia-50 hover:bg-red-800">No</button>
                 </div>
             </div>
         </div>
 
-        <!-- edit part -->
-         <div class="flex w-full justify-center">
-            <div class="flex flex-row min-w-max w-max m-4 bg-rose-100 rounded-md justify-center">
-                <!-- data at left side -->
-                <div :class="css_class_attributes.edit_attribute_area">
-                    <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
-                        <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
-                        <!-- the input field -->
-                        <div class="relative">
-                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                            <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
-                            <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
-                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
-                                <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
-                            </select>
-                            <!-- tooltip content-->
-                            <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
-                        </div>
-                        <!-- for searchable select -->
-                        <div class="flex flex-col">
-                            <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
-                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
-                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
-                                <option :class="css_class_attributes.option_input" :value="null">NULL</option>
-                            </select>
-                        </div>
-                        <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
-                            <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                </svg>
-                            </button>
-                            <button @click="cancel_changes(value)" :class="css_class_attributes.cancel_button">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+        <div v-if="delete_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
+            <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
+                <div class="m-4 font-bold text-lg">The individual has successfully been removed</div>
+                <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
+                    <button @click="delete_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
                 </div>
-
-                <!-- data at right side -->
-                <div :class="css_class_attributes.edit_attribute_area">
-                    <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
-                        <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
-                        <!-- the input field -->
-                        <div class="relative">
-                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                            <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
-                            <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
-                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
-                                <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
-                            </select>
-                            <!-- tooltip content-->
-                            <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
-                        </div>
-                        <!-- for searchable select -->
-                        <div class="flex flex-col">
-                            <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
-                            <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
-                                <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
-                                <option :class="css_class_attributes.option_input" :value="null">NULL</option>
-                            </select>
-                        </div>
-                        <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
-                            <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                </svg>
-                            </button>
-                            <button @click="cancel_changes(value)" :class="css_class_attributes.cancel_button">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
-        <!--  -->
+        <div v-if="success_operation_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
+            <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
+                <div class="m-4 font-bold text-lg">The individual data has successfully been updated</div>
+                <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
+                    <button @click="success_operation_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
+            <div class="flex flex-col w-max">
+                <!-- basic display part -->
+                <div class="flex flex-col m-4">
+                    <div class="flex flex-col min-w-340 max-w-full overflow-auto px-2 py-2 bg-rose-100 rounded-md border-3 border-pink-700 shadow-xl">
+                        <div class="flex flex-row w-ful" v-for="value in overview_attribute">
+                            <div class="flex w-60 m-1 justify-end items-end font-bold border-pink-700 border-b-1">{{ value['name'] }}</div>
+                            <div class="flex w-full m-1 ml-8 px-2 border-pink-700 border-b-1">{{ value['value'].value }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- edit part -->
+                <div class="flex w-full justify-center">
+                    <div class="flex flex-row min-w-max w-max m-4 bg-rose-100 rounded-md justify-center border-3 border-pink-700 shadow-xl">
+                        <!-- data at left side -->
+                        <div :class="css_class_attributes.edit_attribute_area">
+                            <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
+                                <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
+                                <!-- the input field -->
+                                <div class="relative">
+                                    <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                                    <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
+                                    <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
+                                        <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
+                                    </select>
+                                    <!-- tooltip content-->
+                                    <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
+                                </div>
+                                <!-- for searchable select -->
+                                <div class="flex flex-col">
+                                    <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
+                                        <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
+                                        <option :class="css_class_attributes.option_input" :value="null">NULL</option>
+                                    </select>
+                                </div>
+                                <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
+                                    <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                        </svg>
+                                    </button>
+                                    <button @click="cancel_changes(value)" :class="css_class_attributes.cancel_button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- data at right side -->
+                        <div :class="css_class_attributes.edit_attribute_area">
+                            <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
+                                <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
+                                <!-- the input field -->
+                                <div class="relative">
+                                    <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                                    <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
+                                    <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
+                                        <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
+                                    </select>
+                                    <!-- tooltip content-->
+                                    <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
+                                </div>
+                                <!-- for searchable select -->
+                                <div class="flex flex-col">
+                                    <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
+                                        <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
+                                        <option :class="css_class_attributes.option_input" :value="null">NULL</option>
+                                    </select>
+                                </div>
+                                <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
+                                    <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                        </svg>
+                                    </button>
+                                    <button @click="cancel_changes(value)" :class="css_class_attributes.cancel_button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">
+            You don't have permission to view / edit this lead, or this lead is no longer exist
+        </div>
     </div>
-    <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">You don't have permission to view / edit this lead</div>
 </template>
 
 <style>

@@ -381,8 +381,9 @@
 </script>
 
 <template>
-    <div class="flex h-full w-full bg-black overflow-auto">
-        <div class="flex flex-col h-9/10 w-55/100 min-w-180 max-w-max m-2 border-1">
+    <div class="flex h-full w-full bg-black overflow-auto justify-center">
+        <!-- Display content -->
+        <div class="flex flex-col h-full w-55/100 min-w-180 max-w-max m-2 border-1">
             <div class="flex flex-col h-full rounded-2xl border-1 overflow-auto">
                 <div class="flex flex-row w-max min-w-180 min-h-8 bg-fuchsia-500 border-b-2">
                     <div class="flex flex-row w-max" v-for="value in lead_display_attributes" :key="value" v-if="need_display">
@@ -424,13 +425,13 @@
             </div>
         </div>
 
-        <div class="flex flex-col h-9/10 w-45/55 bg-violet-500 m-2">
+        <div class="flex flex-col h-full w-45/55 min-w-220 max-w-max bg-violet-500 m-2">
             <div class="flex flex-col px-2 py-1 bg-rose-700 h-45/100">
                 <div class="">Filter Leads</div>
                 <div class="flex flex-row h-full">
 
                     <!-- Select display section -->
-                    <div class="flex flex-col h-full w-3/10">
+                    <div class="flex flex-col h-full w-3/10 max-w-max">
                         <div class="bg-amber-500">Display</div>
                         <div class="flex flex-col overflow-auto h-8/10 bg-green-500">
                             <div v-for="value in lead_display_attributes" :key="value">
@@ -441,7 +442,7 @@
                     </div>
 
                     <!-- Search section -->
-                    <div class="flex flex-col h-full w-7/10">
+                    <div class="flex flex-col h-full w-7/10 max-w-max">
                         <div class="bg-amber-500">Search by</div>
                         <div class=""><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full" type="search"></div>
 

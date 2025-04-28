@@ -51,6 +51,15 @@ function edit_lead($conn){
             }
         }
 
+        if ($valid && array_key_exists("operation", (array)$post_data) && $post_data->operation == "DELETE"){
+            $delete_query = "DELETE FROM individual WHERE individual_id = $post_data->individual_id";
+            $delete_statement = $conn->prepare($delete_query);
+            $delete_statement->execute();
+
+            http_response_code(204);
+            echo json_encode(array("message" => "Successful deleted individual"));
+        }
+
         if ($valid && $post_data->update_table == "individual"){
             if (($post_data->update_attribute == "phone_number" || $post_data->update_attribute == "email_address") && $post_data->update_value != NULL){
                 $check_duplicate_query = "SELECT * FROM individual WHERE $post_data->update_attribute = $post_data->update_value";
