@@ -427,12 +427,12 @@
 
         <!-- right side -->
         <div class="flex flex-col min-h-max max-h-max w-180 max-w-180 min-w-180 bg-violet-500 m-2">
-            <div class="flex flex-col px-2 py-1 bg-rose-200">
-                <div class="h-max">Filter Leads</div>
-                <div class="flex flex-row">
+            <div class="flex flex-col px-2 py-1 bg-rose-200 border-pink-700 rounded-lg border-3 m-1">
+                <div class="h-max font-bold mx-1 text-xl py-1 decoration-2 decoration-pink-700 underline">Filter Leads</div>
+                <div class="flex flex-row h-max">
 
                     <!-- Select display section -->
-                    <div class="flex flex-col min-h-72 max-h-72 w-35/100 border-3 border-pink-700 rounded-xs mx-1">
+                    <div class="flex flex-col min-h-80 max-h-98 w-35/100 border-3 border-pink-700 rounded-xs mx-1">
                         <div class="h-max border-pink-700 px-3 py-1 border-b-3 font-bold bg-pink-500">Display</div>
                         <div class="flex flex-col overflow-auto bg-rose-100">
                             <div class="flex flex-row justify-between mx-2 border-b-2 border-pink-700/60 last:border-none" v-for="value in lead_display_attributes" :key="value">
@@ -443,35 +443,40 @@
                     </div>
 
                     <!-- Search section -->
-                    <div class="flex flex-col min-h-72 max-h-72 w-65/100 border-3 border-pink-700 rounded-xs mx-1">
+                    <div class="flex flex-col min-h-80 max-h-max w-65/100 border-3 border-pink-700 rounded-xs mx-1">
                         <div class="h-max border-pink-700 px-3 py-1 border-b-3 font-bold bg-pink-500">Search by</div>
-                        <div class="flex justify-center items-center"><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full rounded-full focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 mx-2 my-1 px-4 border-2 border-pink-700 cursor-pointer focus:cursor-texts hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content overflow-auto text-nowrap truncate" type="search"></div>
+                        <div class="bg-pink-300 flex justify-center items-center border-pink-700 border-b-3"><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full rounded-full focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 mx-2 my-1 px-4 border-2 border-pink-700 cursor-pointer focus:cursor-text hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content overflow-auto text-nowrap truncate" type="search" placeholder="Search for leads that match the requirement..."></div>
 
                         <!-- Search by check box -->
-                        <div class="flex flex-col overflow-auto w-full h-6/10">
-                            <div class="flex flex-row" v-for="value in lead_display_attributes" :key="value">
-                                <label class="w-3/10" v-if="value['display'].value" :for="value['correspond'] + '_search_by_checkbox'">{{ value['name'] }}</label>
-                                <input v-if="value['display'].value" @change="search_data" @click="value['search_by'].value = !value['search_by'].value" v-model="value['search_by'].value" :id="value['correspond'] + '_search_by_checkbox'" v-bind:name="value['correspond'] + '_search_by_checkbox'" type="checkbox"/>
-                                <input @input="search_data('SPECIFIC')" class="bg-gray-300 w-7/10" v-model="value['search_for'].value" v-if="value['display'].value" type="search"/>
+                        <div class="flex flex-col overflow-auto w-full h-60 bg-rose-100">
+                            <div class="last:border-none" v-for="value in lead_display_attributes" :key="value">
+                                <div class="mx-2 mt-2 flex flex-row border-pink-700/60 border-b-2 justify-center items-center" v-if="value['display'].value">
+                                    <label class="w-45/100 px-2" :for="value['correspond'] + '_search_by_checkbox'">{{ value['name'] }}</label>
+                                    <input class="accent-pink-700" @change="search_data" @click="value['search_by'].value = !value['search_by'].value" v-model="value['search_by'].value" :id="value['correspond'] + '_search_by_checkbox'" v-bind:name="value['correspond'] + '_search_by_checkbox'" type="checkbox"/>
+                                    <input @input="search_data('SPECIFIC')" class="bg-white w-55/100 rounded-md focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-6 mx-2 my-1 px-2 border-2 border-pink-700 cursor-pointer focus:cursor-text hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content overflow-auto text-nowrap truncate" v-model="value['search_for'].value" type="search"/>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Filter search type -->
-                        <div class="flex flex-row w-full justify-between min-h-max max-h-max">
-                            <div class="w-max">Filter type:</div>
+                        <div class="flex flex-row w-full justify-between bg-pink-300 border-pink-700 p-2 border-t-3">
+                            <div class="w-max font-semibold ml-3">Filter type:</div>
                             <div class="flex flex-row justify-end w-fit">
-                                <label for="search_one">Fulfill at least one</label>
-                                <input @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'OR'" id="search_one" name="search_radio" checked/>
-                                <label for="search_all">Fulfill all</label>
-                                <input @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'AND'" id="search_all" name="search_radio"/>
+                                <label class="ml-3" for="search_one">Fulfill at least one</label>
+                                <input class="mx-1" @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'OR'" id="search_one" name="search_radio" checked/>
+                                <label class="ml-3" for="search_all">Fulfill all</label>
+                                <input class="mx-1" @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'AND'" id="search_all" name="search_radio"/>
                             </div>
                         </div>
 
                         <!-- Search button -->
-                         <div class="flex flex-row w-full justify-end min-h-max max-h-max">
-                            <button @click="search_data('GENERAL')" class="bg-pink-400 ml-3 hover:bg-pink-700">General search</button>
-                            <button @click="search_data('SPECIFIC')" class="bg-pink-400 ml-3 hover:bg-pink-700">Specific search</button>
-                         </div>
+                         <div class="flex flex-row w-full justify-between bg-pink-300">
+                            <div class="w-max font-semibold ml-3">Search type:</div>
+                            <div class="flex flex-row justify-end w-fit">
+                                <button @click="search_data('GENERAL')" class="bg-pink-500 mx-3 hover:bg-pink-700 hover:text-white rounded-full w-35 px-2 mb-1">General search</button>
+                                <button @click="search_data('SPECIFIC')" class="bg-pink-500 mx-3 hover:bg-pink-700 hover:text-white rounded-full w-35 px-2 mb-1">Specific search</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
