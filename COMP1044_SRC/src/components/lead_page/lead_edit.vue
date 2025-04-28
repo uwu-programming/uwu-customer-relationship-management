@@ -22,27 +22,27 @@
 
     // referenceable CSS attribute
     const css_class_attributes = {
-        edit_attribute_area: "flex flex-col w-max h-max bg-amber-300 mx-5 px-5 py-2 my-2",
+        edit_attribute_area: "flex flex-col w-max h-max mx-5 px-5 py-2 my-2",
 
-        normal_edit_attribute: "flex flex-row mb-1 items-center",
-        description_edit_attribute: "flex flex-row mb-1",
-        search_select_edit_attribute: "flex flex-row mb-1",
-        normal_label: "w-48 flex justify-end px-2 py-1 mx-1 bg-violet-500 border-2",
-        text_input: "h-8 w-100 mx-1 mb-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
-        text_area_input: "w-100 h-40 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
-        text_area_input_short: "w-100 h-25 mx-1 cursor-pointer focus:cursor-text px-2 py-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
-        select_input: "h-8 w-100 mx-1 border-2 cursor-pointer px-2 pr-4 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
-        paragraph_input: "flex w-100 h-40 mx-1 px-2 py-2 overflow-auto",
-        paragraph_input_short: "flex w-100 h-20 mx-1 px-2 py-2 overflow-y-scroll",
-        variable_select_input: "h-8 w-100 mx-1 border-2 cursor-pointer px-2 pr-4 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
+        normal_edit_attribute: "flex flex-row mb-4 items-center",
+        description_edit_attribute: "flex flex-row mb-4",
+        search_select_edit_attribute: "flex flex-row mb-4",
+        normal_label: "w-48 flex justify-end px-2 py-1 mx-1 border-b-2 border-pink-700 font-bold",
+        text_input: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 cursor-pointer focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        text_area_input: "focus:shadow-pink-500/50 shadow-xl w-100 h-40 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
+        text_area_input_short: "focus:shadow-pink-500/50 shadow-xl w-100 h-25 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
+        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        paragraph_input: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-40 mx-3 px-2 py-1 overflow-auto border-2 focus:bg-gray-100 border-pink-700 rounded-md bg-white",
+        paragraph_input_short: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-20 mx-3 px-2 py-1 overflow-y-scroll focus:bg-gray-100 border-2 border-pink-700 rounded-sm bg-white",
+        variable_select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-sm cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
         option_input: "",
-        search_input: "h-8 w-100 mx-1 mb-1 border-2 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:border-pink-500 overflow-auto text-nowrap truncate",
+        search_input: "focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 w-100 mx-3 mb-2 bg-white rounded-full border-2 border-pink-700 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
 
-        error_input: "bg-red-700",
+        error_input: "shadow-red-600",
 
         tooltip_show: "visible",
         tooltip_hide: "hidden",
-        tooltip: "flex w-100 h-14 bg-rose-600 absolute z-2 m-1 -top-16 py-1 px-2 text-xs whitespace-pre-line",
+        tooltip: "flex w-100 h-14 bg-rose-500 border-2 border-rose-800 absolute z-2 m-1 -top-16 left-2 py-1 px-2 text-xs whitespace-pre-line rounded-sm",
 
         save_button: "hover:cursor-pointer w-5 h-5 m-1 text-white bg-green-600 rounded-full flex justify-center items-center",
         cancel_button: "hover:cursor-pointer w-5 h-5 m-1 text-white bg-red-700 rounded-full flex justify-center items-center",
@@ -316,6 +316,11 @@
     }
 
     const overview_attribute = {
+        lead_name: {
+            name: "Lead name",
+            value: ref(""),
+            correspond: ""
+        },
         lead_owner: {
             name: "Lead owner",
             correspond: "lead_owner_name",
@@ -385,10 +390,12 @@
                 }
                 for (const key in overview_attribute)
                     overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
+                overview_attribute['lead_name']['value']['value'] = (response.value.data[0]['first_name'] == null ? "" : response.value.data[0]['first_name'] + " ") + (response.value.data[0]['middle_name'] == null ? "" : response.value.data[0]['middle_name'] + " ") + (response.value.data[0]['last_name'] == null ? "" : response.value.data[0]['last_name']);
             } else if (success_response.value){
                 attribute['value']['value'] = response.value.data[0][attribute['correspond']];
                 for (const key in overview_attribute)
                     overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
+                overview_attribute['lead_name']['value']['value'] = (response.value.data[0]['first_name'] == null ? "" : response.value.data[0]['first_name'] + " ") + (response.value.data[0]['middle_name'] == null ? "" : response.value.data[0]['middle_name'] + " ") + (response.value.data[0]['last_name'] == null ? "" : response.value.data[0]['last_name']);
             }
         } catch (error){
             alert(error);
@@ -510,7 +517,11 @@
             } else {
                 const reg_exp = new RegExp(attribute['pattern']);
                 if (typeof((attribute['value']['value']).trim()) == "undefined" || (attribute['value']['value']).trim() == ""){
-                    if ((attribute['correspond'] == "last_name" && response['value']['data'][0]['first_name'] == null) || (attribute['correspond'] == "first_name" && response['value']['data'][0]['last_name'] == null)){
+                    if ((attribute['correspond'] == "last_name" && (response['value']['data'][0]['first_name'] == null || response['value']['data'][0]['first_name'] == ""))){
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_visible']['value'] = true;
+                        attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+                    } else if (attribute['correspond'] == "first_name" && (response['value']['data'][0]['last_name'] == null || response['value']['data'][0]['last_name'] == "")) {
                         attribute['has_error']['value'] = true;
                         attribute['tooltip_visible']['value'] = true;
                         attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
@@ -685,29 +696,28 @@
 </script>
 
 <template>
-    <div>{{ success_response }}: {{ response.data[0] }}</div>
-    <div>{{ edit_attribute_right['company']['value']['value'] }}</div>
-
-    <div class="flex flex-col w-screen min-w-max overflow-auto justify-center items-center bg-green-500">
+    <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto justify-center items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
 
         <!-- basic display part -->
-        <div class="flex flex-col min-w-300 overflow-auto px-20 py-10">
-            <div class="flex flex-row w-full bg-rose-700" v-for="value in overview_attribute">
-                <div>{{ value['name'] }}</div>
-                <div>{{ value['value'].value }}</div>
+        <div class="flex flex-col m-2">
+            <div class="flex flex-col min-w-340 max-w-full overflow-auto px-2 py-2 bg-rose-100 rounded-md">
+                <div class="flex flex-row w-ful" v-for="value in overview_attribute">
+                    <div class="flex w-60 m-1 justify-end items-end font-bold border-pink-700 border-b-1">{{ value['name'] }}</div>
+                    <div class="flex w-full m-1 ml-8 px-2 border-pink-700 border-b-1">{{ value['value'].value }}</div>
+                </div>
             </div>
         </div>
 
         <!-- edit part -->
-         <div class="flex w-full bg-red-600 justify-center">
-            <div class="flex flex-row min-w-max w-max m-4 bg-red-800 justify-center">
+         <div class="flex w-full justify-center">
+            <div class="flex flex-row min-w-max w-max m-4 bg-rose-100 rounded-md justify-center">
                 <!-- data at left side -->
                 <div :class="css_class_attributes.edit_attribute_area">
                     <div :class="value['class']" v-for="value in edit_attribute_left" :key="value">
                         <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                         <!-- the input field -->
                         <div class="relative">
-                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'border-red-700 border-4':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
                             <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
                             <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
                             <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
@@ -745,7 +755,7 @@
                         <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                         <!-- the input field -->
                         <div class="relative">
-                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'border-red-700 border-4':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                            <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
                             <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
                             <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
                             <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
@@ -782,6 +792,7 @@
 
         <!--  -->
     </div>
+    <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">You don't have permission to view / edit this lead</div>
 </template>
 
 <style>
