@@ -463,9 +463,9 @@
                             <div class="w-max font-semibold ml-3">Filter type:</div>
                             <div class="flex flex-row justify-end w-fit">
                                 <label class="ml-3" for="search_one">Fulfill at least one</label>
-                                <input class="mx-1" @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'OR'" id="search_one" name="search_radio" checked/>
+                                <input class="mx-1 accent-pink-700" @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'OR'" id="search_one" name="search_radio" checked/>
                                 <label class="ml-3" for="search_all">Fulfill all</label>
-                                <input class="mx-1" @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'AND'" id="search_all" name="search_radio"/>
+                                <input class="mx-1 accent-pink-700" @change="search_data('SPECIFIC')" type="radio" v-model="filter_type" :value="'AND'" id="search_all" name="search_radio"/>
                             </div>
                         </div>
 
@@ -481,27 +481,39 @@
                 </div>
             </div>
 
-            <div class="flex flex-col px-2 py-1 bg-green-600 h-55/100 w-full">
-                <div>Preview detail</div>
-                <div class="flex flex-row">
-                    <div class="w-1/2 h-full bg-sky-900 flex flex-col">
-                        <div class="">{{ preview_attribute_name['name']['name'] }}: {{ current_hover_user['last_name'] }} {{ current_hover_user['middle_name'] }} {{ current_hover_user['first_name'] }}</div>
-                        <div v-for="value in preview_attribute_left" :key="value">{{ value['name'] }}: {{ current_hover_user[value['correspond']] }}</div>
-                        <div class="flex flex-col">
-                            {{ preview_attribute_description['individual_description']['name'] }}:
+            <div class="flex flex-col px-2 py-1 h-64 bg-rose-200 border-rose-700 border-3 rounded-lg m-1 justify-center overflow-auto">
+                <div class="h-max font-bold mx-1 text-xl py-1 decoration-2 decoration-pink-700 underline">Preview detail</div>
+                <div class="flex flex-row overflow-auto">
+                    <div class="w-1/2 h-full flex flex-col">
+                        <div class="w-full flex flex-row px-2 m-1">
+                            <div class="w-30 border-pink-700 border-b-2 font-semibold">{{ preview_attribute_name['name']['name'] }}</div>
+                            <div class="mr-2 font-semibold border-pink-700 border-b-2">:</div>
+                            <div class="w-52 text-nowrap overflow-auto border-pink-700 border-b-2">{{ current_hover_user['last_name'] }} {{ current_hover_user['middle_name'] }} {{ current_hover_user['first_name'] }}</div>
+                        </div>
+                        <div class="w-full flex flex-row px-2 m-1" v-for="value in preview_attribute_left" :key="value">
+                            <div class="w-30 h-6 font-semibold border-pink-700 border-b-2">{{ value['name'] }}</div>
+                            <div class="mr-2 h-6 font-semibold border-pink-700 border-b-2">:</div>
+                            <div class="flex overflow-auto h-6 w-52 text-nowrap border-pink-700 border-b-2">{{ current_hover_user[value['correspond']] }}</div>
+                        </div>
+                        <div class="flex flex-col px-2 m-1">
+                            <div class="font-semibold border-pink-700 border-b-2 w-full">{{ preview_attribute_description['individual_description']['name'] }}:</div>
                             <div class="flex overflow-auto h-40">{{ current_hover_user[preview_attribute_description['individual_description']['correspond']] }}</div>
                         </div>
                     </div>
-                    <div class="w-1/2 bg-sky-900">
-                        <div v-for="value in preview_attribute_right" :key="value">{{ value['name'] }}: {{ current_hover_user[value['correspond']] }}</div>
-                        <div class="flex flex-col">
-                            {{ preview_attribute_description['company_description']['name'] }}:
+                    <div class="w-1/2 h-full flex flex-col">
+                        <div class="w-full flex flex-row px-2 m-1" v-for="value in preview_attribute_right" :key="value">
+                            <div class="w-30 h-6 font-semibold border-pink-700 border-b-2">{{ value['name'] }}</div>
+                            <div class="mr-2 h-6 font-semibold border-pink-700 border-b-2">:</div>
+                            <div class="flex overflow-auto h-6 w-52 text-nowrap border-pink-700 border-b-2">{{ current_hover_user[value['correspond']] }}</div>
+                        </div>
+                        <div class="flex flex-col px-2 m-1">
+                            <div class="font-semibold border-pink-700 border-b-2">{{ preview_attribute_description['company_description']['name'] }}:</div>
                             <div class="flex overflow-auto h-40">{{ current_hover_user[preview_attribute_description['company_description']['correspond']] }}</div>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-row bg-cyan-700">
-                    <router-link :to="{name: 'lead_edit_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button">Edit</router-link>
+                <div class="flex flex-row justify-end m-1 border-pink-700 border-t-3">
+                    <router-link :to="{name: 'lead_edit_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button"><div class="w-35 bg-pink-500 mx-3 hover:bg-pink-700 hover:text-white rounded-full flex justify-center items-center m-2 font-semibold py-1">Open in detail</div></router-link>
                 </div>
             </div>
 
