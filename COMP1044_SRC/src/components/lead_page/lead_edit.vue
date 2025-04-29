@@ -16,14 +16,20 @@
     const lead_status_option = ref("");
     const company_option = ref("");
     const chosen_company_id = ref("");
+    const conversion_history_response = ref("");
 
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
+    const conversion_history_exist = ref(false);
 
     // check if delete is activated
     const delete_prompt = ref(false);
     const delete_success_prompt = ref(false);
     const success_operation_prompt = ref(false);
+
+    // check which content to load
+    const information_content = ref(true);
+    const conversion_history_content = ref(false);
 
     // referenceable CSS attribute
     const css_class_attributes = {
@@ -407,6 +413,21 @@
         }
     }
 
+    // get conversion history
+    const get_conversion_history = async () => {
+        try {
+            conversion_history_response['value'] = await axios.post(
+                "../backend/retrieve_lead_conversion_history.php",
+                {
+                    individual_id: props.individual_id
+                }
+            );
+            conversion_history_exist['value'] = (conversion_history_response['value']['data'].length > 0 ? true : false);
+        } catch (error){
+            alert(error);
+        }
+    }
+
     // get select option of lead status
     const get_lead_status_option = async () => {
         try {
@@ -763,8 +784,16 @@
 
         <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
             <div class="flex flex-col w-max">
+                <!-- select content -->
+                <div class="flex mx-4 mt-2 p-1">
+                    <div class="flex flex-row w-max p-1 bg-rose-100 rounded-full border-pink-700 border-2">
+                        <button @click="conversion_history_content=false; information_content=true;" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!information_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':information_content}]">Overview</button>
+                        <button @click="conversion_history_content=true; information_content=false; get_conversion_history();" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!conversion_history_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':conversion_history_content}]">Conversion history</button>
+                    </div>
+                </div>
+
                 <!-- basic display part -->
-                <div class="flex flex-col m-4">
+                <div v-if="information_content" class="flex flex-col m-4">
                     <div class="flex flex-col min-w-340 max-w-full overflow-auto px-2 py-2 bg-rose-100 rounded-md border-3 border-pink-700 shadow-xl">
                         <div class="flex flex-row w-ful" v-for="value in overview_attribute">
                             <div class="flex w-60 m-1 justify-end items-end font-bold border-pink-700 border-b-1">{{ value['name'] }}</div>
@@ -774,7 +803,7 @@
                 </div>
 
                 <!-- edit part -->
-                <div class="flex w-full justify-center">
+                <div v-if="information_content" class="flex w-full justify-center">
                     <div class="flex flex-row min-w-max w-max m-4 bg-rose-100 rounded-md justify-center border-3 border-pink-700 shadow-xl">
                         <!-- data at left side -->
                         <div :class="css_class_attributes.edit_attribute_area">
@@ -854,6 +883,40 @@
 
                     </div>
                 </div>
+
+                <div v-if="conversion_history_content" class="flex flex-col min-w-240 max-w-full h-screen overflow-auto bg-pink-300 my-2 mx-4 border-4 rounded-md border-pink-700 p-2">
+                    <div v-if="conversion_history_exist" v-for="value in conversion_history_response.data">
+                        <div class="flex flex-col my-2 mx-2 bg-rose-100 border-pink-700 border-2 rounded-md py-2 px-4">
+                            <div class="flex flex-row bg-pink-500 w-max py-1 px-4 mb-2 border-2 rounded-md border-pink-700 font-bold text-lg">
+                                <div>{{ value['convert_time'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert from</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['convert_from'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert to</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['convert_to'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert by</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['user_name'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Converter user ID</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['user_id'] }}</div>
+                            </div>
+                            <div class="flex flex-row">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Conversion note</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8 h-40 overflow-auto">{{ value['conversion_message'] }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="flex m-4 min-w-340 max-w-full px-4">
+                        <div class="flex bg-rose-100 border-rose-700 border-3 rounded-md px-2 py-2 w-full justify-center items-center">There is no conversion history for this lead</div>
+                    </div>
+                </div>
+
             </div>
         </div>
         
