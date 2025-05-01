@@ -36,7 +36,7 @@ function retrieve_gender($conn){
         // check get type
         if (array_key_exists("data", (array)$post_data)){
             // if the request is to get field
-            if (true || $post_data->data == "option"){
+            if ($post_data->data == "option"){
                 $field_string = "";
                 $field_array = array();
                 foreach ($result as $key => $value){

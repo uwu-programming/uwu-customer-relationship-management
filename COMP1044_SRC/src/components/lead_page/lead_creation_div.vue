@@ -752,9 +752,9 @@
 
     // add the individual into the database
     const create_new_user = async () => {
-        validate_create();
+        await validate_create();
 
-        if (can_add['value']){
+        if (can_add.value){
             var insert_data = [];
             for (const value in edit_attribute_left){
                 if (edit_attribute_left[value]['value']['value'] != ""){
@@ -763,16 +763,37 @@
             }
             for (const value in edit_attribute_right){
                 if (edit_attribute_right[value]['value']['value'] != "" && (edit_attribute_right[value]['correspond'] != "company_address" && edit_attribute_right[value]['correspond'] != "company_description")){
-                    if (edit_attribute_right[value]['correspond'] != 'lead_owner_user_id' || (edit_attribute_right[value]['correspond'] == 'lead_owner_user_id' && edit_attribute_right['relationship']['value']['value'] == 'Lead')){
+                    if (edit_attribute_right[value]['correspond'] != 'lead_owner_user_id'){
                         insert_data.push(edit_attribute_right[value]['correspond'] + ":'" + edit_attribute_right[value]['value']['value'] + "'");
                     }
                 }
             }
 
-            alert(JSON.stringify(insert_data));
-
             try {
-
+                if (edit_attribute_right['relationship']['value']['value'] != "Lead"){
+                    const create_individual_response = await axios.post(
+                        "../backend/create_new_individual_api.php",
+                        {
+                            requirement: JSON.stringify(insert_data),
+                            relationship: edit_attribute_right['relationship']['value']['value']
+                        }
+                    );
+                    if (create_individual_response.status == 204){
+                        create_success_prompt['value'] = true;
+                    }
+                } else {
+                    const create_individual_response = await axios.post(
+                        "../backend/create_new_individual_api.php",
+                        {
+                            requirement: JSON.stringify(insert_data),
+                            relationship: edit_attribute_right['relationship']['value']['value'],
+                            lead_owner_user_id: edit_attribute_right['assign_to']['value']['value']
+                        }
+                    );
+                    if (create_individual_response.status == 204){
+                        create_success_prompt['value'] = true;
+                    }
+                }
             } catch (error){
                 alert(error);
             }
@@ -804,7 +825,7 @@
 
         <div v-if="create_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
             <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
-                <div class="m-4 font-bold text-lg">The individual has successfully been removed</div>
+                <div class="m-4 font-bold text-lg">The individual has successfully been created</div>
                 <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
                     <button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
                 </div>
@@ -878,7 +899,7 @@
                                 <div v-if="edit_attribute_right['relationship']['value']['value'] == 'Lead' && value['correspond'] == 'lead_owner_user_id'" class="flex flex-col">
                                     <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
                                     <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
-                                        <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
+                                        <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['user_id']">ID: {{ option['user_id'] }} - User name: {{ option[value['value_name']['value']] }} </option>
                                         <option :class="css_class_attributes.option_input" :value="current_crm_user">Self</option>
                                     </select>
                                 </div>
