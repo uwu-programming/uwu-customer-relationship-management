@@ -76,10 +76,10 @@ function retrieve_user($conn){
 
                         // add filter (AND / OR) if it is not the last requirement
                         if ($value != end($requirement_JSON))
-                            if (array_key_exists("search_type", (array)$post_data) && $post_data->search_type == "GENERAL")
-                                $sql_query = $sql_query . " OR";
+                            if (array_key_exists("search_type", (array)$post_data) && $post_data->search_type == "SPECIFIC")
+                                $sql_query = $sql_query . " AND";
                             else
-                                $sql_query = $sql_query . " $post_data->filter";
+                                $sql_query = $sql_query . " OR";
                     }
 
                     $sql_query = $sql_query . ")";

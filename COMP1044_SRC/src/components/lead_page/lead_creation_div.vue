@@ -7,6 +7,9 @@
         individual_id: String // for accessing specific individual
     });
 
+    // current crm user
+    const current_crm_user = ref("");
+
     // store the response from API request
     const response = ref("");
     const user = ref("");
@@ -269,11 +272,11 @@
             input: input_attributes.variable_select,
             trait: input_attributes.trait_select,
             value: ref(""),
-            value_name: ref("company_name"),
+            value_name: ref("user_name"),
             search_value: ref(""),
             search_placeholder: ref("Search for individual name..."),
             search_function: ref(""),
-            option_list: ref(company_option),
+            option_list: ref(assign_to_user_option),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -333,6 +336,17 @@
         }
     }
 
+    // get current crm user
+    const get_current_crm_user = async () => {
+        try {
+            const get_current_crm_user_response = await axios.post("../backend/get_current_user_api.php");
+            current_crm_user['value'] = get_current_crm_user_response['data']['user_id'];
+            edit_attribute_right['assign_to']['value']['value'] = current_crm_user['value']; // set default assign to user
+        } catch(error) {
+            alert(error);
+        }
+    }
+
     // get select option of gender
     const get_gender_option = async () => {
         try {
@@ -379,6 +393,31 @@
     }
     // bind the function to country
     edit_attribute_left['country']['search_function']['value'] = get_country_option;
+
+    // get user able to be assigned to
+    const get_assign_user_option = async (search_value) => {
+        try {
+            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
+                const get_assign_user_option_response = await axios.post("../backend/retrieve_user_api.php");
+                assign_to_user_option['value'] = get_assign_user_option_response.data;
+            } else {
+                var search_array = [];
+                search_array.push("user_id:" + search_value.trim());
+                search_array.push("user_name:" + search_value.trim());
+
+                const get_assign_user_option_response = await axios.post(
+                    "../backend/retrieve_user_api.php", 
+                    {
+                        requirement: JSON.stringify(search_array)
+                    }
+                );
+                assign_to_user_option['value'] = get_assign_user_option_response.data;
+            }
+        } catch(error) {
+            alert(error);
+        }
+    }
+    edit_attribute_right['assign_to']['search_function']['value'] = get_assign_user_option;
 
     // get select option of honorifics
     const get_company_option = async (search_value) => {
@@ -724,18 +763,28 @@
             }
             for (const value in edit_attribute_right){
                 if (edit_attribute_right[value]['value']['value'] != "" && (edit_attribute_right[value]['correspond'] != "company_address" && edit_attribute_right[value]['correspond'] != "company_description")){
-                    insert_data.push(edit_attribute_right[value]['correspond'] + ":" + edit_attribute_right[value]['value']['value'] + "'");
+                    if (edit_attribute_right[value]['correspond'] != 'lead_owner_user_id' || (edit_attribute_right[value]['correspond'] == 'lead_owner_user_id' && edit_attribute_right['relationship']['value']['value'] == 'Lead')){
+                        insert_data.push(edit_attribute_right[value]['correspond'] + ":'" + edit_attribute_right[value]['value']['value'] + "'");
+                    }
                 }
             }
 
             alert(JSON.stringify(insert_data));
+
+            try {
+
+            } catch (error){
+                alert(error);
+            }
         }
     }
 
     // initialize / update to get data
     const initialize = async () => {
+        get_current_crm_user();
         get_gender_option();
         get_honorifics_option();
+        get_assign_user_option();
         get_company_option();
         get_country_option();
         get_relationship_option();
@@ -805,7 +854,7 @@
                         <!-- data at right side -->
                         <div :class="css_class_attributes.edit_attribute_area">
                             <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
-                                <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
+                                <label v-if="value['correspond'] != 'lead_owner_user_id' || edit_attribute_right['relationship']['value']['value'] == 'Lead'" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                                 <!-- the input field -->
                                 <div class="relative">
                                     <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
@@ -818,11 +867,19 @@
                                     <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
                                 </div>
                                 <!-- for searchable select -->
-                                <div class="flex flex-col">
+                                <div v-if="value['correspond'] != 'lead_owner_user_id'" class="flex flex-col">
                                     <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
                                     <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
                                         <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
                                         <option :class="css_class_attributes.option_input" :value="null">NULL</option>
+                                    </select>
+                                </div>
+                                <!-- for assign user -->
+                                <div v-if="edit_attribute_right['relationship']['value']['value'] == 'Lead' && value['correspond'] == 'lead_owner_user_id'" class="flex flex-col">
+                                    <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
+                                        <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
+                                        <option :class="css_class_attributes.option_input" :value="current_crm_user">Self</option>
                                     </select>
                                 </div>
                             </div>
