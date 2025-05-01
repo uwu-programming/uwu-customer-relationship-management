@@ -520,12 +520,7 @@
                     <router-link :to="{name: 'lead_edit_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button"><div class="w-35 bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full flex justify-center items-center m-2 font-semibold py-1">Open in detail</div></router-link>
                 </div>
             </div>
-
-            <!-- create new lead -->
-            <div class="bg-pink-300 rounded-md border-pink-700 border-3 m-1 flex justify-end">
-                <button class="mx-3 my-4 bg-green-500 py-2 px-4 rounded-full font-semibold hover:bg-green-800 hover:text-white">Create new user</button>
-            </div>
-
+            
         </div>
     </div>
 </template>
