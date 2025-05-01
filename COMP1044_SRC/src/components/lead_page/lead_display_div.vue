@@ -393,7 +393,7 @@
                         <span>No attribute selected</span>
                     </div>
                 </div>
-                <div class="flex flex-col w-max overflow-y-auto h-full" v-if="need_display && JSON.stringify(response.data) != '[]'">
+                <div class="flex flex-col w-max overflow-y-auto h-full bg-rose-100" v-if="need_display && JSON.stringify(response.data) != '[]'">
                     <router-link :to="{name: 'lead_edit_page', params: {individual_id: response_value['individual_id']}}" @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-rose-100 hover:bg-rose-300 flex flex-row border-b-pink-700/80 border-b-1 overflow-hidden" v-if="response.status==200" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
                         <div class="w-max flex overflow-hidden" v-for="value in lead_display_attributes" :key="value">   
                             <span v-if="value['display'].value" v-bind:class="value['class'] + css_class_attributes.display_span">{{ response_value[value['correspond']] }}</span>
@@ -436,7 +436,7 @@
                 <div class="flex flex-row h-max">
 
                     <!-- Select display section -->
-                    <div class="flex flex-col min-h-80 max-h-98 w-35/100 border-3 border-pink-700 rounded-xs mx-1">
+                    <div class="flex flex-col min-h-80 max-h-98 w-35/100 border-3 border-pink-700 rounded-xs mx-1 bg-rose-100">
                         <div class="h-max border-pink-700 px-3 py-1 border-b-3 font-bold bg-pink-500">Display</div>
                         <div class="flex flex-col overflow-auto bg-rose-100">
                             <div class="flex flex-row justify-between mx-2 border-b-2 border-pink-700/60 last:border-none" v-for="value in lead_display_attributes" :key="value">
@@ -447,7 +447,7 @@
                     </div>
 
                     <!-- Search section -->
-                    <div class="flex flex-col min-h-80 max-h-max w-65/100 border-3 border-pink-700 rounded-xs mx-1">
+                    <div class="flex flex-col min-h-80 max-h-max w-65/100 border-3 border-pink-700 rounded-xs mx-1 bg-rose-100">
                         <div class="h-max border-pink-700 px-3 py-1 border-b-3 font-bold bg-pink-500">Search by</div>
                         <div class="bg-pink-500 flex justify-center items-center border-pink-700 border-b-3"><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full rounded-full focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 mx-2 my-1 px-4 border-2 border-pink-700 cursor-pointer focus:cursor-text hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content overflow-auto text-nowrap truncate" type="search" placeholder="Search for leads that match the requirement..."></div>
 
@@ -477,8 +477,8 @@
                          <div class="flex flex-row w-full justify-between bg-pink-500">
                             <div class="w-max font-semibold ml-3">Search type:</div>
                             <div class="flex flex-row justify-end w-fit">
-                                <button @click="search_data('GENERAL')" class="bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full w-35 px-2 mb-1">General search</button>
-                                <button @click="search_data('SPECIFIC')" class="bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full w-35 px-2 mb-1">Specific search</button>
+                                <button @click="search_data('GENERAL')" class="bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full w-35 px-2 mb-1 font-semibold">General search</button>
+                                <button @click="search_data('SPECIFIC')" class="bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full w-35 px-2 mb-1 font-semibold">Specific search</button>
                             </div>
                         </div>
                     </div>
@@ -521,9 +521,11 @@
                 </div>
             </div>
 
-            <div>
-
+            <!-- create new lead -->
+            <div class="bg-pink-300 rounded-md border-pink-700 border-3 m-1 flex justify-end">
+                <button class="mx-3 my-4 bg-green-500 py-2 px-4 rounded-full font-semibold hover:bg-green-800 hover:text-white">Create new user</button>
             </div>
+
         </div>
     </div>
 </template>

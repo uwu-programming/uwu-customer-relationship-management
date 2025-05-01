@@ -1,7 +1,8 @@
 INSERT INTO user_role
     VALUES
         (1, "uwu", "yesuwu"),
-        (2, "owo", "partly yes uwu");
+        (2, "owo", "partly yes uwu"),
+        (3, "noob", "bad");
 
 INSERT INTO crm_user 
     VALUES

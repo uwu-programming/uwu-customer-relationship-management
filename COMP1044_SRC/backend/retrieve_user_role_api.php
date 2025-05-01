@@ -11,24 +11,28 @@ require "database_connection.php";
 
 switch($_SERVER["REQUEST_METHOD"]){
     case "POST":
-        retrieve_company($conn);
+        retrieve_user_role($conn);
         break;
 
     default:
-        retrieve_company($conn);
+        retrieve_user_role($conn);
         break;
 }
 
-function retrieve_company($conn){
+function retrieve_user_role($conn){
     try {
+        $current_role_id = $_SESSION['user_role'];
+
         // get the POST JSON (expected data: {data})
         $post_data = json_decode(file_get_contents("php://input"));
 
-        $sql_query = "SELECT * FROM company";
+        $sql_query = "SELECT * FROM user_role";
 
         // for filter
         if (array_key_exists("filter", (array)$post_data)){
-            $sql_query = $sql_query . " WHERE company_name LIKE '%$post_data->filter%'";
+            $sql_query = $sql_query . " WHERE role_name LIKE '%$post_data->filter%' AND role_id > $current_role_id";
+        } else {
+            $sql_query = $sql_query . " WHERE role_id > $current_role_id";
         }
 
         $sql_statement = $conn->prepare($sql_query);
@@ -42,7 +46,7 @@ function retrieve_company($conn){
         // check get type
         if (array_key_exists("data", (array)$post_data) && count($result) > 0){
             // if the request is to get field
-            if ($post_data->data == "option"){
+            if (true || $post_data->data == "option"){
                 echo json_encode($result);
             }
         } else {

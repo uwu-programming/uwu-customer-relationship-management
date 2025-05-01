@@ -14,7 +14,9 @@
     const honorifics_option = ref("");
     const country_option = ref("");
     const lead_status_option = ref("");
+    const assign_to_user_option = ref("");
     const company_option = ref("");
+    const relationship_option = ref("");
     const chosen_company_id = ref("");
     const conversion_history_response = ref("");
 
@@ -23,8 +25,8 @@
     const conversion_history_exist = ref(false);
 
     // check if delete is activated
-    const delete_prompt = ref(false);
-    const delete_success_prompt = ref(false);
+    const create_prompt = ref(false);
+    const create_success_prompt = ref(false);
     const success_operation_prompt = ref(false);
 
     // check which content to load
@@ -42,8 +44,8 @@
         text_input: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 cursor-pointer focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
         text_area_input: "focus:shadow-pink-500/50 shadow-xl w-100 h-40 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
         text_area_input_short: "focus:shadow-pink-500/50 shadow-xl w-100 h-25 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
-        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
-        paragraph_input: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-40 mx-3 px-2 py-1 overflow-auto border-2 focus:bg-gray-100 border-pink-700 rounded-md bg-white",
+        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate shadow-xl",
+        paragraph_input: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-40 mx-3 px-2 py-1 overflow-auto border-2 focus:bg-gray-100 border-pink-700 rounded-md bg-white shadow-xl",
         paragraph_input_short: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-20 mx-3 px-2 py-1 overflow-y-scroll focus:bg-gray-100 border-2 border-pink-700 rounded-sm bg-white",
         variable_select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-sm cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
         option_input: "",
@@ -240,16 +242,16 @@
     }
 
     const edit_attribute_right = {
-        lead_status: {
-            name: "Lead status",
-            correspond: "lead_status",
-            table: "lead_individual.",
+        relationship: {
+            name: "Individual relationship",
+            correspond: "relationship",
+            table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.select_input,
             input: input_attributes.fixed_select,
             trait: input_attributes.trait_select,
-            option_list: ref(lead_status_option),
+            option_list: ref(relationship_option),
             value: ref(""),
             hover: ref(false),
             changed: ref(false),
@@ -257,16 +259,21 @@
             tooltip_visible: ref(css_class_attributes.tooltip_hide),
             tooltip_message: ref("")
         },
-        lead_conversion_message: {
-            name: "Conversion note",
-            correspond: "conversion_message",
-            table: "conversion_history.",
-            class: css_class_attributes.description_edit_attribute,
+        assign_to: {
+            name: "Assign to user",
+            correspond: "lead_owner_user_id",
+            table: "lead_individual.",
+            class: css_class_attributes.search_select_edit_attribute,
             name_class: css_class_attributes.normal_label,
-            input_class: css_class_attributes.text_area_input_short,
-            input: input_attributes.textarea,
-            trait: input_attributes.trait_text,
+            input_class: css_class_attributes.variable_select_input,
+            input: input_attributes.variable_select,
+            trait: input_attributes.trait_select,
             value: ref(""),
+            value_name: ref("company_name"),
+            search_value: ref(""),
+            search_placeholder: ref("Search for individual name..."),
+            search_function: ref(""),
+            option_list: ref(company_option),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -323,119 +330,6 @@
             has_error: ref(false),
             tooltip_visible: ref(css_class_attributes.tooltip_hide),
             tooltip_message: ref("")
-        }
-    }
-
-    const overview_attribute = {
-        lead_name: {
-            name: "Lead name",
-            value: ref(""),
-            correspond: ""
-        },
-        lead_owner: {
-            name: "Lead owner",
-            correspond: "lead_owner_name",
-            table: "crm_user.",
-            class: css_class_attributes.description_edit_attribute,
-            name_class: css_class_attributes.normal_label,
-            input_class: "",
-            value: ref(""),
-            hover: ref(false),
-        },
-        lead_owner_id: {
-            name: "Lead owner ID",
-            correspond: "lead_owner_user_id",
-            table: "lead_individual.",
-            class: css_class_attributes.description_edit_attribute,
-            name_class: css_class_attributes.normal_label,
-            input_class: "",
-            value: ref(""),
-            hover: ref(false),
-        },
-        lead_status: {
-            name: "Lead status",
-            correspond: "lead_status",
-            table: "lead_individual.",
-            class: css_class_attributes.description_edit_attribute,
-            name_class: css_class_attributes.normal_label,
-            input_class: "",
-            value: ref(""),
-            hover: ref(false),
-        },
-        registered_date: {
-            name: "Registered date",
-            correspond: "registered_date",
-            table: "individual.",
-            class: css_class_attributes.normal_edit_attribute,
-            name_class: css_class_attributes.normal_label,
-            input_class: "",
-            input: input_attributes.none,
-            value: ref(""),
-            hover: ref(false),
-        },
-        created_by: {
-            name: "Created by",
-            correspond: "created_by_name",
-            table: "crm_user.",
-            class: css_class_attributes.normal_edit_attribute,
-            name_class: css_class_attributes.normal_label,
-            input_class: "",
-            input: input_attributes.none,
-            value: ref(""),
-            hover: ref(false),
-        }
-    }
-
-    // retrieve the lead to edit
-    const get_lead_detail = async (attribute) => {
-        try {
-            response.value = await axios.post("../backend/retrieve_lead_api.php", {requirement: JSON.stringify(["individual_id:" + props.individual_id]), hard_requirement: true});
-            // check if the retrieve is success (by checking if the object has key)
-            success_response.value = (Object.keys(response.value.data)).length > 0;
-
-            if (success_response.value && attribute == null){
-                for (const key in edit_attribute_left)
-                    edit_attribute_left[key]['value'].value = response.value.data[0][edit_attribute_left[key]['correspond']];
-                for (const key in edit_attribute_right){
-                    edit_attribute_right[key]['value'].value = response.value.data[0][edit_attribute_right[key]['correspond']];
-                }
-                for (const key in overview_attribute)
-                    overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
-                overview_attribute['lead_name']['value']['value'] = (response.value.data[0]['first_name'] == null ? "" : response.value.data[0]['first_name'] + " ") + (response.value.data[0]['middle_name'] == null ? "" : response.value.data[0]['middle_name'] + " ") + (response.value.data[0]['last_name'] == null ? "" : response.value.data[0]['last_name']);
-            } else if (success_response.value){
-                attribute['value']['value'] = response.value.data[0][attribute['correspond']];
-                for (const key in overview_attribute)
-                    overview_attribute[key]['value'].value = response.value.data[0][overview_attribute[key]['correspond']];
-                overview_attribute['lead_name']['value']['value'] = (response.value.data[0]['first_name'] == null ? "" : response.value.data[0]['first_name'] + " ") + (response.value.data[0]['middle_name'] == null ? "" : response.value.data[0]['middle_name'] + " ") + (response.value.data[0]['last_name'] == null ? "" : response.value.data[0]['last_name']);
-            }
-        } catch (error){
-            alert(error);
-        }
-    }
-
-    // get conversion history
-    const get_conversion_history = async () => {
-        try {
-            conversion_history_response['value'] = await axios.post(
-                "../backend/retrieve_lead_conversion_history.php",
-                {
-                    individual_id: props.individual_id
-                }
-            );
-            conversion_history_exist['value'] = (conversion_history_response['value']['data'].length > 0 ? true : false);
-        } catch (error){
-            alert(error);
-        }
-    }
-
-    // get select option of lead status
-    const get_lead_status_option = async () => {
-        try {
-            const lead_status_option_response = await axios.post("../backend/retrieve_lead_status_api.php", {data: "option"});
-            // it should be an object (array), keys are index
-            lead_status_option['value'] = lead_status_option_response.data;
-        } catch (error){
-            alert(error);
         }
     }
 
@@ -510,6 +404,17 @@
     }
     // bind the function to company
     edit_attribute_right['company']['search_function']['value'] = get_company_option;
+
+    // get relationship option
+    const get_relationship_option = async () => {
+        try {
+            const relationship_option_response = await axios.post("../backend/retrieve_individual_relationship_api.php", {data: "option"});
+            // it should be an object (array), keys are index
+            relationship_option['value'] = relationship_option_response.data;
+        } catch (error){
+            alert(error);
+        }
+    }
 
     // detect changes
     const select_changed = (attribute) => {
@@ -692,54 +597,148 @@
         }
     }
 
-    // cancel changes
-    const cancel_changes = (attribute) => {
-        attribute['changed']['value'] = false;
-        attribute['has_error']['value'] = false;
-        attribute['value']['value'] = response.value.data[0][attribute['correspond']];
+    // validate the creation of an individual
+    const can_add = ref(true);
+    const validate_create = async () => {
+        can_add['value'] = true;
 
-        if (attribute['correspond'] == "lead_status"){
-            edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
-            edit_attribute_right['lead_conversion_message']['has_error']['value'] = false;
-            edit_attribute_right['lead_conversion_message']['value']['value'] = "";
-        } else if (attribute['correspond'] == 'company_id'){
-            edit_attribute_right['company_address']['value']['value'] = response.value.data[0][attribute['company_address']];
-            edit_attribute_right['company_description']['value']['value'] = response.value.data[0][attribute['company_description']];
-            chosen_company_id['value'] = response.value.data[0][attribute['company_id']];
+        // reset error and tooltup
+        edit_attribute_left['last_name']['has_error']['value'] = false;
+        edit_attribute_left['first_name']['has_error']['value'] = false;
+        edit_attribute_left['phone_number']['has_error']['value'] = false;
+        edit_attribute_left['email_address']['has_error']['value'] = false;
+        edit_attribute_left['gender']['has_error']['value'] = false;
+        edit_attribute_left['honorifics']['has_error']['value'] = false;
+        edit_attribute_right['relationship']['has_error']['value'] = false;
+
+        // check if last name or first name is filled
+        if ((typeof((edit_attribute_left['last_name']['value']['value']).trim()) == "undefined" || (edit_attribute_left['last_name']['value']['value']).trim() == "") && (typeof((edit_attribute_left['first_name']['value']['value']).trim()) == "undefined" || (edit_attribute_left['first_name']['value']['value']).trim() == "")){
+            edit_attribute_left['last_name']['has_error']['value'] = true;
+            edit_attribute_left['first_name']['has_error']['value'] = true;
+            edit_attribute_left['last_name']['tooltip_visible']['value'] = true;
+            edit_attribute_left['first_name']['tooltip_visible']['value'] = true;
+            edit_attribute_left['last_name']['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+            edit_attribute_left['first_name']['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+            can_add['value'] = false;
+        } else {   
+            // test if the input follow the format
+            const reg_exp = new RegExp(input_attributes.name_pattern);
+            if (!((typeof((edit_attribute_left['last_name']['value']['value']).trim()) == "undefined" || (edit_attribute_left['last_name']['value']['value']).trim() == "")) && !(reg_exp.test(edit_attribute_left['last_name']['value']['value']))){
+                edit_attribute_left['last_name']['has_error']['value'] = true;
+                edit_attribute_left['last_name']['tooltip_visible']['value'] = true;
+                edit_attribute_left['last_name']['tooltip_message']['value'] = "Bad name format, please try again. \n(Name must start with capital letter, and does not include numbers or special character)";
+                can_add['value'] = false;
+            }
+
+            if (!(typeof((edit_attribute_left['first_name']['value']['value']).trim()) == "undefined" || (edit_attribute_left['first_name']['value']['value']).trim() == "") && !(reg_exp.test(edit_attribute_left['first_name']['value']['value']))){
+                edit_attribute_left['first_name']['has_error']['value'] = true;
+                edit_attribute_left['first_name']['tooltip_visible']['value'] = true;
+                edit_attribute_left['first_name']['tooltip_message']['value'] = "Bad name format, please try again. \n(Name must start with capital letter, and does not include numbers or special character)";
+                can_add['value'] = false;
+            }
+        }
+
+        // check phone number and email has one of them filled
+        if ((typeof((edit_attribute_left['phone_number']['value']['value']).trim()) == "undefined" || (edit_attribute_left['phone_number']['value']['value']).trim() == "") && (typeof((edit_attribute_left['email_address']['value']['value']).trim()) == "undefined" || (edit_attribute_left['email_address']['value']['value']).trim() == "")){
+            edit_attribute_left['phone_number']['has_error']['value'] = true;
+            edit_attribute_left['email_address']['has_error']['value'] = true;
+            edit_attribute_left['phone_number']['tooltip_visible']['value'] = true;
+            edit_attribute_left['email_address']['tooltip_visible']['value'] = true;
+            edit_attribute_left['phone_number']['tooltip_message']['value'] = "Phone number and email address cannot be empty at the same time.\nPlease try again.";
+            edit_attribute_left['email_address']['tooltip_message']['value'] = "Phone number and email address cannot be empty at the same time.\nPlease try again.";
+            can_add['value'] = false;
+        } else {
+            // test if the input follow the format
+            const reg_exp_phone = new RegExp(input_attributes.phone_pattern);
+            const reg_exp_email = new RegExp(input_attributes.email_pattern);
+            if (!((typeof((edit_attribute_left['phone_number']['value']['value']).trim()) == "undefined" || (edit_attribute_left['phone_number']['value']['value']).trim() == "")) && !(reg_exp_phone.test(edit_attribute_left['phone_number']['value']['value']))){
+                edit_attribute_left['phone_number']['has_error']['value'] = true;
+                edit_attribute_left['phone_number']['tooltip_visible']['value'] = true;
+                edit_attribute_left['phone_number']['tooltip_message']['value'] = "The entered phone number format is invalid.\nPlease try again. (Format: number between range (8, 20) without special character)";
+                can_add['value'] = false;
+            } else if (!((typeof((edit_attribute_left['phone_number']['value']['value']).trim()) == "undefined" || (edit_attribute_left['phone_number']['value']['value']).trim() == ""))) {
+                const phone_number_response = await axios.post("../backend/retrieve_phone_number_api.php", {phone_number: edit_attribute_left['phone_number']['value']['value']});
+                if (phone_number_response.status == 204){
+
+                } else {
+                    edit_attribute_left['phone_number']['has_error']['value'] = true;
+                    edit_attribute_left['phone_number']['tooltip_visible']['value'] = true;
+                    edit_attribute_left['phone_number']['tooltip_message']['value'] = "The entered phone number has already taken by another individual. Please try another number.";
+                    can_add['value'] = false;
+                }
+            }
+
+            if (!(typeof((edit_attribute_left['email_address']['value']['value']).trim()) == "undefined" || (edit_attribute_left['email_address']['value']['value']).trim() == "") && !(reg_exp_email.test(edit_attribute_left['email_address']['value']['value']))){
+                edit_attribute_left['email_address']['has_error']['value'] = true;
+                edit_attribute_left['email_address']['tooltip_visible']['value'] = true;
+                edit_attribute_left['email_address']['tooltip_message']['value'] = "The entered email address format is invalid.\nPlease try again. (Format: 'local-part@domain')";
+                can_add['value'] = false;
+            } else if (!(typeof((edit_attribute_left['email_address']['value']['value']).trim()) == "undefined" || (edit_attribute_left['email_address']['value']['value']).trim() == "")) {
+                const email_address_response = await axios.post("../backend/retrieve_email_address_api.php", {email_address: edit_attribute_left['email_address']['value']['value']});
+                if (email_address_response.status == 204){
+
+                } else {
+                    edit_attribute_left['email_address']['has_error']['value'] = true;
+                    edit_attribute_left['email_address']['tooltip_visible']['value'] = true;
+                    edit_attribute_left['email_address']['tooltip_message']['value'] = "The entered email address has already taken by another individual. Please try another email address.";
+                    can_add['value'] = false;
+                }
+            }
+        }
+
+        // gender
+        if ((typeof((edit_attribute_left['gender']['value']['value']).trim()) == "undefined" || (edit_attribute_left['gender']['value']['value']).trim() == "")){
+            edit_attribute_left['gender']['has_error']['value'] = true;
+            edit_attribute_left['gender']['tooltip_visible']['value'] = true;
+            edit_attribute_left['gender']['tooltip_message']['value'] = "The gender attribute cannot be empty";
+            can_add['value'] = false;
+        }
+
+        // honorifics
+        if ((typeof((edit_attribute_left['honorifics']['value']['value']).trim()) == "undefined" || (edit_attribute_left['honorifics']['value']['value']).trim() == "")){
+            edit_attribute_left['honorifics']['has_error']['value'] = true;
+            edit_attribute_left['honorifics']['tooltip_visible']['value'] = true;
+            edit_attribute_left['honorifics']['tooltip_message']['value'] = "The honorifics attribute cannot be empty";
+            can_add['value'] = false;
+        }
+
+        // relationship
+        if ((typeof((edit_attribute_right['relationship']['value']['value']).trim()) == "undefined" || (edit_attribute_right['relationship']['value']['value']).trim() == "")){
+            edit_attribute_right['relationship']['has_error']['value'] = true;
+            edit_attribute_right['relationship']['tooltip_visible']['value'] = true;
+            edit_attribute_right['relationship']['tooltip_message']['value'] = "The relationship attribute cannot be empty";
+            can_add['value'] = false;
         }
     }
 
-    // delete lead
-    const delete_lead = async () => {
-        delete_prompt['value'] = false;
+    // add the individual into the database
+    const create_new_user = async () => {
+        validate_create();
 
-        const delete_response = await axios.post(
-            "../backend/edit_lead_api.php",
-            {
-                individual_id: props.individual_id,
-                update_table: null,
-                update_attribute: null,
-                update_value: null,
-                operation: "DELETE"
+        if (can_add['value']){
+            var insert_data = [];
+            for (const value in edit_attribute_left){
+                if (edit_attribute_left[value]['value']['value'] != ""){
+                    insert_data.push(edit_attribute_left[value]['correspond'] + ":'" + edit_attribute_left[value]['value']['value'] + "'");
+                }
             }
-        );
+            for (const value in edit_attribute_right){
+                if (edit_attribute_right[value]['value']['value'] != "" && (edit_attribute_right[value]['correspond'] != "company_address" && edit_attribute_right[value]['correspond'] != "company_description")){
+                    insert_data.push(edit_attribute_right[value]['correspond'] + ":" + edit_attribute_right[value]['value']['value'] + "'");
+                }
+            }
 
-        if (delete_response.status == 204){
-            delete_success_prompt['value'] = true;
-            initialize();
-        } else {
-            alert(delete_response.data.message);
+            alert(JSON.stringify(insert_data));
         }
     }
 
     // initialize / update to get data
     const initialize = async () => {
-        get_lead_detail();
-        get_lead_status_option();
         get_gender_option();
         get_honorifics_option();
         get_company_option();
         get_country_option();
+        get_relationship_option();
     }
 
     initialize();
@@ -750,26 +749,15 @@
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
             <router-link :to="{name: 'lead_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
-            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Lead editing page</div>
-            <button @click="delete_prompt = true" v-if="success_response" class="text-white font-semibold bg-rose-600 hover:bg-rose-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Delete</button>
-            <div v-else class="w-34"></div>
+            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Individual creation page</div>
+            <button @click="create_prompt = true; create_new_user();" class="text-white font-semibold bg-green-600 hover:bg-green-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Create</button>
         </div>
 
-        <div v-if="delete_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
-            <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
-                <div class="m-4 font-bold text-lg">Are you sure you want to remove this individual?</div>
-                <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
-                    <button @click="delete_lead()" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Yes</button>
-                    <button @click="delete_prompt = false" class="w-28 mx-4 px-6 py-1 bg-red-600 rounded-full hover:text-fuchsia-50 hover:bg-red-800">No</button>
-                </div>
-            </div>
-        </div>
-
-        <div v-if="delete_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
+        <div v-if="create_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
             <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
                 <div class="m-4 font-bold text-lg">The individual has successfully been removed</div>
                 <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
-                    <button @click="delete_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
+                    <button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
                 </div>
             </div>
         </div>
@@ -783,26 +771,8 @@
             </div>
         </div>
 
-        <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
-            <div class="flex flex-col w-max">
-                <!-- select content -->
-                <div class="flex mx-4 mt-2 p-1">
-                    <div class="flex flex-row w-max p-1 bg-rose-100 rounded-full border-pink-700 border-2">
-                        <button @click="conversion_history_content=false; information_content=true;" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!information_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':information_content}]">Overview</button>
-                        <button @click="conversion_history_content=true; information_content=false; get_conversion_history();" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!conversion_history_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':conversion_history_content}]">Conversion history</button>
-                    </div>
-                </div>
-
-                <!-- basic display part -->
-                <div v-if="information_content" class="flex flex-col m-4">
-                    <div class="flex flex-col min-w-340 max-w-full overflow-auto px-2 py-2 bg-rose-100 rounded-md border-3 border-pink-700 shadow-xl">
-                        <div class="flex flex-row w-ful" v-for="value in overview_attribute">
-                            <div class="flex w-60 m-1 justify-end items-end font-bold border-pink-700 border-b-1">{{ value['name'] }}</div>
-                            <div class="flex w-full m-1 ml-8 px-2 border-pink-700 border-b-1">{{ value['value'].value }}</div>
-                        </div>
-                    </div>
-                </div>
-
+        <div class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
+            <div class="flex flex-col w-max pt-10">
                 <!-- edit part -->
                 <div v-if="information_content" class="flex w-full justify-center">
                     <div class="flex flex-row min-w-max w-max m-4 bg-rose-100 rounded-md justify-center border-3 border-pink-700 shadow-xl">
@@ -813,9 +783,9 @@
                                 <!-- the input field -->
                                 <div class="relative">
                                     <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                                    <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
+                                    <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
                                     <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
-                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" :id="value['correspond'] + '_input'">
                                         <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
                                     </select>
                                     <!-- tooltip content-->
@@ -828,18 +798,6 @@
                                         <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
                                         <option :class="css_class_attributes.option_input" :value="null">NULL</option>
                                     </select>
-                                </div>
-                                <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
-                                    <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                        </svg>
-                                    </button>
-                                    <button @click="cancel_changes(value)" :class="css_class_attributes.cancel_button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -851,9 +809,9 @@
                                 <!-- the input field -->
                                 <div class="relative">
                                     <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                                    <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
+                                    <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
                                     <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
-                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" :id="value['correspond'] + '_input'">
                                         <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
                                     </select>
                                     <!-- tooltip content-->
@@ -867,62 +825,13 @@
                                         <option :class="css_class_attributes.option_input" :value="null">NULL</option>
                                     </select>
                                 </div>
-                                <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
-                                    <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                        </svg>
-                                    </button>
-                                    <button @click="cancel_changes(value)" :class="css_class_attributes.cancel_button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </div>
                             </div>
                         </div>
 
-                    </div>
-                </div>
-
-                <div v-if="conversion_history_content" class="flex flex-col min-w-240 max-w-full h-screen overflow-auto bg-pink-300 my-2 mx-4 border-4 rounded-md border-pink-700 p-2">
-                    <div v-if="conversion_history_exist" v-for="value in conversion_history_response.data">
-                        <div class="flex flex-col my-2 mx-2 bg-rose-100 border-pink-700 border-2 rounded-md py-2 px-4">
-                            <div class="flex flex-row bg-pink-500 w-max py-1 px-4 mb-2 border-2 rounded-md border-pink-700 font-bold text-lg">
-                                <div>{{ value['convert_time'] }}</div>
-                            </div>
-                            <div class="flex flex-row mb-2">
-                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert from</div>
-                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['convert_from'] }}</div>
-                            </div>
-                            <div class="flex flex-row mb-2">
-                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert to</div>
-                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['convert_to'] }}</div>
-                            </div>
-                            <div class="flex flex-row mb-2">
-                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert by</div>
-                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['user_name'] }}</div>
-                            </div>
-                            <div class="flex flex-row mb-2">
-                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Converter user ID</div>
-                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['user_id'] }}</div>
-                            </div>
-                            <div class="flex flex-row">
-                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Conversion note</div>
-                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8 h-40 overflow-auto">{{ value['conversion_message'] }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else class="flex m-4 min-w-340 max-w-full px-4">
-                        <div class="flex bg-rose-100 border-rose-700 border-3 rounded-md px-2 py-2 w-full justify-center items-center">There is no conversion history for this lead</div>
                     </div>
                 </div>
 
             </div>
-        </div>
-        
-        <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">
-            You don't have permission to view / edit this lead, or this lead is no longer exist
         </div>
     </div>
 </template>

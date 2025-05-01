@@ -27,7 +27,7 @@ CREATE TABLE crm_user_login_info(
     password_salt CHAR(10) NOT NULL,
     password_hash VARCHAR(64) NOT NULL,
 
-    FOREIGN KEY (user_id) REFERENCES crm_user(user_id)
+    FOREIGN KEY (user_id) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- individual: includes all people outside from CRM users (contact, lead, customer)
