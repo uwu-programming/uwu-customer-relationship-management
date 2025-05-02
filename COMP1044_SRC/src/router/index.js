@@ -5,6 +5,7 @@ import lead_edit_page from "../views/lead_edit_page.vue";
 import user_page from "../views/user_page.vue";
 import user_edit_page from "../views/user_edit_page.vue";
 import individual_creation_page from "../views/individual_creation_page.vue";
+import contact_page from "../views/contact_page.vue";
 
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -45,6 +46,12 @@ const router = createRouter({
             path: "/individual_creation_page",
             name: "individual_creation_page",
             component: individual_creation_page
+        },
+
+        {
+            path: "/contact_page",
+            name: contact_page,
+            component: contact_page
         }
     ]
 });
