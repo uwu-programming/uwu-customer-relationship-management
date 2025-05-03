@@ -324,6 +324,8 @@
                         }
                     )
                 }
+
+                create_success_prompt['value'] = true;
             } catch (error){
                 alert(error);
             }
@@ -353,7 +355,7 @@
             <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
                 <div class="m-4 font-bold text-lg">The activity has successfully been created</div>
                 <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
-                    <button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
+                    <router-link :to="{name: 'lead_page'}" tag="button"><button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button></router-link>
                 </div>
             </div>
         </div>
