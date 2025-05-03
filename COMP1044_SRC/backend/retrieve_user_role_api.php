@@ -46,7 +46,7 @@ function retrieve_user_role($conn){
         // check get type
         if (array_key_exists("data", (array)$post_data) && count($result) > 0){
             // if the request is to get field
-            if (true || $post_data->data == "option"){
+            if ($post_data->data == "option"){
                 echo json_encode($result);
             }
         } else {

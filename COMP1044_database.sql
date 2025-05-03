@@ -89,7 +89,7 @@ CREATE TABLE activity(
     activity_subject VARCHAR(255) NOT NULL,
     activity_description TEXT DEFAULT NULL,
 
-    CONSTRAINT check_time CHECK (start_time < end_time)
+    CONSTRAINT check_time CHECK (start_time <= end_time)
 );
 
 -- individual_activity_history: record the activity history of each individual

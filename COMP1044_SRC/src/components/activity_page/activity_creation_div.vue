@@ -99,7 +99,6 @@
             input_class: css_class_attributes.text_input,
             input: input_attributes.text,
             trait: input_attributes.trait_text,
-            pattern: "[a-zA-Z0-9 ]*",
             value: ref(""),
             hover: ref(false),
             changed: ref(false),
@@ -249,6 +248,87 @@
 
     // validate the creation of an individual
     const can_add = ref(true);
+    // validate add activity
+    const validate_create = async () => {
+        can_add['value'] = true;
+
+        // reset error and tooltip
+        edit_attribute_left['activity_subject']['has_error']['value'] = false;
+        edit_attribute_left['start_time']['has_error']['value'] = false;
+        edit_attribute_left['end_time']['has_error']['value'] = false;
+
+        if ((typeof((edit_attribute_left['activity_subject']['value']['value']).trim()) == "undefined") || (edit_attribute_left['activity_subject']['value']['value']).trim() == ""){
+            edit_attribute_left['activity_subject']['has_error']['value'] = true;
+            edit_attribute_left['activity_subject']['tooltip_visible']['value'] = true;
+            edit_attribute_left['activity_subject']['tooltip_message']['value'] = "Activity subject cannot be empty";
+            can_add['value'] = false;
+        }
+
+        if ((typeof((edit_attribute_left['end_time']['value']['value']).trim()) == "undefined") || (edit_attribute_left['end_time']['value']['value']).trim() == ""){
+            edit_attribute_left['end_time']['has_error']['value'] = true;
+            edit_attribute_left['end_time']['tooltip_visible']['value'] = true;
+            edit_attribute_left['end_time']['tooltip_message']['value'] = "Activity end time cannot be empty value /\nThe filled in end time is not complete";
+            can_add['value'] = false;
+        } else {
+            if (edit_attribute_left['start_time']['value']['value'] > edit_attribute_left['end_time']['value']['value']){
+                edit_attribute_left['end_time']['has_error']['value'] = true;
+                edit_attribute_left['end_time']['tooltip_visible']['value'] = true;
+                edit_attribute_left['end_time']['tooltip_message']['value'] = "Activity end time cannot be earlier than activity start time";
+                can_add['value'] = false;
+            }
+        }
+
+        if (can_add['value']){
+            let start_time = "";
+            let end_time = "'" + edit_attribute_left['end_time']['value']['value'] + "'";
+            let description = "";
+
+            let activity_id = "";
+
+            if ((typeof((edit_attribute_left['start_time']['value']['value']).trim()) == "undefined") || (edit_attribute_left['start_time']['value']['value']).trim() == ""){
+                start_time = 'null';
+            } else {
+                start_time = "'" + edit_attribute_left['start_time']['value']['value'] + "'";
+            }
+
+            if ((typeof((edit_attribute_left['activity_description']['value']['value']).trim()) == "undefined") || (edit_attribute_left['activity_description']['value']['value']).trim() == ""){
+                description = 'null';
+            } else {
+                description = "'" + edit_attribute_left['activity_description']['value']['value'] + "'";
+            }
+
+            try {
+                const create_activity_response = await axios.post(
+                    "../backend/create_new_activity_api.php",
+                    {
+                        type: "create",
+                        activity_subject: "'" + edit_attribute_left['activity_subject']['value']['value'] + "'",
+                        activity_type: "'" + edit_attribute_left['activity_type']['value']['value'] + "'",
+                        activity_description: description,
+                        start_time: start_time,
+                        end_time: end_time
+                    }
+                );
+
+                if (create_activity_response.status != 400){
+                    activity_id = create_activity_response.data.activity_id;
+                }
+                
+                for (const value in individual_drop_list['value']){
+                    const insert_individual_activity = await axios.post(
+                        "../backend/insert_individual_activity_api.php",
+                        {
+                            type: "insert",
+                            individual_id: individual_drop_list['value'][value]['individual_id'],
+                            activity_id: activity_id
+                        }
+                    )
+                }
+            } catch (error){
+                alert(error);
+            }
+        }
+    }
 
     // initialize / update to get data
     const initialize = async () => {
@@ -266,12 +346,12 @@
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
             <router-link :to="{name: 'lead_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
             <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Activity creation page</div>
-            <button @click="create_prompt = true;" class="text-white font-semibold bg-green-600 hover:bg-green-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Create</button>
+            <button @click="create_prompt = true; validate_create()" class="text-white font-semibold bg-green-600 hover:bg-green-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Create</button>
         </div>
 
         <div v-if="create_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
             <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
-                <div class="m-4 font-bold text-lg">The individual has successfully been created</div>
+                <div class="m-4 font-bold text-lg">The activity has successfully been created</div>
                 <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
                     <button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
                 </div>
@@ -298,13 +378,13 @@
                                 <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                                 <!-- the input field -->
                                 <div class="relative">
-                                    <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                                    <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
                                     <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
                                     <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
                                     <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" :id="value['correspond'] + '_input'">
                                         <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
                                     </select>
-                                    <input v-else-if="value['input'] == 'datetime-local'" :class="value['input_class']" type="datetime-local"/>
+                                    <input @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-model="value['value']['value']" v-else-if="value['input'] == 'datetime-local'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" type="datetime-local"/>
                                     <!-- tooltip content-->
                                     <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
                                 </div>
@@ -323,11 +403,11 @@
                 </div>
 
                 <!-- add participant -->
-                <div class="flex flex-col bg-rose-100 m-4 justify-center border-3 rounded-md border-pink-700 shadow-xl">
+                <div class="flex flex-col bg-pink-500 m-4 justify-center border-3 rounded-md border-pink-700 shadow-xl">
                     <!-- title --> 
-                    <div class="flex flex-row w-full"><span class="font-bold text-lg mx-4 my-2 px-6 py-1 bg-pink-500 border-pink-700 border-3 rounded-sm">Participant</span></div>
+                    <div class="flex flex-row w-full"><span class="font-bold text-lg mx-4 my-2 px-6 py-1 bg-pink-300 border-pink-700 border-3 rounded-sm">Participant</span></div>
+                    
                     <!-- add and drop participant -->
-
                     <div class="flex flex-row justify-between border-pink-700 border-t-3">
                         <!-- add -->
                         <div class="flex flex-col items-center bg-pink-300 border-pink-700 border-r-2 w-1/2">

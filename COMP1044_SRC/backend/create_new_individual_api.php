@@ -78,7 +78,7 @@ function create_individual($conn){
         }
 
         http_response_code(204);
-        echo json_encode(array("message" => $sql_lead_query));
+        echo json_encode(array("message" => "created new individual successfully"));
     } catch (PDOException $error){
         http_response_code(400);
     }
