@@ -83,7 +83,7 @@ CREATE TABLE lead_individual(
 -- activity: record the interaction between user and individual
 CREATE TABLE activity(
     activity_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    activity_type ENUM("Email", "Call", "Meeting", "Other") DEFAULT "Other",
+    activity_type ENUM("Email", "Call", "Meeting", "Other") NOT NULL DEFAULT "Other",
     start_time DATETIME DEFAULT NULL,
     end_time DATETIME NOT NULL,
     activity_subject VARCHAR(255) NOT NULL,

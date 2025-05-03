@@ -360,7 +360,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col w-max overflow-y-auto h-full bg-rose-100" v-if="need_display && JSON.stringify(response.data) != '[]'">
-                    <router-link :to="{name: 'lead_edit_page', params: {individual_id: response_value['individual_id']}}" @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-rose-100 hover:bg-rose-300 flex flex-row border-b-pink-700/80 border-b-1 overflow-hidden" v-if="response.status==200" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
+                    <router-link :to="{name: 'contact_edit_page', params: {individual_id: response_value['individual_id']}}" @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-rose-100 hover:bg-rose-300 flex flex-row border-b-pink-700/80 border-b-1 overflow-hidden" v-if="response.status==200" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
                         <div class="w-max flex overflow-hidden" v-for="value in contact_display_attributes" :key="value">   
                             <span v-if="value['display'].value" v-bind:class="value['class'] + css_class_attributes.display_span">{{ response_value[value['correspond']] }}</span>
                         </div>
@@ -483,7 +483,7 @@
                     </div>
                 </div>
                 <div class="flex flex-row justify-end bg-pink-500 border-pink-700 border-3 mt-2 rounded-md">
-                    <router-link :to="{name: 'lead_edit_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button"><div class="w-35 bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full flex justify-center items-center m-2 font-semibold py-1">Open in detail</div></router-link>
+                    <router-link :to="{name: 'contact_edit_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button"><div class="w-35 bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full flex justify-center items-center m-2 font-semibold py-1">Open in detail</div></router-link>
                 </div>
             </div>
             
