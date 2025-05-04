@@ -8,6 +8,8 @@ import individual_creation_page from "../views/individual_creation_page.vue";
 import contact_page from "../views/contact_page.vue";
 import contact_edit_page from "../views/contact_edit_page.vue";
 import activity_creation_page from "../views/activity_creation_page.vue";
+import activity_edit_page from "../views/activity_edit_page.vue";
+import contact_view_page from "../views/contact_view_page.vue";
 
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -67,6 +69,20 @@ const router = createRouter({
             path: "/activity_creation_page",
             name: "activity_creation_page",
             component: activity_creation_page
+        },
+
+        {
+            path: "/activity_edit_page/:activity_id",
+            name: "activity_edit_page",
+            component: activity_edit_page,
+            props: true
+        },
+
+        {
+            path: "/contact_view_page/:individual_id",
+            name: "contact_view_page",
+            component: contact_view_page,
+            props: true
         },
     ]
 });

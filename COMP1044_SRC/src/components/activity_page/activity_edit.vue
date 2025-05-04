@@ -2,6 +2,11 @@
     import axios from 'axios';
     import {ref} from 'vue';
 
+    // the parameter passed by the router
+    const props = defineProps({
+        activity_id: String // for accessing specific individual
+    });
+
     // current crm user
     const current_crm_user = ref("");
 
@@ -21,8 +26,9 @@
     const individual_add_list = ref([]);
     const individual_drop_list = ref([]);
 
-    // search value
+    // search v-model
     const add_search_value = ref("");
+    const drop_search_value = ref("");
 
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
@@ -32,6 +38,8 @@
     const create_prompt = ref(false);
     const create_success_prompt = ref(false);
     const success_operation_prompt = ref(false);
+    const delete_prompt = ref(false);
+    const delete_success_prompt = ref(false);
 
     // check which content to load
     const information_content = ref(true);
@@ -201,32 +209,17 @@
         }
     }
 
-    // get individual list
-    const get_individual_add_list = async (search_value) => {
-        let get_individual_add_list_response = "";
+    // get individual list (for activity participant)
+    const get_individual_drop_list = async (search_value) => {
+        let get_individual_drop_list_response = "";
+        individual_drop_list['value'] = [];
 
         try {
-            if (search_value == null){
-                individual_add_list['value'] = [];
-                get_individual_add_list_response = await axios.post("../backend/retrieve_activity_individual_option_api.php");
-
-                // check for duplicate
-                for (const add_value in get_individual_add_list_response['data']){
-                    var add_to = true;
-                    for (const drop_value in individual_drop_list['value']){
-                        if (get_individual_add_list_response['data'][add_value]['individual_id'] == individual_drop_list['value'][drop_value]['individual_id']){
-                            add_to = false;
-                            break;
-                        }
-                    }
-                    if (add_to)
-                        individual_add_list['value'].push(get_individual_add_list_response['data'][add_value]);
-                }
-            } else {
-                individual_add_list['value'] = [];
-                get_individual_add_list_response = await axios.post(
-                    "../backend/retrieve_activity_individual_option_api.php",
+            if (search_value != null){
+                get_individual_drop_list_response = await axios.post(
+                    "../backend/retrieve_activity_individual_history_api.php", 
                     {
+                        activity_id: props.activity_id,
                         requirement: JSON.stringify(
                             [
                                 "last_name:" + search_value.trim(),
@@ -236,18 +229,60 @@
                         )
                     }
                 );
-
-                for (const add_value in get_individual_add_list_response['data']){
-                    var add_to = true;
-                    for (const drop_value in individual_drop_list['value']){
-                        if (get_individual_add_list_response['data'][add_value]['individual_id'] == individual_drop_list['value'][drop_value]['individual_id']){
-                            add_to = false;
-                            break;
-                        }
+            } else {
+                get_individual_drop_list_response = await axios.post(
+                    "../backend/retrieve_activity_individual_history_api.php",
+                    {
+                        activity_id: props.activity_id
                     }
-                    if (add_to)
-                        individual_add_list['value'].push(get_individual_add_list_response['data'][add_value]);
+                );
+            }
+            
+            for (const drop_value in get_individual_drop_list_response['data']){
+                individual_drop_list['value'].push(get_individual_drop_list_response['data'][drop_value]);
+            }
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    // get individual list
+    const get_individual_add_list = async (search_value) => {
+        let get_individual_add_list_response = "";
+        individual_add_list['value'] = [];
+
+        try {
+            if (search_value != null){
+                get_individual_add_list_response = await axios.post(
+                    "../backend/retrieve_activity_individual_option_api.php",
+                    {
+                        activity_id: props.activity_id,
+                        requirement: JSON.stringify(
+                            [
+                                "last_name:" + search_value.trim(),
+                                "middle_name:" + search_value.trim(),
+                                "first_name:" + search_value.trim()
+                            ]
+                        )
+                    }
+                );
+            } else {
+                get_individual_add_list_response = await axios.post(
+                    "../backend/retrieve_activity_individual_option_api.php"
+                );
+            }
+
+            // check for duplicate
+            for (const add_value in get_individual_add_list_response['data']){
+                var add_to = true;
+                for (const drop_value in individual_drop_list['value']){
+                    if (get_individual_add_list_response['data'][add_value]['individual_id'] == individual_drop_list['value'][drop_value]['individual_id']){
+                        add_to = false;
+                        break;
+                    }
                 }
+                if (add_to)
+                    individual_add_list['value'].push(get_individual_add_list_response['data'][add_value]);
             }
         } catch (error) {
             alert(error);
@@ -255,23 +290,24 @@
     }
 
     // add to participant list
-    const add_participant = (individual) => {
+    const add_participant = async (individual) => {
         individual_drop_list['value'].push(individual);
         for (const value in individual_add_list['value']){
             if (individual_add_list['value'][value]['individual_id'] == individual['individual_id']){
                 individual_add_list['value'].splice(value, 1);
             }
         }
+        let add_response = await axios.post("../backend/insert_individual_activity_api.php", {activity_id: props.activity_id, individual_id: individual['individual_id'], type: "insert"});
     }
     
     // drop pacticipant
-    const drop_participant = (individual) => {
+    const drop_participant = async (individual) => {
         for (const value in individual_drop_list['value']){
             if (individual_drop_list['value'][value]['individual_id'] == individual['individual_id']){
                 individual_drop_list['value'].splice(value, 1);
             }
         }
-        get_individual_add_list();
+        let drop_response = await axios.post("../backend/insert_individual_activity_api.php", {activity_id: props.activity_id, individual_id: individual['individual_id'], type: "remove"});
     }
 
     // validate the creation of an individual
@@ -330,7 +366,7 @@
                     "../backend/create_new_activity_api.php",
                     {
                         type: "create",
-                        activity_subject: "'" + (edit_attribute_left['activity_subject']['value']['value']).trim() + "'",
+                        activity_subject: "'" + edit_attribute_left['activity_subject']['value']['value'] + "'",
                         activity_type: "'" + edit_attribute_left['activity_type']['value']['value'] + "'",
                         activity_description: description,
                         start_time: start_time,
@@ -353,6 +389,8 @@
                     )
                 }
 
+                const insert_user_activity = await axios.post("../backend/insert_user_activity_api.php", {type: "insert", activity_id: activity_id});
+
                 create_success_prompt['value'] = true;
             } catch (error){
                 alert(error);
@@ -360,11 +398,132 @@
         }
     }
 
+    // get activity information
+    const retrieve_activity_information = async () => {
+        try {
+            response['value'] = await axios.post(
+                "../backend/retrieve_activity_edit_api.php",
+                {
+                    activity_id: props.activity_id
+                }
+            );
+        } catch (error) {
+            alert(error);
+        }
+
+        success_response['value'] = (response['value'].data[0] != undefined);
+
+        if (success_response['value']){
+            edit_attribute_left['activity_subject']['value']['value'] = response['value'].data[0]['activity_subject'];
+            edit_attribute_left['activity_type']['value']['value'] = response['value'].data[0]['activity_type'];
+            edit_attribute_left['activity_description']['value']['value'] = response['value'].data[0]['activity_description'];
+            edit_attribute_left['start_time']['value']['value'] = response['value'].data[0]['start_time'];
+            edit_attribute_left['end_time']['value']['value'] = response['value'].data[0]['end_time'];
+        }
+    }
+
+    // delete activity
+    const delete_activity = async () => {
+        try {
+            let delete_response = await axios.post("../backend/update_activity_api.php", {type: "delete", activity_id: props.activity_id});
+            if (delete_response.status == 204){
+                delete_success_prompt['value'] = true;
+            }
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+
+    // validate changes and save
+    const validate_update_data = async (value) => {
+        if (value['correspond'] == "start_time" || value['correspond'] == "end_time"){
+            if (edit_attribute_left['start_time']['value']['value'] > edit_attribute_left['end_time']['value']['value']){
+                edit_attribute_left['end_time']['has_error']['value'] = true;
+                edit_attribute_left['end_time']['tooltip_visible']['value'] = true;
+                edit_attribute_left['end_time']['tooltip_message']['value'] = "Activity end time cannot be earlier than activity start time";
+            } else {
+                try {
+                    const update_response = await axios.post(
+                        "../backend/update_activity_api.php",
+                        {
+                            type: "update_time",
+                            start_time: "'" + edit_attribute_left['start_time']['value']['value'] + "'",
+                            end_time: "'" + edit_attribute_left['end_time']['value']['value'] + "'",
+                            activity_id: props.activity_id
+                        }
+                    );
+
+                    if (update_response.status == 204){
+                        success_operation_prompt['value'] = true;
+                        edit_attribute_left['start_time']['changed']['value'] = false;
+                        edit_attribute_left['end_time']['changed']['value'] = false;
+                    }
+                } catch (error) {
+                    alert(error);
+                }
+            }
+        } else if (value['correspond'] == "activity_subject"){
+            if ((typeof((edit_attribute_left['activity_subject']['value']['value']).trim()) == "undefined") || (edit_attribute_left['activity_subject']['value']['value']).trim() == ""){
+                edit_attribute_left['activity_subject']['has_error']['value'] = true;
+                edit_attribute_left['activity_subject']['tooltip_visible']['value'] = true;
+                edit_attribute_left['activity_subject']['tooltip_message']['value'] = "Activity subject cannot be empty";
+            } else {
+                try {
+                    const update_response = await axios.post(
+                        "../backend/update_activity_api.php",
+                        {
+                            type: "update",
+                            update_attribute: value['correspond'],
+                            update_value: "'" + edit_attribute_left['activity_subject']['value']['value'] + "'",
+                            activity_id: props.activity_id
+                        }
+                    );
+
+                    if (update_response.status == 204){
+                        success_operation_prompt['value'] = true;
+                        edit_attribute_left['activity_subject']['changed']['value'] = false;
+                    }
+                } catch (error) {
+                    alert(error);
+                }
+            }
+        } else {
+            try {
+                const update_response = await axios.post(
+                    "../backend/update_activity_api.php",
+                    {
+                        type: "update",
+                        update_attribute: value['correspond'],
+                        update_value: "'" + (value['value']['value']).trim() + "'",
+                        activity_id: props.activity_id
+                    }
+                );
+
+                if (update_response.status == 204){
+                    success_operation_prompt['value'] = true;
+                    value['changed']['value'] = false;
+                }
+            } catch (error) {
+                alert(error);
+            }
+        }
+    }
+
+    // cancel changes
+    const cancel_changes = (value) => {
+        value['changed']['value'] = false;
+        value['has_error']['value'] = false;
+        value['value']['value'] = response['value'].data[0][value['correspond']];
+    }
+
     // initialize / update to get data
     const initialize = async () => {
         get_current_crm_user();
         get_activity_option();
+        get_individual_drop_list();
         get_individual_add_list();
+        retrieve_activity_information();
     }
 
     initialize();
@@ -375,8 +534,9 @@
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
             <router-link :to="{name: 'lead_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
-            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Activity creation page</div>
-            <button @click="create_prompt = true; validate_create()" class="text-white font-semibold bg-green-600 hover:bg-green-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Create</button>
+            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Activity editing page</div>
+            <button v-if="success_response" @click="delete_prompt = true" class="text-white font-semibold bg-red-600 hover:bg-red-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Delete</button>
+            <div v-else class="w-25 mx-4"></div>
         </div>
 
         <div v-if="create_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
@@ -397,7 +557,26 @@
             </div>
         </div>
 
-        <div class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
+        <div v-if="delete_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
+            <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
+                <div class="m-4 font-bold text-lg">Are you sure you want to remove this activity?</div>
+                <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
+                    <button @click="delete_prompt = false; delete_activity();" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Yes</button>
+                    <button @click="delete_prompt = false" class="w-28 mx-4 px-6 py-1 bg-red-600 rounded-full hover:text-fuchsia-50 hover:bg-red-800">No</button>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="delete_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
+            <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
+                <div class="m-4 font-bold text-lg">The activity has successfully been removed</div>
+                <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
+                    <button @click="delete_success_prompt = false; retrieve_activity_information();" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
             <div class="flex flex-col w-max pt-10">
                 <!-- edit part -->
                 <div v-if="information_content" class="flex w-full justify-center">
@@ -414,7 +593,7 @@
                                     <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" :id="value['correspond'] + '_input'">
                                         <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
                                     </select>
-                                    <input @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-model="value['value']['value']" v-else-if="value['input'] == 'datetime-local'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" type="datetime-local"/>
+                                    <input @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-model="value['value']['value']" v-else-if="value['input'] == 'datetime-local'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" type="datetime-local"/>
                                     <!-- tooltip content-->
                                     <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
                                 </div>
@@ -425,6 +604,19 @@
                                         <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
                                         <option :class="css_class_attributes.option_input" :value="null">NULL</option>
                                     </select>
+                                </div>
+                                <!-- save changes -->
+                                <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
+                                    <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                        </svg>
+                                    </button>
+                                    <button @click="cancel_changes(value)" :class="css_class_attributes.cancel_button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -447,8 +639,8 @@
                             </div>
                             <div class="flex flex-col mx-4 my-1 mb-3 w-80 overflow-auto bg-rose-100 h-100 border-rose-700 rounded-md border-2">
                                 <div class="flex justify-between px-2 py-1 hover:bg-rose-300 cursor-default border-rose-700 border-b-1 last:border-none" v-for="value in individual_add_list">
-                                    <div class="truncate">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['last_name'] }} {{ value['first_name'] }}</div>
-                                    <button @click="add_participant(value)" class="cursor-pointer px-2 rounded-full font-semibold bg-green-500 hover:bg-green-700 hover:text-white">Add</button>
+                                    <div class="truncate">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['middle_name'] }} {{ value['last_name'] }}</div>
+                                    <button @click="add_participant(value); get_individual_drop_list(drop_search_value);" class="cursor-pointer px-2 rounded-full font-semibold bg-green-500 hover:bg-green-700 hover:text-white">Add</button>
                                 </div>
                             </div>
                         </div>
@@ -456,12 +648,13 @@
                         <!-- drop -->
                         <div class="flex flex-col items-center bg-pink-300 border-pink-700 border-l-2 w-1/2">
                             <div class="flex justify-center my-1 font-semibold decoration-2 decoration-pink-700 underline">Drop participant</div>
-                            <div class="flex h-8 mb-2">
+                            <div class="flex">
+                                <input v-model="drop_search_value" @input="get_individual_drop_list(drop_search_value);" :class="css_class_attributes.small_search_input" type="search" placeholder="Search for individual to drop..."/>
                             </div>
                             <div class="flex flex-col mx-4 my-1 mb-3 w-80 overflow-auto bg-rose-100 h-100 border-rose-700 rounded-md border-2">
                                 <div class="flex justify-between px-2 py-1 hover:bg-rose-300 cursor-default border-rose-700 border-b-1 last:border-none" v-for="value in individual_drop_list">
-                                    <div class="truncate">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['last_name'] }} {{ value['first_name'] }}</div>
-                                    <button @click="drop_participant(value)" class="cursor-pointer px-2 rounded-full font-semibold bg-red-500 hover:bg-red-700 hover:text-white">Remove</button>
+                                    <div class="truncate">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['middle_name'] }} {{ value['last_name'] }}</div>
+                                    <button @click="drop_participant(value); get_individual_add_list(add_search_value);" class="cursor-pointer px-2 rounded-full font-semibold bg-red-500 hover:bg-red-700 hover:text-white">Remove</button>
                                 </div>
                             </div>
                         </div>
@@ -472,6 +665,11 @@
 
             </div>
         </div>
+
+        <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">
+            You don't have permission to edit this activity, or this activity is no longer exist
+        </div>
+
     </div>
 </template>
 

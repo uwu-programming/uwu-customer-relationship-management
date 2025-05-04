@@ -123,6 +123,44 @@ function retrieve_user($conn){
                     $sql_query = $sql_query . ")";
                 }
             }
+        } else {
+            $sql_query = $sql_query . " WHERE crm_user.role_id > $current_user_role";
+
+            if (array_key_exists("requirement", (array)$post_data)){
+                // decode the requirement (a JSON like string)
+                $requirement_JSON = json_decode($post_data->requirement);
+                
+                if (count((array)$requirement_JSON) > 0){
+                    $sql_query = $sql_query . " AND (";
+
+                    // loop through the requirement array
+                    foreach ($requirement_JSON as $value){
+                        // seperate the requirement to TABLE and VALUE
+                        $requirement_array = explode(":", $value);
+
+                        // check if it is a hard requirement (using = instead of LIKE)
+                        if (array_key_exists("hard_requirement", (array)$post_data)){
+                            $sql_query = $sql_query . " $requirement_array[0] = $requirement_array[1]";
+                        }
+                        else {
+                            if ($requirement_array[0] == 'role_id'){
+                                $sql_query = $sql_query . " crm_user.role_id LIKE '%$requirement_array[1]%'";
+                            } else {
+                                $sql_query = $sql_query . " $requirement_array[0] LIKE '%$requirement_array[1]%'";
+                            }
+                        }
+
+                        // add filter (AND / OR) if it is not the last requirement
+                        if ($value != end($requirement_JSON))
+                            if (array_key_exists("search_type", (array)$post_data) && $post_data->search_type == "GENERAL")
+                                $sql_query = $sql_query . " OR";
+                            else
+                                $sql_query = $sql_query . " $post_data->filter";
+                    }
+
+                    $sql_query = $sql_query . ")";
+                }
+            }
         }
 
         $sql_query = $sql_query . " GROUP BY lead_owner_user_id";

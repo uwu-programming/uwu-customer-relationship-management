@@ -51,7 +51,7 @@ function retrieve_lead($conn){
         }
 
         // check if user is an admin
-        if ($current_user_role == 1){
+        if ($current_user_role <= 2){
             // get all users
             
         } else {

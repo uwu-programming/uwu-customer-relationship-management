@@ -8,13 +8,15 @@ INSERT INTO crm_user
     VALUES
         (1, "UwwwU", 1),
         (2, "OwwwO", 2),
-        (3, "Bibidebadeboowa", 2);
+        (3, "Bibidebadeboowa", 3),
+        (4, "nananana", 3);
 
 INSERT INTO crm_user_login_info
     VALUES
         (1, "uwu", "uwu"),
         (2, "owo", "owo"),
-        (3, "uwaaa", "weee");
+        (3, "uwaaa", "weee"),
+        (4, "hmm", "123");
 
 INSERT INTO country
     VALUES
@@ -109,10 +111,10 @@ INSERT INTO lead_individual
         (30, 3);
 
 INSERT INTO activity
-        (activity_type, start_time, end_time, activity_subject)
+        (activity_type, start_time, end_time, activity_subject, created_by)
     VALUES
-        ("Meeting", "2024-12-03 11:28:09", "2024-12-03 12:28:09", "Meeting dayo"),
-        ("Meeting", "2023-01-23 6:28:09", "2023-01-23 7:08:23", "Some meeting idk"),
-        ("Call", "2021-09-17 10:12:39", "2021-09-17 10:18:21", "Call with client");
+        ("Meeting", "2024-12-03 11:28:09", "2024-12-03 12:28:09", "Meeting dayo", 1),
+        ("Meeting", "2023-01-23 6:28:09", "2023-01-23 7:08:23", "Some meeting idk", 1),
+        ("Call", "2021-09-17 10:12:39", "2021-09-17 10:18:21", "Call with client", 1);
 
 -- UPDATE lead_individual SET lead_status = 'Contacted' WHERE individual_id = 6;

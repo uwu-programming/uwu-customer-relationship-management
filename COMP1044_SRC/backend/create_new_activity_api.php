@@ -25,18 +25,19 @@ function create_activity($conn){
 
         $post_data = json_decode(file_get_contents("php://input"));
 
-        $sql_query = "INSERT INTO activity (activity_type, start_time, end_time, activity_subject, activity_description) VALUES(";
+        $sql_query = "INSERT INTO activity (activity_type, start_time, end_time, activity_subject, activity_description, created_by) VALUES(";
 
         if (array_key_exists("type", (array)$post_data) && $post_data->type == "create"){
             $sql_query = $sql_query . " $post_data->activity_type,";
             $sql_query = $sql_query . " $post_data->start_time,";
             $sql_query = $sql_query . " $post_data->end_time,";
             $sql_query = $sql_query . " $post_data->activity_subject,";
-            $sql_query = $sql_query . " $post_data->activity_description)";
+            $sql_query = $sql_query . " $post_data->activity_description,";
+            $sql_query = $sql_query . " $current_user_id)";
 
             $sql_statement = $conn->prepare($sql_query);
             $sql_statement->execute();
-
+            
             $get_activity_id_query = "SELECT COUNT(*) AS quantity FROM activity";
             $get_activity_id_statement = $conn->prepare($get_activity_id_query);
             $get_activity_id_statement->execute();

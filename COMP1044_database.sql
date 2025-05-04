@@ -45,9 +45,9 @@ CREATE TABLE individual(
     company_id INT DEFAULT NULL,                            -- reference to the TABLE company
     individual_description TEXT DEFAULT NULL,
     registered_date DATETIME NOT NULL,
-    created_by INT NOT NULL,
+    created_by INT NULL,
 
-    FOREIGN KEY (created_by) REFERENCES crm_user(user_id),
+    FOREIGN KEY (created_by) REFERENCES crm_user(user_id) ON UPDATE SET NULL ON DELETE SET NULL,
     CONSTRAINT phone_or_email CHECK (phone_number IS NOT NULL OR email_address IS NOT NULL)
 );
 
@@ -74,10 +74,10 @@ ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES compan
 -- lead_individual: record which individual is lead and their status
 CREATE TABLE lead_individual(
     individual_id INT UNIQUE NOT NULL,
-    lead_owner_user_id INT NOT NULL,
+    lead_owner_user_id INT NULL,
     lead_status ENUM("New lead", "Attempted to contact lead", "Contacted lead", "Junk lead", "Lost lead", "Converted to customer") NOT NULL DEFAULT "New lead",
 
-    FOREIGN KEY (lead_owner_user_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (lead_owner_user_id) REFERENCES crm_user(user_id) ON UPDATE SET NULL ON DELETE SET NULL
 );
 
 -- activity: record the interaction between user and individual
@@ -88,7 +88,9 @@ CREATE TABLE activity(
     end_time DATETIME NOT NULL,
     activity_subject VARCHAR(255) NOT NULL,
     activity_description TEXT DEFAULT NULL,
+    created_by INT NULL,
 
+    FOREIGN KEY (created_by) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT check_time CHECK (start_time <= end_time)
 );
 
@@ -99,16 +101,6 @@ CREATE TABLE individual_activity_history(
 
     PRIMARY KEY (individual_id, activity_id),
     FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (activity_id) REFERENCES activity(activity_id) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
--- user_activity_history: record the activity history of each user
-CREATE TABLE user_activity_history(
-    user_id INT NOT NULL,
-    activity_id INT NOT NULL,
-
-    PRIMARY KEY (user_id, activity_id),
-    FOREIGN KEY (user_id) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (activity_id) REFERENCES activity(activity_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 

@@ -36,6 +36,12 @@ function insert_individual($conn){
 
             echo json_encode(array("message" => "successfully add activity into individual history"));
             http_response_code(204);
+        } else if (array_key_exists("type", (array)$post_data) && $post_data->type == "remove") {
+            $sql_query = "DELETE FROM individual_activity_history WHERE activity_id = $post_data->activity_id AND individual_id = $post_data->individual_id";
+            $sql_statement = $conn->prepare($sql_query);
+            $sql_statement->execute();
+
+            http_response_code(204);
         } else {
             http_response_code(400);
         }
