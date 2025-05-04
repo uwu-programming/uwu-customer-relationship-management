@@ -10,6 +10,9 @@ import contact_edit_page from "../views/contact_edit_page.vue";
 import activity_creation_page from "../views/activity_creation_page.vue";
 import activity_edit_page from "../views/activity_edit_page.vue";
 import contact_view_page from "../views/contact_view_page.vue";
+import customer_page from "../views/customer_page.vue";
+import customer_edit_page from "../views/customer_edit_page.vue";
+import customer_view_page from "../views/customer_view_page.vue";
 
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -82,6 +85,26 @@ const router = createRouter({
             path: "/contact_view_page/:individual_id",
             name: "contact_view_page",
             component: contact_view_page,
+            props: true
+        },
+
+        {
+            path: "/customer_page",
+            name: "customer_page",
+            component: customer_page
+        },
+
+        {
+            path: "/customer_edit_page/:individual_id",
+            name: "customer_edit_page",
+            component: customer_edit_page,
+            props: true
+        },
+
+        {
+            path: "/customer_view_page/:individual_id",
+            name: "customer_view_page",
+            component: customer_view_page,
             props: true
         },
     ]

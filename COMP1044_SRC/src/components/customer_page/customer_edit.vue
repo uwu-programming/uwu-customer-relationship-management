@@ -46,15 +46,16 @@
         description_edit_attribute: "flex flex-row mb-4",
         search_select_edit_attribute: "flex flex-row mb-4",
         normal_label: "w-48 flex justify-end px-2 py-1 mx-1 border-b-2 border-pink-700 font-bold",
-        text_input: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 invalid:shadow-red-600 overflow-auto text-nowrap truncate",
-        text_area_input: "focus:shadow-pink-500/50 shadow-xl w-100 h-40 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white focus:cursor-text px-2 py-1 resize-none",
-        text_area_input_short: "focus:shadow-pink-500/50 shadow-xl w-100 h-25 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white focus:cursor-text px-2 py-1 resize-none",
-        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md px-2 pr-5 invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        text_input: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 cursor-pointer focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        text_area_input: "focus:shadow-pink-500/50 shadow-xl w-100 h-40 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
+        text_area_input_short: "focus:shadow-pink-500/50 shadow-xl w-100 h-25 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
+        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
         paragraph_input: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-40 mx-3 px-2 py-1 overflow-auto border-2 focus:bg-gray-100 border-pink-700 rounded-md bg-white",
         paragraph_input_short: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-20 mx-3 px-2 py-1 overflow-y-scroll focus:bg-gray-100 border-2 border-pink-700 rounded-sm bg-white",
-        variable_select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-sm px-2 pr-5 invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        variable_select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-sm cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
         option_input: "",
-        search_input: "focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 w-100 mx-3 mb-2 bg-white rounded-full border-2 border-pink-700 focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        search_input: "focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 w-100 mx-3 mb-2 bg-white rounded-full border-2 border-pink-700 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        none: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 invalid:shadow-red-600 overflow-auto text-nowrap truncate",
 
         error_input: "shadow-red-600",
 
@@ -95,7 +96,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.name_pattern,
             value: ref(""),
@@ -112,7 +113,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.name_pattern,
             value: ref(""),
@@ -129,7 +130,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.name_pattern,
             value: ref(""),
@@ -146,7 +147,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.select_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.fixed_select,
             trait: input_attributes.trait_select,
             option_list: ref(gender_option),
             value: ref(""),
@@ -163,7 +164,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.select_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.fixed_select,
             trait: input_attributes.trait_select,
             option_list: ref(honorifics_option),
             value: ref(""),
@@ -180,7 +181,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.phone_pattern,
             value: ref(""),
@@ -197,7 +198,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.text,
             trait: input_attributes.trait_text,
             pattern: input_attributes.email_pattern,
             value: ref(""),
@@ -214,7 +215,7 @@
             class: css_class_attributes.search_select_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.variable_select_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.variable_select,
             trait: input_attributes.trait_select,
             value: ref(""),
             value_name: ref("country_name"),
@@ -235,7 +236,7 @@
             class: css_class_attributes.description_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_area_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.textarea,
             trait: input_attributes.trait_text,
             value: ref(""),
             hover: ref(false),
@@ -253,7 +254,7 @@
             table: "individual.",
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
-            input_class: css_class_attributes.select_input,
+            input_class: css_class_attributes.none,
             input: input_attributes.paragraph,
             trait: input_attributes.trait_select,
             option_list: ref(lead_status_option),
@@ -266,12 +267,12 @@
         },
         company: {
             name: "Company",
-            correspond: "company_name",
+            correspond: "company_id",
             table: "individual.",
             class: css_class_attributes.search_select_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.variable_select_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.variable_select,
             trait: input_attributes.trait_select,
             value: ref(""),
             value_name: ref("company_name"),
@@ -319,7 +320,7 @@
 
     const overview_attribute = {
         lead_name: {
-            name: "Contact name",
+            name: "Customer name",
             value: ref(""),
             correspond: ""
         },
@@ -360,7 +361,7 @@
     // retrieve the lead to edit
     const get_lead_detail = async (attribute) => {
         try {
-            response.value = await axios.post("../backend/retrieve_contact_api.php", {requirement: JSON.stringify(["individual_id:" + props.individual_id]), hard_requirement: true});
+            response.value = await axios.post("../backend/retrieve_customer_api.php", {requirement: JSON.stringify(["individual_id:" + props.individual_id]), hard_requirement: true});
             // check if the retrieve is success (by checking if the object has key)
             success_response.value = (Object.keys(response.value.data)).length > 0;
 
@@ -472,7 +473,7 @@
         if (attribute != null){
             attribute['changed']['value'] = true;
             if (attribute['correspond'] == "lead_status"){
-                edit_attribute_right['lead_conversion_message']['changed']['value']= true;
+
             } else if (attribute['correspond'] == "company_id"){
                 // display company address and description on changed
                 for (const key in company_option['value']){
@@ -488,6 +489,30 @@
                     edit_attribute_right['company_description']['value']['value'] = "";
                 }
             }
+        }
+    }
+
+    // get user able to be assigned to
+    const get_assign_user_option = async (search_value) => {
+        try {
+            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
+                const get_assign_user_option_response = await axios.post("../backend/retrieve_user_api.php");
+                assign_to_user_option['value'] = get_assign_user_option_response.data;
+            } else {
+                var search_array = [];
+                search_array.push("user_id:" + search_value.trim());
+                search_array.push("user_name:" + search_value.trim());
+
+                const get_assign_user_option_response = await axios.post(
+                    "../backend/retrieve_user_api.php", 
+                    {
+                        requirement: JSON.stringify(search_array)
+                    }
+                );
+                assign_to_user_option['value'] = get_assign_user_option_response.data;
+            }
+        } catch(error) {
+            alert(error);
         }
     }
 
@@ -526,6 +551,157 @@
         }
     }
 
+    // get conversion history
+    const get_conversion_history = async () => {
+        try {
+            conversion_history_response['value'] = await axios.post(
+                "../backend/retrieve_lead_conversion_history.php",
+                {
+                    individual_id: props.individual_id
+                }
+            );
+            conversion_history_exist['value'] = (conversion_history_response['value']['data'].length > 0 ? true : false);
+        } catch (error){
+            alert(error);
+        }
+    }
+
+    // input validation & update
+    const validate_update_data = async (attribute) => {
+        if (attribute['trait'] == "text"){ // for text related
+            if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+                attribute['changed']['value'] = false;
+                attribute['has_error']['value'] = false;
+            } else {
+                const reg_exp = new RegExp(attribute['pattern']);
+                if (typeof((attribute['value']['value']).trim()) == "undefined" || (attribute['value']['value']).trim() == ""){
+                    if ((attribute['correspond'] == "last_name" && (response['value']['data'][0]['first_name'] == null || response['value']['data'][0]['first_name'] == ""))){
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_visible']['value'] = true;
+                        attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+                    } else if (attribute['correspond'] == "first_name" && (response['value']['data'][0]['last_name'] == null || response['value']['data'][0]['last_name'] == "")) {
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_visible']['value'] = true;
+                        attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+                    } else if ((attribute['correspond'] == "phone_number" && response['value']['data'][0]['email_address'] == null) || (attribute['correspond'] == "email_address" && response['value']['data'][0]['phone_number'] == null)){
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_visible']['value'] = true;
+                        attribute['tooltip_message']['value'] = "Phone number and email address cannot be empty at the same time.\nPlease try again.";
+                    } else { // allow empty value
+                        attribute['has_error']['value'] = false;
+                        const edit_response = await axios.post(
+                            "../backend/edit_contact_api.php",
+                            {
+                                individual_id: props.individual_id,
+                                update_table: (attribute['table']).slice(0, -1),
+                                update_attribute: (attribute['correspond']),
+                                update_value: null
+                            }
+                        );
+                        if (edit_response.status == 204){
+                            success_operation_prompt['value'] = true;
+                            get_lead_detail(attribute);
+                            attribute['changed']['value'] = false;
+                        }
+                    }
+                } else if (reg_exp.test(attribute['value']['value'])){
+                    attribute['has_error']['value'] = false;
+                    const edit_response = await axios.post(
+                        "../backend/edit_contact_api.php",
+                        {
+                            individual_id: props.individual_id,
+                            update_table: (attribute['table']).slice(0, -1),
+                            update_attribute: (attribute['correspond']),
+                            update_value: "'" + attribute['value']['value'] + "'"
+                        }
+                    );
+                    if (edit_response.status == 204){
+                        success_operation_prompt['value'] = true;
+                        get_lead_detail(attribute);
+                        attribute['changed']['value'] = false;
+                    } else {
+                        // covered duplicate value
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_visible']['value'] = true;
+                        attribute['tooltip_message']['value'] = edit_response.data.message;
+                    }
+                } else {
+                    attribute['has_error']['value'] = true;
+                    attribute['tooltip_visible']['value'] = true;
+                    
+                    if (attribute['pattern'] == input_attributes.name_pattern){
+                        attribute['tooltip_message']['value'] = input_attributes.name_format_wrong;
+                    } else if (attribute['pattern'] == input_attributes.email_pattern){
+                        attribute['tooltip_message']['value'] = "The entered email address format is invalid.\nPlease try again. (Format: 'local-part@domain')";
+                    } else if (attribute['pattern'] == input_attributes.phone_pattern){
+                        attribute['tooltip_message']['value'] = "The entered phone number format is invalid.\nPlease try again. (Format: number between range (8, 20) without special character)";
+                    }
+                }
+            }
+        } else if (attribute['trait'] == "select"){ // select type input
+            if (attribute['correspond'] == 'company_id' || attribute['correspond'] == 'country_code'){ // for company
+                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+                    attribute['changed']['value'] = false;
+                } else {
+                    const edit_response = await axios.post(
+                        "../backend/edit_contact_api.php",
+                        {
+                            individual_id: props.individual_id,
+                            update_table: (attribute['table']).slice(0, -1),
+                            update_attribute: attribute['correspond'],
+                            update_value: attribute['value']['value']
+                        }
+                    );
+                    if (edit_response.status == 204){
+                        success_operation_prompt['value'] = true;
+                        get_lead_detail(attribute);
+                        attribute['changed']['value'] = false;
+                    } else {
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_message']['value'] = edit_response.data.message;
+                    }
+                }
+            } else {
+                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){ // gender & honorifics
+                    attribute['changed']['value'] = false;
+                } else {
+                    const edit_response = await axios.post(
+                        "../backend/edit_contact_api.php",
+                        {
+                            individual_id: props.individual_id,
+                            update_table: (attribute['table']).slice(0, -1),
+                            update_attribute: attribute['correspond'],
+                            update_value: "'" + attribute['value']['value'] + "'"
+                        }
+                    );
+                    if (edit_response.status == 204){
+                        success_operation_prompt['value'] = true;
+                        get_lead_detail(attribute);
+                        attribute['changed']['value'] = false;
+                    } else {
+                        attribute['has_error']['value'] = true;
+                        attribute['tooltip_message']['value'] = edit_response.data.message;
+                    }
+                }
+            }
+        }
+    }
+
+    // cancel changes
+    const cancel_changes = (attribute) => {
+        attribute['changed']['value'] = false;
+        attribute['has_error']['value'] = false;
+        attribute['value']['value'] = response.value.data[0][attribute['correspond']];
+
+        if (attribute['correspond'] == "lead_status"){
+
+        } else if (attribute['correspond'] == 'company_id'){
+            edit_attribute_right['company_address']['value']['value'] = response.value.data[0][attribute['company_address']];
+            edit_attribute_right['company_description']['value']['value'] = response.value.data[0][attribute['company_description']];
+            chosen_company_id['value'] = response.value.data[0][attribute['company_id']];
+        }
+    }
+
     // delete lead
     const delete_lead = async () => {
         delete_prompt['value'] = false;
@@ -560,6 +736,7 @@
         get_current_crm_user();
         get_current_crm_user_role();
         get_assign_user_option();
+        get_conversion_history();
     }
 
     initialize();
@@ -569,9 +746,10 @@
     <div class="flex flex-col w-max h-max">
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
-            <router-link :to="{name: 'contact_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
-            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Contact viewing page</div>
-            <div class="w-34"></div>
+            <router-link :to="{name: 'customer_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
+            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Customer editing page</div>
+            <button @click="delete_prompt = true" v-if="success_response && current_crm_user_role <= 2" class="text-white font-semibold bg-rose-600 hover:bg-rose-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Delete</button>
+            <div v-else class="w-34"></div>
         </div>
 
         <div v-if="delete_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
@@ -602,13 +780,13 @@
             </div>
         </div>
 
-        <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
+        <div v-if="success_response && current_crm_user_role <= 2" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
             <div class="flex flex-col w-max">
                 <!-- select content -->
                 <div class="flex mx-4 mt-2 p-1">
                     <div class="flex flex-row w-max p-1 bg-rose-100 rounded-full border-pink-700 border-2">
                         <button @click="conversion_history_content=false; information_content=true;" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!information_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':information_content}]">Overview</button>
-                        <button @click="conversion_history_content=true; information_content=false; get_activity_history();" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!conversion_history_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':conversion_history_content}]">Timeline</button>
+                        <button @click="conversion_history_content=true; information_content=false; get_conversion_history(); get_activity_history();" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!conversion_history_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':conversion_history_content}]">Timeline</button>
                     </div>
                 </div>
 
@@ -686,6 +864,14 @@
                                         <option :class="css_class_attributes.option_input" :value="null">NULL</option>
                                     </select>
                                 </div>
+                                <!-- for assign user -->
+                                <div v-if="edit_attribute_right['lead_status']['value']['value'] == 'Lead' && value['correspond'] == 'lead_owner_user_id'" class="flex flex-col">
+                                    <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
+                                        <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['user_id']">ID: {{ option['user_id'] }} - User name: {{ option[value['value_name']['value']] }} </option>
+                                        <option :class="css_class_attributes.option_input" :value="current_crm_user">Self</option>
+                                    </select>
+                                </div>
                                 <div v-if="value['changed'].value && value['correspond'] != 'conversion_message' && value['correspond'] != 'lead_owner_user_id'" class="flex flex-row h-max">
                                     <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
@@ -701,6 +887,41 @@
                             </div>
                         </div>
 
+                    </div>
+                </div>
+
+                <div v-if="conversion_history_content" class="flex flex-col min-w-240 max-w-full h-screen overflow-auto bg-pink-300 my-2 mx-4 border-4 rounded-md border-pink-700 p-2">
+                    <div class="mx-2 font-bold decoration-pink-700 decoration-2 text-lg underline">Conversion history</div>
+                    <div v-if="conversion_history_exist" v-for="value in conversion_history_response.data">
+                        <div class="flex flex-col my-2 mx-2 bg-rose-100 border-pink-700 border-2 rounded-md py-2 px-4">
+                            <div class="flex flex-row bg-pink-500 w-max py-1 px-4 mb-2 border-2 rounded-md border-pink-700 font-bold text-lg">
+                                <div>{{ value['convert_time'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert from</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['convert_from'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert to</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['convert_to'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert by</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['user_name'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Converter user ID</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['user_id'] }}</div>
+                            </div>
+                            <div class="flex flex-row">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Conversion note</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8 h-40 overflow-auto">{{ value['conversion_message'] }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else class="flex m-4 min-w-340 max-w-full px-4">
+                        <div class="flex bg-rose-100 border-rose-700 border-3 rounded-md px-2 py-2 w-full justify-center items-center">There is no conversion history for this lead</div>
                     </div>
                 </div>
 
@@ -731,7 +952,7 @@
                     </div>
 
                     <div v-else class="flex m-4 min-w-340 max-w-full px-4">
-                        <div class="flex bg-rose-100 border-rose-700 border-3 rounded-md px-2 py-2 w-full justify-center items-center">There is no activity history for this contact</div>
+                        <div class="flex bg-rose-100 border-rose-700 border-3 rounded-md px-2 py-2 w-full justify-center items-center">There is no activity history for this customer</div>
                     </div>
                 </div>
 
@@ -739,7 +960,7 @@
         </div>
         
         <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">
-            This contact no longer exist
+            This customer no longer exist or you don't have permission to edit this customer
         </div>
     </div>
 </template>

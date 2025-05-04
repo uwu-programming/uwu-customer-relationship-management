@@ -260,7 +260,7 @@
     // retrieve all data from TABLE individual JOIN company
     const retrieve_all = async () => {
         try {
-            response.value = await axios.post("../backend/retrieve_contact_api.php");
+            response.value = await axios.post("../backend/retrieve_customer_api.php");
         } catch (error){
             alert(error);
         }
@@ -301,7 +301,7 @@
 
             response.value = await axios.post(
                 // send the request to:
-                "../backend/retrieve_contact_api.php", 
+                "../backend/retrieve_customer_api.php", 
                 {
                     sort: true, // set that it is a sort request
                     sort_attribute: sort_attribute.value, // what attribute to sort by
@@ -373,12 +373,12 @@
                     </div>
                 </div>
                 <div class="flex flex-col w-max overflow-y-auto h-full bg-rose-100" v-if="need_display && JSON.stringify(response.data) != '[]'">
-                    <router-link :to="{name: 'contact_edit_page', params: {individual_id: response_value['individual_id']}}" @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-rose-100 hover:bg-rose-300 flex flex-row border-b-pink-700/80 border-b-1 overflow-hidden" v-if="response.status==200 && current_crm_user_role <= 2" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
+                    <router-link :to="{name: 'customer_edit_page', params: {individual_id: response_value['individual_id']}}" @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-rose-100 hover:bg-rose-300 flex flex-row border-b-pink-700/80 border-b-1 overflow-hidden" v-if="response.status==200 && current_crm_user_role <= 2" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
                         <div class="w-max flex overflow-hidden" v-for="value in contact_display_attributes" :key="value">   
                             <span v-if="value['display'].value" v-bind:class="value['class'] + css_class_attributes.display_span">{{ response_value[value['correspond']] }}</span>
                         </div>
                     </router-link>
-                    <router-link :to="{name: 'contact_view_page', params: {individual_id: response_value['individual_id']}}" @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-rose-100 hover:bg-rose-300 flex flex-row border-b-pink-700/80 border-b-1 overflow-hidden" v-if="response.status==200 && current_crm_user_role > 2" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
+                    <router-link :to="{name: 'customer_view_page', params: {individual_id: response_value['individual_id']}}" @mouseover="currently_hover(response_value)" class="w-max min-w-180 min-h-10 bg-rose-100 hover:bg-rose-300 flex flex-row border-b-pink-700/80 border-b-1 overflow-hidden" v-if="response.status==200 && current_crm_user_role > 2" v-for="response_value in response.data" :key="response_value" v-bind:id="response_value.individual_id">
                         <div class="w-max flex overflow-hidden" v-for="value in contact_display_attributes" :key="value">   
                             <span v-if="value['display'].value" v-bind:class="value['class'] + css_class_attributes.display_span">{{ response_value[value['correspond']] }}</span>
                         </div>
@@ -388,7 +388,7 @@
                     <span>No content available since no attribute is selected</span>
                 </div>
                 <div class="flex bg-red-400 h-full w-full justify-center items-center" v-if="JSON.stringify(response.data) == '[]'">
-                    <span>No contact fulfill the search requirement</span>
+                    <span>No customer fulfill the search requirement</span>
                 </div>
             </div>
 
@@ -416,7 +416,7 @@
         <!-- right side -->
         <div class="flex flex-col min-h-max max-h-max w-180 max-w-180 min-w-180 m-2">
             <div class="flex flex-col px-2 py-1 bg-pink-300 border-pink-700 rounded-lg border-3 m-1">
-                <div class="h-max font-bold mx-1 text-xl py-1 decoration-2 decoration-pink-700 underline">Filter Contacts</div>
+                <div class="h-max font-bold mx-1 text-xl py-1 decoration-2 decoration-pink-700 underline">Filter Customer</div>
                 <div class="flex flex-row h-max">
 
                     <!-- Select display section -->
@@ -433,7 +433,7 @@
                     <!-- Search section -->
                     <div class="flex flex-col min-h-80 max-h-max w-65/100 border-3 border-pink-700 rounded-xs mx-1 bg-rose-100">
                         <div class="h-max border-pink-700 px-3 py-1 border-b-3 font-bold bg-pink-500">Search by</div>
-                        <div class="bg-pink-500 flex justify-center items-center border-pink-700 border-b-3"><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full rounded-full focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 mx-2 my-1 px-4 border-2 border-pink-700 cursor-pointer focus:cursor-text hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content overflow-auto text-nowrap truncate" type="search" placeholder="Search for contacts that match the requirement..."></div>
+                        <div class="bg-pink-500 flex justify-center items-center border-pink-700 border-b-3"><input @input="search_data('GENERAL')" v-model="general_search" class="bg-white w-full rounded-full focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 mx-2 my-1 px-4 border-2 border-pink-700 cursor-pointer focus:cursor-text hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content overflow-auto text-nowrap truncate" type="search" placeholder="Search for customers that match the requirement..."></div>
 
                         <!-- Search by check box -->
                         <div class="flex flex-col overflow-auto w-full h-60 bg-rose-100">
@@ -501,8 +501,8 @@
                     </div>
                 </div>
                 <div class="flex flex-row justify-end bg-pink-500 border-pink-700 border-3 mt-2 rounded-md">
-                    <router-link v-if="current_crm_user_role <= 2" :to="{name: 'contact_edit_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button"><div class="w-35 bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full flex justify-center items-center m-2 font-semibold py-1">Open in detail</div></router-link>
-                    <router-link v-else :to="{name: 'contact_view_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button"><div class="w-35 bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full flex justify-center items-center m-2 font-semibold py-1">Open in detail</div></router-link>
+                    <router-link v-if="current_crm_user_role <= 2" :to="{name: 'customer_edit_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button"><div class="w-35 bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full flex justify-center items-center m-2 font-semibold py-1">Open in detail</div></router-link>
+                    <router-link v-else :to="{name: 'customer_view_page', params: {individual_id: current_hover_user['individual_id']}}" tag="button"><div class="w-35 bg-pink-200 mx-3 hover:bg-pink-700 hover:text-white rounded-full flex justify-center items-center m-2 font-semibold py-1">Open in detail</div></router-link>
                 </div>
             </div>
             

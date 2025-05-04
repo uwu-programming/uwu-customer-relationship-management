@@ -319,7 +319,7 @@
 
     const overview_attribute = {
         lead_name: {
-            name: "Contact name",
+            name: "Customer name",
             value: ref(""),
             correspond: ""
         },
@@ -360,7 +360,7 @@
     // retrieve the lead to edit
     const get_lead_detail = async (attribute) => {
         try {
-            response.value = await axios.post("../backend/retrieve_contact_api.php", {requirement: JSON.stringify(["individual_id:" + props.individual_id]), hard_requirement: true});
+            response.value = await axios.post("../backend/retrieve_customer_api.php", {requirement: JSON.stringify(["individual_id:" + props.individual_id]), hard_requirement: true});
             // check if the retrieve is success (by checking if the object has key)
             success_response.value = (Object.keys(response.value.data)).length > 0;
 
@@ -511,6 +511,21 @@
         }
     }
 
+    // get conversion history
+    const get_conversion_history = async () => {
+        try {
+            conversion_history_response['value'] = await axios.post(
+                "../backend/retrieve_lead_conversion_history.php",
+                {
+                    individual_id: props.individual_id
+                }
+            );
+            conversion_history_exist['value'] = (conversion_history_response['value']['data'].length > 0 ? true : false);
+        } catch (error){
+            alert(error);
+        }
+    }
+
      // get activity history
      const get_activity_history = async () => {
         try {
@@ -560,6 +575,7 @@
         get_current_crm_user();
         get_current_crm_user_role();
         get_assign_user_option();
+        get_conversion_history();
     }
 
     initialize();
@@ -569,8 +585,8 @@
     <div class="flex flex-col w-max h-max">
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
-            <router-link :to="{name: 'contact_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
-            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Contact viewing page</div>
+            <router-link :to="{name: 'customer_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
+            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Customer viewing page</div>
             <div class="w-34"></div>
         </div>
 
@@ -608,7 +624,7 @@
                 <div class="flex mx-4 mt-2 p-1">
                     <div class="flex flex-row w-max p-1 bg-rose-100 rounded-full border-pink-700 border-2">
                         <button @click="conversion_history_content=false; information_content=true;" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!information_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':information_content}]">Overview</button>
-                        <button @click="conversion_history_content=true; information_content=false; get_activity_history();" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!conversion_history_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':conversion_history_content}]">Timeline</button>
+                        <button @click="conversion_history_content=true; information_content=false; get_conversion_history(); get_activity_history();" :class="['bg-pink-500 p-1 px-3 mx-1 rounded-full cursor-pointer', {'hover:bg-pink-600 hover:text-rose-100 hover:shadow-xl hover:shadow-pink-500/50':!conversion_history_content}, {'bg-pink-700 text-white font-bold hover:bg-pink-700 hover:text-white hover:shadow-none':conversion_history_content}]">Timeline</button>
                     </div>
                 </div>
 
@@ -705,6 +721,41 @@
                 </div>
 
                 <div v-if="conversion_history_content" class="flex flex-col min-w-240 max-w-full h-screen overflow-auto bg-pink-300 my-2 mx-4 border-4 rounded-md border-pink-700 p-2">
+                    <div class="mx-2 font-bold decoration-pink-700 decoration-2 text-lg underline">Conversion history</div>
+                    <div v-if="conversion_history_exist" v-for="value in conversion_history_response.data">
+                        <div class="flex flex-col my-2 mx-2 bg-rose-100 border-pink-700 border-2 rounded-md py-2 px-4">
+                            <div class="flex flex-row bg-pink-500 w-max py-1 px-4 mb-2 border-2 rounded-md border-pink-700 font-bold text-lg">
+                                <div>{{ value['convert_time'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert from</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['convert_from'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert to</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['convert_to'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Convert by</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['user_name'] }}</div>
+                            </div>
+                            <div class="flex flex-row mb-2">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Converter user ID</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8">{{ value['user_id'] }}</div>
+                            </div>
+                            <div class="flex flex-row">
+                                <div class="flex justify-end border-pink-700 border-b-2 w-2/10 font-semibold">Conversion note</div>
+                                <div class="flex border-pink-700 border-b-2 w-85/100 ml-8 h-40 overflow-auto">{{ value['conversion_message'] }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else class="flex m-4 min-w-340 max-w-full px-4">
+                        <div class="flex bg-rose-100 border-rose-700 border-3 rounded-md px-2 py-2 w-full justify-center items-center">There is no conversion history for this lead</div>
+                    </div>
+                </div>
+
+                <div v-if="conversion_history_content" class="flex flex-col min-w-240 max-w-full h-screen overflow-auto bg-pink-300 my-2 mx-4 border-4 rounded-md border-pink-700 p-2">
                     <div class="mx-2 font-bold decoration-pink-700 decoration-2 text-lg underline">Activity history</div>
                     <div v-if="activity_history_exist" v-for="value in activity_history_response.data">
                         <div class="flex flex-col my-2 mx-2 bg-rose-100 border-pink-700 border-2 rounded-md py-2 px-4">
@@ -731,7 +782,7 @@
                     </div>
 
                     <div v-else class="flex m-4 min-w-340 max-w-full px-4">
-                        <div class="flex bg-rose-100 border-rose-700 border-3 rounded-md px-2 py-2 w-full justify-center items-center">There is no activity history for this contact</div>
+                        <div class="flex bg-rose-100 border-rose-700 border-3 rounded-md px-2 py-2 w-full justify-center items-center">There is no activity history for this customer</div>
                     </div>
                 </div>
 
@@ -739,7 +790,7 @@
         </div>
         
         <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">
-            This contact no longer exist
+            This customer no longer exist
         </div>
     </div>
 </template>

@@ -101,6 +101,11 @@ function edit_lead($conn){
                 $update_query = "UPDATE individual SET relationship = 'Customer' WHERE individual_id = $post_data->individual_id";
                 $update_statement = $conn->prepare($update_query);
                 $update_statement->execute();
+
+                // remove from lead individual
+                $remove_query = "DELETE FROM lead_individual WHERE individual_id = $post_data->individual_id";
+                $remove_statement = $conn->prepare($remove_query);
+                $remove_statement->execute();
             } else {
                 $convert_to = $post_data->update_value;
                 // update the lead status

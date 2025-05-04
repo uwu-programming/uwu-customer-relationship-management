@@ -33,23 +33,6 @@ function edit_lead($conn){
             echo json_encode(array("message" => "Invalid post request."));
             http_response_code(400);
         }
-        
-        // check if the user is admin, or else check if the user has the right lead
-        if ($current_user_role != 1 && $valid){
-            $check_query = "SELECT * FROM lead_individual WHERE individual_id = $post_data->individual_id AND lead_owner_user_id = $current_user_id";
-            $check_statement = $conn->prepare($check_query);
-            $check_statement->execute();
-
-            $check_result = array();
-            while ($row = $check_statement->fetch(PDO::FETCH_ASSOC)){
-                array_push($check_result, $row);
-            }
-
-            if (!(count($check_result) > 0)){
-                $valid = false;
-                echo json_encode(array("message" => "You don't have permission to edit this user."));
-            }
-        }
 
         if ($valid && array_key_exists("operation", (array)$post_data) && $post_data->operation == "DELETE"){
             $delete_query = "DELETE FROM individual WHERE individual_id = $post_data->individual_id";
