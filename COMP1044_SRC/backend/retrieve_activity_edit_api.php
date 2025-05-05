@@ -27,8 +27,8 @@ function retrieve_activity($conn){
         // get the JSON post by the client
         $post_data = json_decode(file_get_contents("php://input"));
 
-        // the SQL query to get all contact
-        $sql_query = "SELECT * FROM activity WHERE activity_id = $post_data->activity_id AND created_by = $current_user_id";
+        // the SQL query to get activity information
+        $sql_query = "SELECT * FROM activity JOIN crm_user ON activity.created_by = crm_user.user_id WHERE activity_id = $post_data->activity_id";
 
         $statement = $conn->prepare($sql_query);
         $statement->execute();

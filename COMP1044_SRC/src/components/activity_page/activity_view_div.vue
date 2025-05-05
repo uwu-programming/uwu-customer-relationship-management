@@ -53,21 +53,21 @@
         description_edit_attribute: "flex flex-row mb-4",
         search_select_edit_attribute: "flex flex-row mb-4",
         normal_label: "w-48 flex justify-end px-2 py-1 mx-1 border-b-2 border-pink-700 font-bold",
-        text_input: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 cursor-pointer focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
-        text_area_input: "focus:shadow-pink-500/50 shadow-xl w-100 h-40 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
-        text_area_input_short: "focus:shadow-pink-500/50 shadow-xl w-100 h-25 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
-        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate shadow-xl",
-        time_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md cursor-pointer px-2 overflow-auto text-nowrap truncate shadow-xl",
+        text_input: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        text_area_input: "focus:shadow-pink-500/50 shadow-xl w-100 h-40 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white focus:cursor-text px-2 py-1 resize-none",
+        text_area_input_short: "focus:shadow-pink-500/50 shadow-xl w-100 h-25 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white focus:cursor-text px-2 py-1 resize-none",
+        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md px-2 pr-5 invalid:shadow-red-600 overflow-auto text-nowrap truncate shadow-xl",
+        time_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md px-2 overflow-auto text-nowrap truncate shadow-xl",
         paragraph_input: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-40 mx-3 px-2 py-1 overflow-auto border-2 focus:bg-gray-100 border-pink-700 rounded-md bg-white shadow-xl",
         paragraph_input_short: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-20 mx-3 px-2 py-1 overflow-y-scroll focus:bg-gray-100 border-2 border-pink-700 rounded-sm bg-white",
-        variable_select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-sm cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
+        variable_select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-sm px-2 pr-5 invalid:shadow-red-600 overflow-auto text-nowrap truncate",
         option_input: "",
         search_input: "focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 w-100 mx-3 mb-2 bg-white rounded-full border-2 border-pink-700 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
         small_search_input: "focus:shadow-pink-500/50 focus:bg-gray-100 shadow-xl h-8 w-80 mx-3 mb-2 bg-white rounded-full border-2 border-pink-700 cursor-pointer focus:cursor-text px-2 hover:bg-[url(/src/assets/icon/icons8-search.svg)] focus:bg-[url(/src/assets/icon/icons8-search.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
 
-        none: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 invalid:shadow-red-600 overflow-auto text-nowrap truncate",
-
         error_input: "shadow-red-600",
+
+        none: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 invalid:shadow-red-600 overflow-auto text-nowrap truncate",
 
         tooltip_show: "visible",
         tooltip_hide: "hidden",
@@ -105,7 +105,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_input,
-            input: input_attributes.text,
+            input: input_attributes.paragraph,
             trait: input_attributes.trait_text,
             value: ref(""),
             hover: ref(false),
@@ -121,7 +121,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.select_input,
-            input: input_attributes.fixed_select,
+            input: input_attributes.paragraph,
             trait: input_attributes.trait_select,
             option_list: ref(activity_type_option),
             value: ref("Other"),
@@ -138,7 +138,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.time_input,
-            input: input_attributes.datetime,
+            input: input_attributes.paragraph,
             trait: input_attributes.trait_select,
             option_list: ref(honorifics_option),
             value: ref(""),
@@ -155,7 +155,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.time_input,
-            input: input_attributes.datetime,
+            input: input_attributes.paragraph,
             trait: input_attributes.trait_select,
             option_list: ref(honorifics_option),
             value: ref(""),
@@ -172,7 +172,7 @@
             class: css_class_attributes.description_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_area_input,
-            input: input_attributes.textarea,
+            input: input_attributes.paragraph,
             trait: input_attributes.trait_text,
             value: ref(""),
             hover: ref(false),
@@ -554,9 +554,8 @@
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
             <router-link :to="{name: 'activity_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
-            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Activity editing page</div>
-            <button v-if="success_response && current_crm_user == response['data'][0]['created_by']" @click="delete_prompt = true" class="text-white font-semibold bg-red-600 hover:bg-red-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Delete</button>
-            <div v-else class="w-25 mx-4"></div>
+            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Activity view page</div>
+            <div class="w-25 mx-4"></div>
         </div>
 
         <div v-if="create_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
@@ -596,7 +595,7 @@
             </div>
         </div>
 
-        <div v-if="success_response && current_crm_user == response['data'][0]['created_by']" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
+        <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
             <div class="flex flex-col w-max pt-10">
                 <!-- edit part -->
                 <div v-if="information_content" class="flex w-full justify-center">
@@ -651,30 +650,16 @@
                     
                     <!-- add and drop participant -->
                     <div class="flex flex-row justify-between border-pink-700 border-t-3">
-                        <!-- add -->
-                        <div class="flex flex-col items-center bg-pink-300 border-pink-700 border-r-2 w-1/2">
-                            <div class="flex justify-center my-1 font-semibold decoration-2 decoration-pink-700 underline">Add participant</div>
-                            <div class="flex">
-                                <input v-model="add_search_value" @input="get_individual_add_list(add_search_value);" :class="css_class_attributes.small_search_input" type="search" placeholder="Search for individual to add..."/>
-                            </div>
-                            <div class="flex flex-col mx-4 my-1 mb-3 w-80 overflow-auto bg-rose-100 h-100 border-rose-700 rounded-md border-2">
-                                <div class="flex justify-between px-2 py-1 hover:bg-rose-300 cursor-default border-rose-700 border-b-1 last:border-none" v-for="value in individual_add_list">
-                                    <div class="truncate">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['middle_name'] }} {{ value['last_name'] }}</div>
-                                    <button @click="add_participant(value); get_individual_drop_list(drop_search_value);" class="cursor-pointer px-2 rounded-full font-semibold bg-green-500 hover:bg-green-700 hover:text-white">Add</button>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- drop -->
-                        <div class="flex flex-col items-center bg-pink-300 border-pink-700 border-l-2 w-1/2">
-                            <div class="flex justify-center my-1 font-semibold decoration-2 decoration-pink-700 underline">Drop participant</div>
+                        <div class="flex flex-col w-full items-center bg-pink-300 border-pink-700">
+                            <div class="flex justify-center my-1 font-semibold decoration-2 decoration-pink-700 underline"></div>
                             <div class="flex">
-                                <input v-model="drop_search_value" @input="get_individual_drop_list(drop_search_value);" :class="css_class_attributes.small_search_input" type="search" placeholder="Search for individual to drop..."/>
+                                <input v-model="drop_search_value" @input="get_individual_drop_list(drop_search_value);" :class="css_class_attributes.small_search_input" type="search" placeholder="Search for participant..."/>
                             </div>
                             <div class="flex flex-col mx-4 my-1 mb-3 w-80 overflow-auto bg-rose-100 h-100 border-rose-700 rounded-md border-2">
-                                <div class="flex justify-between px-2 py-1 hover:bg-rose-300 cursor-default border-rose-700 border-b-1 last:border-none" v-for="value in individual_drop_list">
+                                <div class="flex w-full justify-between px-2 py-1 hover:bg-rose-300 cursor-default border-rose-700 border-b-1 last:border-none" v-for="value in individual_drop_list">
                                     <div class="truncate">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['middle_name'] }} {{ value['last_name'] }}</div>
-                                    <button @click="drop_participant(value); get_individual_add_list(add_search_value);" class="cursor-pointer px-2 rounded-full font-semibold bg-red-500 hover:bg-red-700 hover:text-white">Remove</button>
                                 </div>
                             </div>
                         </div>
@@ -687,7 +672,7 @@
         </div>
 
         <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">
-            You don't have permission to edit this activity, or this activity is no longer exist
+            You don't have permission to view this activity, or this activity is no longer exist
         </div>
 
     </div>

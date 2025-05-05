@@ -11,15 +11,15 @@ require "database_connection.php";
 
 switch($_SERVER["REQUEST_METHOD"]){
     case "POST":
-        retrieve_lead($conn);
+        retrieve_activity($conn);
         break;
     
     default:
-        retrieve_lead($conn);
+        retrieve_activity($conn);
         break;
 }
 
-function retrieve_lead($conn){
+function retrieve_activity($conn){
     try {
         $current_user_id = $_SESSION['user_id'];
         $current_user_role = $_SESSION['user_role'];
@@ -27,51 +27,49 @@ function retrieve_lead($conn){
         // get the JSON post by the client
         $post_data = json_decode(file_get_contents("php://input"));
 
-        // the SQL query to get all lead individual
-        // LEFT JOIN: JOIN, but also consider NULL value (e.g. if TABLE a LEFT JOIN TABLE b, and if a doesn't have value in b, it will give default NULL value)
-        // USING: it is like ON, but when joining two SELECT, use USING to combine duplicate column name
-        // joining multiple SELECT: SELECT * FROM (FIRST SELECT) tempTableName1 JOIN (SECOND SELECT) tempTableName2 ON / USING (CONDITION) ...
-        $sql_query = "SELECT * FROM (SELECT * FROM individual LEFT JOIN company USING(company_id) JOIN lead_individual USING(individual_id)) t1 LEFT JOIN (SELECT user_id AS lead_owner_user_id, user_name AS lead_owner_name FROM crm_user) t2 USING(lead_owner_user_id) LEFT JOIN (SELECT user_id AS created_by, user_name AS created_by_name FROM crm_user) t3 USING(created_by)";
+        // the SQL query to get all contact
+        $sql_query = "SELECT * FROM activity LEFT JOIN crm_user ON activity.created_by = crm_user.user_id";
 
-        // get FIELD of individual and company TABLE
-        $desc_individual_statement = $conn->prepare("DESC individual");
-        $desc_individual_statement->execute();
+        // get FIELD of activity and crm_user TABLE
+        $desc_activity_statement = $conn->prepare("DESC activity");
+        $desc_activity_statement->execute();
 
-        $desc_company_statement = $conn->prepare("DESC company");
-        $desc_company_statement->execute();
+        $desc_crm_user_statement = $conn->prepare("DESC crm_user");
+        $desc_crm_user_statement->execute();
 
         // store the FIELD value inside the array
         $desc_array = array();
 
-        while ($row = $desc_individual_statement->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $desc_activity_statement->fetch(PDO::FETCH_ASSOC)){
             array_push($desc_array, $row);
         }
-        while ($row = $desc_company_statement->fetch(PDO::FETCH_ASSOC)){
+        while ($row = $desc_crm_user_statement->fetch(PDO::FETCH_ASSOC)){
             array_push($desc_array, $row);
         }
 
-        // check if user is an admin
         if ($current_user_role <= 2){
-            // get all users
+            // get all activity
             
         } else {
-            // only get lead that is under this particular user
-            $sql_query = $sql_query . " WHERE lead_owner_user_id = $current_user_id";
+            // only get activity that is under this particular user
+            $sql_query = $sql_query . " WHERE activity.created_by = $current_user_id";
         }
 
         // check if the request asked to filter data
         if (array_key_exists("requirement", (array)$post_data)){
             // decode the requirement (a JSON like string)
             $requirement_JSON = json_decode($post_data->requirement);
-            
+
             if (count((array)$requirement_JSON) > 0){
                 // add WHERE clause for admin
                 if ($current_user_role <= 2)
-                    $sql_query = $sql_query . " WHERE";
+                    $sql_query = $sql_query . " WHERE(";
                 // add syntax for normal user (cause individual_id filter)
                 else
                     $sql_query = $sql_query . " AND( ";
-
+            }
+            
+            if (count((array)$requirement_JSON) > 0){
                 // loop through the requirement array
                 foreach ($requirement_JSON as $value){
                     // seperate the requirement to TABLE and VALUE
@@ -91,9 +89,7 @@ function retrieve_lead($conn){
                             $sql_query = $sql_query . " $post_data->filter";
                 }
 
-                // close the query for non admin user
-                if ($current_user_role != 1)
-                    $sql_query = $sql_query . " ) ";
+                $sql_query = $sql_query . " ) ";
             }
         }
 
@@ -128,6 +124,7 @@ function retrieve_lead($conn){
     }
 
     echo json_encode($result);
+    //echo($sql_query);
 }
 
 ?>
