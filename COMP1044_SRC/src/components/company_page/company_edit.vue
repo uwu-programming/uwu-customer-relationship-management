@@ -323,7 +323,7 @@
     <div class="flex flex-col w-max h-max">
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
-            <router-link :to="{name: 'activity_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
+            <router-link :to="{name: 'company_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
             <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Company editing page</div>
             <button v-if="success_response" @click="delete_prompt = true" class="text-white font-semibold bg-red-600 hover:bg-red-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Delete</button>
             <div v-else class="w-25 mx-4"></div>
@@ -413,7 +413,7 @@
 
                     </div>
                 </div>
-
+                
             </div>
         </div>
 
