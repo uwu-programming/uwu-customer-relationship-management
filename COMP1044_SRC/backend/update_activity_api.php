@@ -11,14 +11,14 @@ require "database_connection.php";
 
 switch($_SERVER["REQUEST_METHOD"]){
     case "POST":
-        create_activity($conn);
+        update_activity($conn);
         break;
     
     default:
         break;
 }
 
-function create_activity($conn){
+function update_activity($conn){
     try {
         $current_user_id = $_SESSION['user_id'];
         $current_user_role = $_SESSION['user_role'];
@@ -46,12 +46,11 @@ function create_activity($conn){
 
             http_response_code(204);
         }else {
-            //http_response_code(400);
+            http_response_code(400);
         }
 
     } catch (PDOException $error){
-        echo json_encode(array("message" => $sql_query));
-        //http_response_code(400);
+        http_response_code(400);
     }
 }
 

@@ -29,6 +29,8 @@ function retrieve_company($conn){
         // for filter
         if (array_key_exists("filter", (array)$post_data)){
             $sql_query = $sql_query . " WHERE company_name LIKE '%$post_data->filter%'";
+        } else if (array_key_exists("company_id", (array)$post_data)){
+            $sql_query = $sql_query . " WHERE company_id = $post_data->company_id";
         }
 
         $sql_statement = $conn->prepare($sql_query);
