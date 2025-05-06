@@ -929,7 +929,10 @@
                     <div class="mx-2 font-bold decoration-pink-700 decoration-2 text-lg underline">Activity history</div>
                     <div v-if="activity_history_exist" v-for="value in activity_history_response.data">
                         <div class="flex flex-col my-2 mx-2 bg-rose-100 border-pink-700 border-2 rounded-md py-2 px-4">
-                            <router-link :to="{name: 'activity_edit_page', params: {activity_id: value['activity_id']}}" tag="button"><div class="flex flex-row cursor-pointer hover:bg-rose-800 hover:text-white bg-pink-500 w-max py-1 px-4 mb-2 border-2 rounded-md border-pink-700 font-bold text-lg">
+                            <router-link v-if="value['created_by'] == current_crm_user" :to="{name: 'activity_edit_page', params: {activity_id: value['activity_id']}}" tag="button"><div class="flex flex-row cursor-pointer hover:bg-rose-800 hover:text-white bg-pink-500 w-max py-1 px-4 mb-2 border-2 rounded-md border-pink-700 font-bold text-lg">
+                                <div>{{ value['activity_subject'] }}</div>
+                            </div></router-link>
+                            <router-link v-else :to="{name: 'activity_view_page', params: {activity_id: value['activity_id']}}" tag="button"><div class="flex flex-row cursor-pointer hover:bg-rose-800 hover:text-white bg-pink-500 w-max py-1 px-4 mb-2 border-2 rounded-md border-pink-700 font-bold text-lg">
                                 <div>{{ value['activity_subject'] }}</div>
                             </div></router-link>
                             <div class="flex flex-row mb-2">
