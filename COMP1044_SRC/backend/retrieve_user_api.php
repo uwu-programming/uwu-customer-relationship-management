@@ -163,7 +163,7 @@ function retrieve_user($conn){
             }
         }
 
-        $sql_query = $sql_query . " GROUP BY lead_owner_user_id";
+        $sql_query = $sql_query . " GROUP BY user_id";
 
         if (array_key_exists("lead_total_search", (array)$post_data) && $post_data->lead_total_search){
             $sql_query = $sql_query . " HAVING total_leads LIKE '%$post_data->lead_total_search_value%' OR total_leads $post_data->lead_total_search_value";

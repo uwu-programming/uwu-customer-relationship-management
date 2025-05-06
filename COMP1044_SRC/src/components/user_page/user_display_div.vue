@@ -294,7 +294,7 @@
 
             <!-- create new user -->
             <div class="bg-pink-300 rounded-md border-pink-700 border-3 m-1 flex justify-end">
-                <button class="mx-3 my-4 bg-green-500 py-2 px-4 rounded-full font-semibold hover:bg-green-800 hover:text-white">Create new user</button>
+                <router-link tag="button"><button class="mx-3 my-4 bg-green-500 py-2 px-4 rounded-full font-semibold hover:bg-green-800 hover:text-white">Create new user</button></router-link>
             </div>
 
         </div>

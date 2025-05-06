@@ -15,6 +15,7 @@ import customer_edit_page from "../views/customer_edit_page.vue";
 import customer_view_page from "../views/customer_view_page.vue";
 import activity_page from "../views/activity_page.vue";
 import activity_view_page from "../views/activity_view_page.vue";
+import user_creation_page from "../views/user_creation_page.vue";
 
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -121,6 +122,12 @@ const router = createRouter({
             name: "activity_view_page",
             component: activity_view_page,
             props: true
+        },
+
+        {
+            path: "/user_creation_page",
+            name: "user_creation_page",
+            component: user_creation_page
         },
     ]
 });

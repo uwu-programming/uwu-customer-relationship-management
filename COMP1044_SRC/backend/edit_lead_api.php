@@ -35,7 +35,7 @@ function edit_lead($conn){
         }
         
         // check if the user is admin, or else check if the user has the right lead
-        if ($current_user_role != 1 && $valid){
+        if ($current_user_role > 2 && $valid){
             $check_query = "SELECT * FROM lead_individual WHERE individual_id = $post_data->individual_id AND lead_owner_user_id = $current_user_id";
             $check_statement = $conn->prepare($check_query);
             $check_statement->execute();

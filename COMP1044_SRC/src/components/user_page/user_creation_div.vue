@@ -4,8 +4,15 @@
 
     // the parameter passed by the router
     const props = defineProps({
-        user_id: String // for accessing specific individual
+        individual_id: String // for accessing specific individual
     });
+
+    // new user id
+    const new_user_id = ref("");
+
+    // current crm user
+    const current_crm_user = ref("");
+    const current_crm_user_role = ref("");
 
     // store the response from API request
     const response = ref("");
@@ -14,17 +21,20 @@
     const honorifics_option = ref("");
     const country_option = ref("");
     const lead_status_option = ref("");
+    const assign_to_user_option = ref("");
     const company_option = ref("");
+    const relationship_option = ref("");
     const chosen_company_id = ref("");
     const conversion_history_response = ref("");
+    const role_option = ref("");
 
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
     const conversion_history_exist = ref(false);
 
     // check if delete is activated
-    const delete_prompt = ref(false);
-    const delete_success_prompt = ref(false);
+    const create_prompt = ref(false);
+    const create_success_prompt = ref(false);
     const success_operation_prompt = ref(false);
 
     // check which content to load
@@ -40,11 +50,10 @@
         search_select_edit_attribute: "flex flex-row mb-4",
         normal_label: "w-48 flex justify-end px-2 py-1 mx-1 border-b-2 border-pink-700 font-bold",
         text_input: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 cursor-pointer focus:bg-gray-100 focus:cursor-text focus:shadow-pink-500/50 shadow-xl px-2 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
-        text_show: "h-8 w-100 mx-3 bg-white rounded-md border-pink-700 border-2 shadow-xl px-2 overflow-auto text-nowrap truncate",
         text_area_input: "focus:shadow-pink-500/50 shadow-xl w-100 h-40 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
         text_area_input_short: "focus:shadow-pink-500/50 shadow-xl w-100 h-25 mx-3 border-2 border-pink-700 focus:bg-gray-100 rounded-sm bg-white cursor-pointer focus:cursor-text px-2 py-1 hover:bg-[url(/src/assets/icon/pen-solid.svg)] focus:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-top-right bg-size-[5%_auto] bg-origin-content resize-none",
-        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
-        paragraph_input: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-40 mx-3 px-2 py-1 overflow-auto border-2 focus:bg-gray-100 border-pink-700 rounded-md bg-white",
+        select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-md cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate shadow-xl",
+        paragraph_input: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-40 mx-3 px-2 py-1 overflow-auto border-2 focus:bg-gray-100 border-pink-700 rounded-md bg-white shadow-xl",
         paragraph_input_short: "focus:shadow-pink-500/50 shadow-xl flex w-100 h-20 mx-3 px-2 py-1 overflow-y-scroll focus:bg-gray-100 border-2 border-pink-700 rounded-sm bg-white",
         variable_select_input: "h-8 w-100 mx-3 bg-white border-pink-700 border-2 rounded-sm cursor-pointer px-2 pr-5 hover:bg-[url(/src/assets/icon/pen-solid.svg)] bg-no-repeat bg-right bg-size-[5%_auto] bg-origin-content invalid:shadow-red-600 overflow-auto text-nowrap truncate",
         option_input: "",
@@ -65,39 +74,24 @@
         text: "text",
         textarea: "textarea",
         none: "none",
-        span: "span",
         paragraph: "paragraph",
         fixed_select: "fixed_select",
         variable_select: "variable_select",
 
 
         name_pattern: "([a-zA-Z])([a-zA-Z ]*)([a-zA-Z]+)$",
+        phone_pattern: "[0-9]{8,20}$",
+        email_pattern: "([a-z,0-9]{2,})@([a-z,0-9]{2,}).([a-z]{2,})$",
+        password_pattern: "([a-zA-Z!@#$%^&\*1-9])([a-zA-Z!@#$%^&\*1-9]*)([a-zA-Z!@#$%^&\*1-9]+)$",
 
         trait_text: "text",
         trait_select: "select",
 
-        name_format_wrong: "Bad user name format, please try again. \n(User name can only contain alphabet and space)",
+        name_format_wrong: "Bad name format, please try again. \n(Name must start with capital letter, and does not include numbers or special character)",
     }
 
     // ref to store the display attribute
     const edit_attribute_left = {
-        user_id: {
-            name: "User ID",
-            correspond: "user_id",
-            table: "crm_user.",
-            class: css_class_attributes.normal_edit_attribute,
-            name_class: css_class_attributes.normal_label,
-            input_class: css_class_attributes.text_show,
-            input: input_attributes.paragraph,
-            trait: input_attributes.trait_text,
-            pattern: input_attributes.name_pattern,
-            value: ref(""),
-            hover: ref(false),
-            changed: ref(false),
-            has_error: ref(false),
-            tooltip_visible: ref(css_class_attributes.tooltip_hide),
-            tooltip_message: ref("")
-        },
         user_name: {
             name: "User name",
             correspond: "user_name",
@@ -115,42 +109,160 @@
             tooltip_visible: ref(css_class_attributes.tooltip_hide),
             tooltip_message: ref("")
         },
-        role: {
-            name: "Role",
+        user_role: {
+            name: "User role",
             correspond: "role_id",
             table: "crm_user.",
-            class: css_class_attributes.search_select_edit_attribute,
+            class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
-            input_class: css_class_attributes.variable_select_input,
-            input: input_attributes.variable_select,
+            input_class: css_class_attributes.select_input,
+            input: input_attributes.fixed_select,
             trait: input_attributes.trait_select,
+            option_list: ref(role_option),
             value: ref(""),
-            value_name: ref("role_name"),
-            search_value: ref(""),
-            search_placeholder: ref("Search for a role name..."),
-            search_function: ref("get"),
-            option_list: ref(country_option),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
             tooltip_visible: ref(css_class_attributes.tooltip_hide),
             tooltip_message: ref("")
         },
+        password: {
+            name: "Password",
+            correspond: "password_hash",
+            table: "crm_user_login_info.",
+            class: css_class_attributes.normal_edit_attribute,
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.text_input,
+            input: input_attributes.text,
+            trait: input_attributes.trait_text,
+            pattern: input_attributes.password_pattern,
+            value: ref(""),
+            hover: ref(false),
+            changed: ref(false),
+            has_error: ref(false),
+            tooltip_visible: ref(css_class_attributes.tooltip_hide),
+            tooltip_message: ref("")
+        }
     }
 
-    // retrieve the lead to edit
-    const get_user_detail = async (attribute) => {
+    // get current crm user
+    const get_current_crm_user = async () => {
         try {
-            response.value = await axios.post("../backend/retrieve_user_api.php", {requirement: JSON.stringify(["user_id:" + props.user_id]), hard_requirement: true});
-            // check if the retrieve is success (by checking if the object has key)
-            success_response.value = (Object.keys(response.value.data)).length > 0;
+            const get_current_crm_user_response = await axios.post("../backend/get_current_user_api.php");
+            current_crm_user['value'] = get_current_crm_user_response['data']['user_id'];
+        } catch(error) {
+            alert(error);
+        }
+    }
 
-            if (success_response.value && attribute == null){
-                for (const key in edit_attribute_left)
-                    edit_attribute_left[key]['value'].value = response.value.data[0][edit_attribute_left[key]['correspond']];
-            } else if (success_response.value){
-                attribute['value']['value'] = response.value.data[0][attribute['correspond']];
+    // get current crm user role
+    const get_current_crm_user_role = async () => {
+        try {
+            const get_current_crm_user_role_response = await axios.post("../backend/get_current_user_api.php");
+            current_crm_user_role['value'] = get_current_crm_user_role_response['data']['user_id'];
+        } catch(error) {
+            alert(error);
+        }
+    }
+
+    // get select option of gender
+    const get_gender_option = async () => {
+        try {
+            const gender_option_response = await axios.post("../backend/retrieve_gender_api.php", {data: "option"});
+            // it should be an object (array), keys are index
+            gender_option['value'] = gender_option_response.data;
+        } catch (error){
+            alert(error);
+        }
+    }
+
+    // get select option of honorifics
+    const get_honorifics_option = async () => {
+        try {
+            const honorifics_option_response = await axios.post("../backend/retrieve_honorifics_api.php", {data: "option"});
+            // it should be an object (array), keys are index
+            honorifics_option['value'] = honorifics_option_response.data;
+        } catch (error){
+            alert(error);
+        }
+    }
+
+    // get select option of country
+    const get_country_option = async (search_value) => {
+        try {
+            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
+                const country_option_response = await axios.post("../backend/retrieve_country_api.php", {data: "option"});
+                
+                // should be [object Object]
+                // first layer key is index (0,1,...)
+                // second layer keys are: [country_code, country_name]
+                country_option['value'] = country_option_response.data;
+            } else {
+                const country_option_response = await axios.post("../backend/retrieve_country_api.php", {data: "option", filter: search_value});
+                
+                // should be [object Object]
+                // first layer key is index (0,1,...)
+                // second layer keys are: [country_code, country_name]
+                country_option['value'] = country_option_response.data;
             }
+        } catch (error){
+            alert(error);
+        }
+    }
+
+    // get user able to be assigned to
+    const get_assign_user_option = async (search_value) => {
+        try {
+            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
+                const get_assign_user_option_response = await axios.post("../backend/retrieve_user_api.php");
+                assign_to_user_option['value'] = get_assign_user_option_response.data;
+            } else {
+                var search_array = [];
+                search_array.push("user_id:" + search_value.trim());
+                search_array.push("user_name:" + search_value.trim());
+
+                const get_assign_user_option_response = await axios.post(
+                    "../backend/retrieve_user_api.php", 
+                    {
+                        requirement: JSON.stringify(search_array)
+                    }
+                );
+                assign_to_user_option['value'] = get_assign_user_option_response.data;
+            }
+        } catch(error) {
+            alert(error);
+        }
+    }
+
+    // get select option of honorifics
+    const get_company_option = async (search_value) => {
+        try {
+            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
+                const company_option_response = await axios.post("../backend/retrieve_company_api.php", {data: "option"});
+                
+                // should be [object Object]
+                // first layer key is index (0,1,...)
+                // second layer keys are: [company_id, company_name, company_address, company_description]
+                company_option['value'] = company_option_response.data;
+            } else {
+                const company_option_response = await axios.post("../backend/retrieve_company_api.php", {data: "option", filter: search_value});
+                
+                // should be [object Object]
+                // first layer key is index (0,1,...)
+                // second layer keys are: [company_id, company_name, company_address, company_description]
+                company_option['value'] = company_option_response.data;
+            }
+        } catch (error){
+            alert(error);
+        }
+    }
+
+    // get relationship option
+    const get_relationship_option = async () => {
+        try {
+            const relationship_option_response = await axios.post("../backend/retrieve_individual_relationship_api.php", {data: "option"});
+            // it should be an object (array), keys are index
+            relationship_option['value'] = relationship_option_response.data;
         } catch (error){
             alert(error);
         }
@@ -160,43 +272,13 @@
     const get_user_role_option = async (search_value) => {
         try {
             if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
-                const country_option_response = await axios.post("../backend/retrieve_user_role_api.php", {data: "option"});
+                const role_option_response = await axios.post("../backend/retrieve_user_role_api.php", {data: "option"});
                 
-                // should be [object Object]
-                // first layer key is index (0,1,...)
-                // second layer keys are: [country_code, country_name]
-                country_option['value'] = country_option_response.data;
+                role_option['value'] = role_option_response.data;
             } else {
-                const country_option_response = await axios.post("../backend/retrieve_user_role_api.php", {data: "option", filter: search_value});
+                const role_option_response = await axios.post("../backend/retrieve_user_role_api.php", {data: "option", filter: search_value});
                 
-                // should be [object Object]
-                // first layer key is index (0,1,...)
-                // second layer keys are: [country_code, country_name]
-                country_option['value'] = country_option_response.data;
-            }
-        } catch (error){
-            alert(error);
-        }
-    }
-    edit_attribute_left['role']['search_function']['value'] = get_user_role_option;
-
-    // get select option of honorifics
-    const get_company_option = async (search_value) => {
-        try {
-            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
-                const company_option_response = await axios.post("../backend/retrieve_user_role_api.php", {data: "option"});
-                
-                // should be [object Object]
-                // first layer key is index (0,1,...)
-                // second layer keys are: [company_id, company_name, company_address, company_description]
-                company_option['value'] = company_option_response.data;
-            } else {
-                const company_option_response = await axios.post("../backend/retrieve_user_role_api.php", {data: "option", filter: search_value});
-                
-                // should be [object Object]
-                // first layer key is index (0,1,...)
-                // second layer keys are: [company_id, company_name, company_address, company_description]
-                company_option['value'] = company_option_response.data;
+                role_option['value'] = role_option_response.data;
             }
         } catch (error){
             alert(error);
@@ -207,6 +289,9 @@
     const select_changed = (attribute) => {
         if (attribute != null){
             attribute['changed']['value'] = true;
+            if (attribute['correspond'] == "lead_status"){
+
+            }
         }
     }
 
@@ -234,9 +319,9 @@
                     } else { // allow empty value
                         attribute['has_error']['value'] = false;
                         const edit_response = await axios.post(
-                            "../backend/edit_user_api.php",
+                            "../backend/edit_lead_api.php",
                             {
-                                user_id: props.user_id,
+                                individual_id: props.individual_id,
                                 update_table: (attribute['table']).slice(0, -1),
                                 update_attribute: (attribute['correspond']),
                                 update_value: null
@@ -244,17 +329,16 @@
                         );
                         if (edit_response.status == 204){
                             success_operation_prompt['value'] = true;
-                            get_user_detail(attribute);
+                            get_lead_detail(attribute);
                             attribute['changed']['value'] = false;
                         }
                     }
-                } else if (((attribute['value']['value']).trim() != "") && reg_exp.test(attribute['value']['value'])){
+                } else if (reg_exp.test(attribute['value']['value'])){
                     attribute['has_error']['value'] = false;
-                    alert();
                     const edit_response = await axios.post(
-                        "../backend/edit_user_api.php",
+                        "../backend/edit_lead_api.php",
                         {
-                            user_id: props.user_id,
+                            individual_id: props.individual_id,
                             update_table: (attribute['table']).slice(0, -1),
                             update_attribute: (attribute['correspond']),
                             update_value: "'" + attribute['value']['value'] + "'"
@@ -262,7 +346,7 @@
                     );
                     if (edit_response.status == 204){
                         success_operation_prompt['value'] = true;
-                        get_user_detail(attribute);
+                        get_lead_detail(attribute);
                         attribute['changed']['value'] = false;
                     } else {
                         // covered duplicate value
@@ -270,10 +354,6 @@
                         attribute['tooltip_visible']['value'] = true;
                         attribute['tooltip_message']['value'] = edit_response.data.message;
                     }
-                } else if ((attribute['value']['value']).trim() == "") {
-                    attribute['has_error']['value'] = true;
-                    attribute['tooltip_visible']['value'] = true;
-                    attribute['tooltip_message']['value'] = "User name cannot be empty";
                 } else {
                     attribute['has_error']['value'] = true;
                     attribute['tooltip_visible']['value'] = true;
@@ -292,15 +372,15 @@
                 if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){ // check if reselect the same value
                     attribute['changed']['value'] = false;
                     attribute['has_error']['value'] = false;
-                } 
-            } else if (attribute['correspond'] == 'company_id' || attribute['correspond'] == 'role_id'){ // for company
+                }
+            } else if (attribute['correspond'] == 'company_id' || attribute['correspond'] == 'country_code'){ // for company
                 if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
                     attribute['changed']['value'] = false;
                 } else {
                     const edit_response = await axios.post(
-                        "../backend/edit_user_api.php",
+                        "../backend/edit_lead_api.php",
                         {
-                            user_id: props.user_id,
+                            individual_id: props.individual_id,
                             update_table: (attribute['table']).slice(0, -1),
                             update_attribute: attribute['correspond'],
                             update_value: attribute['value']['value']
@@ -308,7 +388,7 @@
                     );
                     if (edit_response.status == 204){
                         success_operation_prompt['value'] = true;
-                        get_user_detail(attribute);
+                        get_lead_detail(attribute);
                         attribute['changed']['value'] = false;
                     } else {
                         attribute['has_error']['value'] = true;
@@ -320,9 +400,9 @@
                     attribute['changed']['value'] = false;
                 } else {
                     const edit_response = await axios.post(
-                        "../backend/edit_user_api.php",
+                        "../backend/edit_lead_api.php",
                         {
-                            user_id: props.user_id,
+                            individual_id: props.individual_id,
                             update_table: (attribute['table']).slice(0, -1),
                             update_attribute: attribute['correspond'],
                             update_value: "'" + attribute['value']['value'] + "'"
@@ -330,7 +410,7 @@
                     );
                     if (edit_response.status == 204){
                         success_operation_prompt['value'] = true;
-                        get_user_detail(attribute);
+                        get_lead_detail(attribute);
                         attribute['changed']['value'] = false;
                     } else {
                         attribute['has_error']['value'] = true;
@@ -341,39 +421,74 @@
         }
     }
 
-    // cancel changes
-    const cancel_changes = (attribute) => {
-        attribute['changed']['value'] = false;
-        attribute['has_error']['value'] = false;
-        attribute['value']['value'] = response.value.data[0][attribute['correspond']];
+    // validate the creation of an individual
+    const can_add = ref(true);
+    const validate_create = async () => {
+        can_add['value'] = true;
+
+        for (const value in edit_attribute_left){
+            edit_attribute_left[value]['has_error']['value'] = false;
+            if (typeof(edit_attribute_left[value]['value']['value']) == "string" && (edit_attribute_left[value]['value']['value']).trim() == ""){
+                edit_attribute_left[value]['has_error']['value'] = true;
+                edit_attribute_left[value]['tooltip_visible']['value'] = true;
+                edit_attribute_left[value]['tooltip_message']['value'] = "This field cannot be empty";
+                can_add['value'] = false;
+            } else if (edit_attribute_left[value]['correspond'] == "password_hash"){
+                const reg_exp = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$"); // reference: https://regexr.com/3bfsi
+                if (!(reg_exp.test(edit_attribute_left[value]['value']['value']))){
+                    edit_attribute_left[value]['has_error']['value'] = true;
+                    edit_attribute_left[value]['tooltip_visible']['value'] = true;
+                    edit_attribute_left[value]['tooltip_message']['value'] = "Password must contain minimum 8 characters, a capital alphabet, a lower case alphabet, a number, and a special character";
+                    can_add['value'] = false;
+                } else {
+                    edit_attribute_left[value]['has_error']['value'] = false;
+                }
+            } else if (edit_attribute_left[value]['correspond'] == "user_name"){
+                const reg_exp = new RegExp("([a-zA-Z])([a-zA-Z ]*)([a-zA-Z]+)$");
+                if (!(reg_exp.test(edit_attribute_left[value]['value']['value']))){
+                    edit_attribute_left[value]['has_error']['value'] = true;
+                    edit_attribute_left[value]['tooltip_visible']['value'] = true;
+                    edit_attribute_left[value]['tooltip_message']['value'] = "User name can only contain alphabet and space, and must be at least two chracters";
+                    can_add['value'] = false;
+                } else {
+                    edit_attribute_left[value]['has_error']['value'] = false;
+                }
+            }
+        }
     }
 
-    // delete lead
-    const delete_lead = async () => {
-        delete_prompt['value'] = false;
+    // add the individual into the database
+    const create_new_user = async () => {
+        await validate_create();
 
-        const delete_response = await axios.post(
-            "../backend/edit_user_api.php",
-            {
-                user_id: props.user_id,
-                update_table: null,
-                update_attribute: null,
-                update_value: null,
-                operation: "DELETE"
+        if (can_add.value){
+            try {
+                const create_user_response = await axios.post(
+                    "../backend/create_new_user_api.php",
+                    {
+                        user_name: edit_attribute_left['user_name']['value']['value'],
+                        role_id: edit_attribute_left['user_role']['value']['value'],
+                        password: edit_attribute_left['password']['value']['value']
+                    }
+                );
+                
+                new_user_id['value'] = create_user_response.data.user_id;
+                create_success_prompt['value'] = true;
+            } catch (error){
+                alert(error);
             }
-        );
-
-        if (delete_response.status == 204){
-            delete_success_prompt['value'] = true;
-            initialize();
-        } else {
-            alert(delete_response.data.message);
         }
     }
 
     // initialize / update to get data
     const initialize = async () => {
-        get_user_detail();
+        get_current_crm_user();
+        get_gender_option();
+        get_honorifics_option();
+        get_assign_user_option();
+        get_company_option();
+        get_country_option();
+        get_relationship_option();
         get_user_role_option();
     }
 
@@ -384,43 +499,31 @@
     <div class="flex flex-col w-max h-max">
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
-            <router-link :to="{name: 'user_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
-            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">User editing page</div>
-            <button @click="delete_prompt = true" v-if="success_response" class="text-white font-semibold bg-rose-600 hover:bg-rose-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Delete</button>
-            <div v-else class="w-34"></div>
+            <router-link :to="{name: 'lead_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
+            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">CRM user creation page</div>
+            <button @click="create_prompt = true; create_new_user();" class="text-white font-semibold bg-green-600 hover:bg-green-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Create</button>
         </div>
 
-        <div v-if="delete_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
+        <div v-if="create_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
             <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
-                <div class="m-4 font-bold text-lg">Are you sure you want to remove this user?</div>
+                <div class="m-4 font-bold text-lg">Successfully created user '{{ edit_attribute_left['user_name']['value']['value'] }}' with user ID: {{ new_user_id }}</div>
                 <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
-                    <button @click="delete_lead()" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Yes</button>
-                    <button @click="delete_prompt = false" class="w-28 mx-4 px-6 py-1 bg-red-600 rounded-full hover:text-fuchsia-50 hover:bg-red-800">No</button>
-                </div>
-            </div>
-        </div>
-
-        <div v-if="delete_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
-            <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
-                <div class="m-4 font-bold text-lg">The user has successfully been removed</div>
-                <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
-                    <button @click="delete_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
+                    <router-link :to="{name: 'user_page'}" tag="button"><button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button></router-link>
                 </div>
             </div>
         </div>
 
         <div v-if="success_operation_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
             <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
-                <div class="m-4 font-bold text-lg">The user data has successfully been updated</div>
+                <div class="m-4 font-bold text-lg">The individual data has successfully been updated</div>
                 <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
                     <button @click="success_operation_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button>
                 </div>
             </div>
         </div>
 
-        <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500 pt-10">
-            <div class="flex flex-col w-max">
-
+        <div class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
+            <div class="flex flex-col w-max pt-10">
                 <!-- edit part -->
                 <div v-if="information_content" class="flex w-full justify-center">
                     <div class="flex flex-row min-w-max w-max m-4 bg-rose-100 rounded-md justify-center border-3 border-pink-700 shadow-xl">
@@ -431,12 +534,11 @@
                                 <!-- the input field -->
                                 <div class="relative">
                                     <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
-                                    <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="value['input_class']" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
+                                    <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
                                     <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
-                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="value['input_class']" :id="value['correspond'] + '_input'">
-                                        <option v-for="option in value['option_list']['value']" :value="option">{{ option }}</option>
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" :id="value['correspond'] + '_input'">
+                                        <option v-for="option in value['option_list']['value']" :value="option['role_id']">{{ option['role_name'] }}</option>
                                     </select>
-                                    <span v-else-if="value['input'] == 'span'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</span>
                                     <!-- tooltip content-->
                                     <div v-if="value['has_error'].value" :class="[value['tooltip_visible'].value, css_class_attributes.tooltip]">{{ value['tooltip_message'].value }}</div>
                                 </div>
@@ -445,19 +547,8 @@
                                     <input @input="value['search_function']['value'](value['search_value']['value'])" v-if="value['input'] == 'variable_select'" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
                                     <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
                                         <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
+                                        <option :class="css_class_attributes.option_input" :value="null">NULL</option>
                                     </select>
-                                </div>
-                                <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">
-                                    <button @click="validate_update_data(value)" :class="css_class_attributes.save_button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                        </svg>
-                                    </button>
-                                    <button @click="cancel_changes(value)" :class="css_class_attributes.cancel_button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -466,10 +557,6 @@
                 </div>
 
             </div>
-        </div>
-        
-        <div v-else class="flex justify-center items-center w-screen h-screen bg-rose-400">
-            You don't have permission to view / edit this user, or this user is no longer exist
         </div>
     </div>
 </template>

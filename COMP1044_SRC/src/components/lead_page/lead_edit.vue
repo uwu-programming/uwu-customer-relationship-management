@@ -7,6 +7,10 @@
         individual_id: String // for accessing specific individual
     });
 
+    // current user
+    const current_crm_user = ref("");
+    const current_crm_user_role = ref("");
+
     // store the response from API request
     const response = ref("");
     const user = ref("");
@@ -18,6 +22,9 @@
     const chosen_company_id = ref("");
     const conversion_history_response = ref("");
     const activity_history_response = ref("");
+
+    // in the matter of re-assign lead
+    const assign_to_user_option = ref("");
 
     // store the reference on whether it has sucessfully retrieved data
     const success_response = ref(false);
@@ -70,7 +77,7 @@
         paragraph: "paragraph",
         fixed_select: "fixed_select",
         variable_select: "variable_select",
-
+        assign_select: "assign_select",
 
         name_pattern: "[A-Z]{1}([a-zA-Z ]*)([a-zA-Z]+)$",
         phone_pattern: "[0-9]{8,20}$",
@@ -270,6 +277,27 @@
             input: input_attributes.textarea,
             trait: input_attributes.trait_text,
             value: ref(""),
+            hover: ref(false),
+            changed: ref(false),
+            has_error: ref(false),
+            tooltip_visible: ref(css_class_attributes.tooltip_hide),
+            tooltip_message: ref("")
+        },
+        assign_to: {
+            name: "Assign to user",
+            correspond: "lead_owner_user_id",
+            table: "lead_individual.",
+            class: css_class_attributes.search_select_edit_attribute,
+            name_class: css_class_attributes.normal_label,
+            input_class: css_class_attributes.variable_select_input,
+            input: input_attributes.assign_select,
+            trait: input_attributes.trait_select,
+            value: ref(""),
+            value_name: ref("user_name"),
+            search_value: ref(""),
+            search_placeholder: ref("Search for user name..."),
+            search_function: ref(""),
+            option_list: ref(assign_to_user_option),
             hover: ref(false),
             changed: ref(false),
             has_error: ref(false),
@@ -529,6 +557,41 @@
     // bind the function to company
     edit_attribute_right['company']['search_function']['value'] = get_company_option;
 
+    // get user able to be assigned to
+    const get_assign_user_option = async (search_value) => {
+        try {
+            if (search_value == null || typeof((search_value).trim()) == "undefined" || (search_value).trim() == ""){
+                const get_assign_user_option_response = await axios.post("../backend/retrieve_user_api.php");
+                assign_to_user_option['value'] = get_assign_user_option_response.data;
+            } else {
+                var search_array = [];
+                search_array.push("user_id:" + search_value.trim());
+                search_array.push("user_name:" + search_value.trim());
+
+                const get_assign_user_option_response = await axios.post(
+                    "../backend/retrieve_user_api.php", 
+                    {
+                        requirement: JSON.stringify(search_array)
+                    }
+                );
+                assign_to_user_option['value'] = get_assign_user_option_response.data;
+            }
+        } catch(error) {
+            alert(error);
+        }
+    }
+    edit_attribute_right['assign_to']['search_function']['value'] = get_assign_user_option;
+
+    // get current crm user
+    const get_current_crm_user = async () => {
+        try {
+            const get_current_crm_user_response = await axios.post("../backend/get_current_user_api.php");
+            current_crm_user['value'] = get_current_crm_user_response['data']['user_id'];
+        } catch(error) {
+            alert(error);
+        }
+    }
+
     // detect changes
     const select_changed = (attribute) => {
         if (attribute != null){
@@ -555,26 +618,60 @@
 
     // input validation & update
     const validate_update_data = async (attribute) => {
-        if (attribute['trait'] == "text"){ // for text related
-            if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+        try {
+            // for assign to user, special post request
+            if (attribute['input'] == input_attributes.assign_select) {
                 attribute['changed']['value'] = false;
-                attribute['has_error']['value'] = false;
-            } else {
-                const reg_exp = new RegExp(attribute['pattern']);
-                if (typeof((attribute['value']['value']).trim()) == "undefined" || (attribute['value']['value']).trim() == ""){
-                    if ((attribute['correspond'] == "last_name" && (response['value']['data'][0]['first_name'] == null || response['value']['data'][0]['first_name'] == ""))){
-                        attribute['has_error']['value'] = true;
-                        attribute['tooltip_visible']['value'] = true;
-                        attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
-                    } else if (attribute['correspond'] == "first_name" && (response['value']['data'][0]['last_name'] == null || response['value']['data'][0]['last_name'] == "")) {
-                        attribute['has_error']['value'] = true;
-                        attribute['tooltip_visible']['value'] = true;
-                        attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
-                    } else if ((attribute['correspond'] == "phone_number" && response['value']['data'][0]['email_address'] == null) || (attribute['correspond'] == "email_address" && response['value']['data'][0]['phone_number'] == null)){
-                        attribute['has_error']['value'] = true;
-                        attribute['tooltip_visible']['value'] = true;
-                        attribute['tooltip_message']['value'] = "Phone number and email address cannot be empty at the same time.\nPlease try again.";
-                    } else { // allow empty value
+                const update_lead_owner_response = await axios.post(
+                    "../backend/edit_lead_owner_api.php",
+                    {
+                        user_id: edit_attribute_right['assign_to']['value']['value'],
+                        individual_id: props.individual_id
+                    }
+                );
+
+                if (update_lead_owner_response.status == 204){
+                    success_operation_prompt['value'] = true;
+                } else {
+                    alert(update_lead_owner_response.data);
+                }
+            }else if (attribute['trait'] == "text"){ // for text related
+                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+                    attribute['changed']['value'] = false;
+                    attribute['has_error']['value'] = false;
+                } else {
+                    const reg_exp = new RegExp(attribute['pattern']);
+                    if (typeof((attribute['value']['value']).trim()) == "undefined" || (attribute['value']['value']).trim() == ""){
+                        if ((attribute['correspond'] == "last_name" && (response['value']['data'][0]['first_name'] == null || response['value']['data'][0]['first_name'] == ""))){
+                            attribute['has_error']['value'] = true;
+                            attribute['tooltip_visible']['value'] = true;
+                            attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+                        } else if (attribute['correspond'] == "first_name" && (response['value']['data'][0]['last_name'] == null || response['value']['data'][0]['last_name'] == "")) {
+                            attribute['has_error']['value'] = true;
+                            attribute['tooltip_visible']['value'] = true;
+                            attribute['tooltip_message']['value'] = "Last name and first name cannot be empty at the same time.\nPlease try again.";
+                        } else if ((attribute['correspond'] == "phone_number" && response['value']['data'][0]['email_address'] == null) || (attribute['correspond'] == "email_address" && response['value']['data'][0]['phone_number'] == null)){
+                            attribute['has_error']['value'] = true;
+                            attribute['tooltip_visible']['value'] = true;
+                            attribute['tooltip_message']['value'] = "Phone number and email address cannot be empty at the same time.\nPlease try again.";
+                        } else { // allow empty value
+                            attribute['has_error']['value'] = false;
+                            const edit_response = await axios.post(
+                                "../backend/edit_lead_api.php",
+                                {
+                                    individual_id: props.individual_id,
+                                    update_table: (attribute['table']).slice(0, -1),
+                                    update_attribute: (attribute['correspond']),
+                                    update_value: null
+                                }
+                            );
+                            if (edit_response.status == 204){
+                                success_operation_prompt['value'] = true;
+                                get_lead_detail(attribute);
+                                attribute['changed']['value'] = false;
+                            }
+                        }
+                    } else if (reg_exp.test(attribute['value']['value'])){
                         attribute['has_error']['value'] = false;
                         const edit_response = await axios.post(
                             "../backend/edit_lead_api.php",
@@ -582,63 +679,74 @@
                                 individual_id: props.individual_id,
                                 update_table: (attribute['table']).slice(0, -1),
                                 update_attribute: (attribute['correspond']),
-                                update_value: null
+                                update_value: "'" + attribute['value']['value'] + "'"
                             }
                         );
                         if (edit_response.status == 204){
                             success_operation_prompt['value'] = true;
                             get_lead_detail(attribute);
                             attribute['changed']['value'] = false;
+                        } else {
+                            // covered duplicate value
+                            attribute['has_error']['value'] = true;
+                            attribute['tooltip_visible']['value'] = true;
+                            attribute['tooltip_message']['value'] = edit_response.data.message;
                         }
-                    }
-                } else if (reg_exp.test(attribute['value']['value'])){
-                    attribute['has_error']['value'] = false;
-                    const edit_response = await axios.post(
-                        "../backend/edit_lead_api.php",
-                        {
-                            individual_id: props.individual_id,
-                            update_table: (attribute['table']).slice(0, -1),
-                            update_attribute: (attribute['correspond']),
-                            update_value: "'" + attribute['value']['value'] + "'"
-                        }
-                    );
-                    if (edit_response.status == 204){
-                        success_operation_prompt['value'] = true;
-                        get_lead_detail(attribute);
-                        attribute['changed']['value'] = false;
                     } else {
-                        // covered duplicate value
                         attribute['has_error']['value'] = true;
                         attribute['tooltip_visible']['value'] = true;
-                        attribute['tooltip_message']['value'] = edit_response.data.message;
-                    }
-                } else {
-                    attribute['has_error']['value'] = true;
-                    attribute['tooltip_visible']['value'] = true;
-                    
-                    if (attribute['pattern'] == input_attributes.name_pattern){
-                        attribute['tooltip_message']['value'] = input_attributes.name_format_wrong;
-                    } else if (attribute['pattern'] == input_attributes.email_pattern){
-                        attribute['tooltip_message']['value'] = "The entered email address format is invalid.\nPlease try again. (Format: 'local-part@domain')";
-                    } else if (attribute['pattern'] == input_attributes.phone_pattern){
-                        attribute['tooltip_message']['value'] = "The entered phone number format is invalid.\nPlease try again. (Format: number between range (8, 20) without special character)";
+                        
+                        if (attribute['pattern'] == input_attributes.name_pattern){
+                            attribute['tooltip_message']['value'] = input_attributes.name_format_wrong;
+                        } else if (attribute['pattern'] == input_attributes.email_pattern){
+                            attribute['tooltip_message']['value'] = "The entered email address format is invalid.\nPlease try again. (Format: 'local-part@domain')";
+                        } else if (attribute['pattern'] == input_attributes.phone_pattern){
+                            attribute['tooltip_message']['value'] = "The entered phone number format is invalid.\nPlease try again. (Format: number between range (8, 20) without special character)";
+                        }
                     }
                 }
-            }
-        } else if (attribute['trait'] == "select"){ // select type input
-            if (attribute['correspond'] == "lead_status"){ // lead status
-                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){ // check if reselect the same value
-                    attribute['changed']['value'] = false;
-                    attribute['has_error']['value'] = false;
-                    edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
-                    edit_attribute_right['lead_conversion_message']['has_error']['value'] = false;
-                    edit_attribute_right['lead_conversion_message']['value']['value'];
-                } else {
-                    if (typeof(edit_attribute_right['lead_conversion_message']['value']['value']) == "undefined" || (edit_attribute_right['lead_conversion_message']['value']['value']).trim() == ""){ // check to prevent empty conversion message
-                        edit_attribute_right['lead_conversion_message']['has_error']['value'] = true;
-                        attribute['has_error']['value'] = true;
-                        edit_attribute_right['lead_conversion_message']['tooltip_message']['value'] = "Lead conversion message can't be empty";
-                        attribute['tooltip_message']['value'] = "Lead conversion message can't be empty";
+            } else if (attribute['trait'] == "select"){ // select type input
+                if (attribute['correspond'] == "lead_status"){ // lead status
+                    if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){ // check if reselect the same value
+                        attribute['changed']['value'] = false;
+                        attribute['has_error']['value'] = false;
+                        edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
+                        edit_attribute_right['lead_conversion_message']['has_error']['value'] = false;
+                        edit_attribute_right['lead_conversion_message']['value']['value'];
+                    } else {
+                        if (typeof(edit_attribute_right['lead_conversion_message']['value']['value']) == "undefined" || (edit_attribute_right['lead_conversion_message']['value']['value']).trim() == ""){ // check to prevent empty conversion message
+                            edit_attribute_right['lead_conversion_message']['has_error']['value'] = true;
+                            edit_attribute_right['lead_conversion_message']['tooltip_visible']['value'] = true;
+                            attribute['has_error']['value'] = true;
+                            attribute['tooltip_visible']['value'] = true;
+                            edit_attribute_right['lead_conversion_message']['tooltip_message']['value'] = "Lead conversion message can't be empty";
+                            attribute['tooltip_message']['value'] = "Lead conversion message can't be empty";
+                        } else {
+                            const edit_response = await axios.post(
+                                "../backend/edit_lead_api.php",
+                                {
+                                    individual_id: props.individual_id,
+                                    update_table: (attribute['table']).slice(0, -1),
+                                    update_attribute: attribute['correspond'],
+                                    update_value: "'" + attribute['value']['value'] + "'",
+                                    convert_from: "'" + response['value']['data'][0]['lead_status'] + "'",
+                                    conversion_message: "'" + edit_attribute_right['lead_conversion_message']['value']['value'] + "'"
+                                }
+                            );
+                            if (edit_response.status == 204){
+                                success_operation_prompt['value'] = true;
+                                get_lead_detail(attribute);
+                                attribute['changed']['value'] = false;
+                                edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
+                                edit_attribute_right['lead_conversion_message']['value']['value'] = "";
+                            } else {
+                                alert(edit_response.data.message);
+                            }
+                        }
+                    }
+                } else if (attribute['correspond'] == 'company_id' || attribute['correspond'] == 'country_code'){ // for company
+                    if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
+                        attribute['changed']['value'] = false;
                     } else {
                         const edit_response = await axios.post(
                             "../backend/edit_lead_api.php",
@@ -646,67 +754,54 @@
                                 individual_id: props.individual_id,
                                 update_table: (attribute['table']).slice(0, -1),
                                 update_attribute: attribute['correspond'],
-                                update_value: "'" + attribute['value']['value'] + "'",
-                                convert_from: "'" + response['value']['data'][0]['lead_status'] + "'",
-                                conversion_message: "'" + edit_attribute_right['lead_conversion_message']['value']['value'] + "'"
+                                update_value: attribute['value']['value']
                             }
                         );
                         if (edit_response.status == 204){
                             success_operation_prompt['value'] = true;
                             get_lead_detail(attribute);
                             attribute['changed']['value'] = false;
-                            edit_attribute_right['lead_conversion_message']['changed']['value'] = false;
-                            edit_attribute_right['lead_conversion_message']['value']['value'] = "";
                         } else {
-                            alert(edit_response.data.message);
+                            attribute['has_error']['value'] = true;
+                            attribute['tooltip_message']['value'] = edit_response.data.message;
                         }
                     }
-                }
-            } else if (attribute['correspond'] == 'company_id' || attribute['correspond'] == 'country_code'){ // for company
-                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){
-                    attribute['changed']['value'] = false;
                 } else {
-                    const edit_response = await axios.post(
-                        "../backend/edit_lead_api.php",
-                        {
-                            individual_id: props.individual_id,
-                            update_table: (attribute['table']).slice(0, -1),
-                            update_attribute: attribute['correspond'],
-                            update_value: attribute['value']['value']
-                        }
-                    );
-                    if (edit_response.status == 204){
-                        success_operation_prompt['value'] = true;
-                        get_lead_detail(attribute);
+                    if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){ // gender & honorifics
                         attribute['changed']['value'] = false;
                     } else {
-                        attribute['has_error']['value'] = true;
-                        attribute['tooltip_message']['value'] = edit_response.data.message;
-                    }
-                }
-            } else {
-                if (attribute['value']['value'] == response['value']['data'][0][attribute['correspond']]){ // gender & honorifics
-                    attribute['changed']['value'] = false;
-                } else {
-                    const edit_response = await axios.post(
-                        "../backend/edit_lead_api.php",
-                        {
-                            individual_id: props.individual_id,
-                            update_table: (attribute['table']).slice(0, -1),
-                            update_attribute: attribute['correspond'],
-                            update_value: "'" + attribute['value']['value'] + "'"
+                        const edit_response = await axios.post(
+                            "../backend/edit_lead_api.php",
+                            {
+                                individual_id: props.individual_id,
+                                update_table: (attribute['table']).slice(0, -1),
+                                update_attribute: attribute['correspond'],
+                                update_value: "'" + attribute['value']['value'] + "'"
+                            }
+                        );
+                        if (edit_response.status == 204){
+                            success_operation_prompt['value'] = true;
+                            get_lead_detail(attribute);
+                            attribute['changed']['value'] = false;
+                        } else {
+                            attribute['has_error']['value'] = true;
+                            attribute['tooltip_message']['value'] = edit_response.data.message;
                         }
-                    );
-                    if (edit_response.status == 204){
-                        success_operation_prompt['value'] = true;
-                        get_lead_detail(attribute);
-                        attribute['changed']['value'] = false;
-                    } else {
-                        attribute['has_error']['value'] = true;
-                        attribute['tooltip_message']['value'] = edit_response.data.message;
                     }
                 }
             }
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    // get current crm user role
+    const get_current_crm_user_role = async () => {
+        try {
+            const get_current_crm_user_role_response = await axios.post("../backend/get_current_user_api.php");
+            current_crm_user_role['value'] = get_current_crm_user_role_response['data']['user_id'];
+        } catch(error) {
+            alert(error);
         }
     }
 
@@ -752,12 +847,15 @@
 
     // initialize / update to get data
     const initialize = async () => {
+        get_current_crm_user();
         get_lead_detail();
         get_lead_status_option();
         get_gender_option();
         get_honorifics_option();
         get_company_option();
         get_country_option();
+        get_assign_user_option();
+        get_current_crm_user_role();
     }
 
     initialize();
@@ -865,7 +963,7 @@
                         <!-- data at right side -->
                         <div :class="css_class_attributes.edit_attribute_area">
                             <div :class="value['class']" v-for="value in edit_attribute_right" :key="value">
-                                <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
+                                <label v-if="(value['correspond'] != 'conversion_message' && value['input'] != input_attributes.assign_select) || (value['correspond'] == 'conversion_message' && value['changed']['value']== true) || (value['input'] == input_attributes.assign_select && current_crm_user_role <= 2)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                                 <!-- the input field -->
                                 <div class="relative">
                                     <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
@@ -883,6 +981,14 @@
                                     <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-if="value['input'] == 'variable_select'" v-model="value['value']['value']" :class="value['input_class']">
                                         <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option[value['correspond']]"> {{ option[value['value_name']['value']] }} </option>
                                         <option :class="css_class_attributes.option_input" :value="null">NULL</option>
+                                    </select>
+                                </div>
+                                <!-- for assign user -->
+                                <div v-if="value['correspond'] == 'lead_owner_user_id' && current_crm_user_role <= 2" class="flex flex-col">
+                                    <input @input="value['search_function']['value'](value['search_value']['value'])" type="search" :id="value['correspond'] + '_input'" :class="css_class_attributes.search_input" :placeholder="value['search_placeholder']['value']" v-model="value['search_value']['value']"/>
+                                    <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-model="value['value']['value']" :class="value['input_class']">
+                                        <option :class="css_class_attributes.option_input" v-for="option in value['option_list']['value']" :value="option['user_id']">ID: {{ option['user_id'] }} - User name: {{ option[value['value_name']['value']] }} </option>
+                                        <option :class="css_class_attributes.option_input" :value="current_crm_user">Self</option>
                                     </select>
                                 </div>
                                 <div v-if="value['changed'].value && value['correspond'] != 'conversion_message'" class="flex flex-row h-max">

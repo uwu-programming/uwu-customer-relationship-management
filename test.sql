@@ -13,8 +13,8 @@ INSERT INTO crm_user
 
 INSERT INTO crm_user_login_info
     VALUES
-        (1, "uwu", "uwu"),
-        (2, "owo", "owo"),
+        (1, "1234567890", "25dc7881a731b7b089e34fae262788b5e77e67a390dcca4928be22422379f4cf"),
+        (2, "1234567890", "e3d1bd9701f2e0cc621b55682448b89a8c6b9e984a535084cabcf38613fc6b0e"),
         (3, "uwaaa", "weee"),
         (4, "hmm", "123");
 
