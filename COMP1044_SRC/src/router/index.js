@@ -16,6 +16,7 @@ import customer_view_page from "../views/customer_view_page.vue";
 import activity_page from "../views/activity_page.vue";
 import activity_view_page from "../views/activity_view_page.vue";
 import user_creation_page from "../views/user_creation_page.vue";
+import company_creation_page from "../views/company_creation_page.vue";
 
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -129,6 +130,12 @@ const router = createRouter({
             name: "user_creation_page",
             component: user_creation_page
         },
+
+        {
+            path: "/company_creation_page",
+            name: "company_creation_page",
+            component: company_creation_page
+        }
     ]
 });
 

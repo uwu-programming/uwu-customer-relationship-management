@@ -45,7 +45,7 @@
     const css_class_attributes = {
         edit_attribute_area: "flex flex-col w-max h-max mx-5 px-5 py-2 my-2",
 
-        normal_edit_attribute: "flex flex-row mb-4 items-center",
+        normal_edit_attribute: "flex flex-row mb-4",
         description_edit_attribute: "flex flex-row mb-4",
         search_select_edit_attribute: "flex flex-row mb-4",
         normal_label: "w-48 flex justify-end px-2 py-1 mx-1 border-b-2 border-pink-700 font-bold",
@@ -116,7 +116,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_area_input_short,
-            input: input_attributes.paragraph,
+            input: input_attributes.textarea,
             trait: input_attributes.trait_text,
             option_list: ref(role_option),
             value: ref(""),
@@ -133,7 +133,7 @@
             class: css_class_attributes.normal_edit_attribute,
             name_class: css_class_attributes.normal_label,
             input_class: css_class_attributes.text_area_input,
-            input: input_attributes.paragraph,
+            input: input_attributes.textarea,
             trait: input_attributes.trait_text,
             option_list: ref(role_option),
             value: ref(""),
@@ -426,54 +426,62 @@
     const validate_create = async () => {
         can_add['value'] = true;
 
-        for (const value in edit_attribute_left){
-            edit_attribute_left[value]['has_error']['value'] = false;
-            if (typeof(edit_attribute_left[value]['value']['value']) == "string" && (edit_attribute_left[value]['value']['value']).trim() == ""){
-                edit_attribute_left[value]['has_error']['value'] = true;
-                edit_attribute_left[value]['tooltip_visible']['value'] = true;
-                edit_attribute_left[value]['tooltip_message']['value'] = "This field cannot be empty";
-                can_add['value'] = false;
-            } else if (edit_attribute_left[value]['correspond'] == "password_hash"){
-                const reg_exp = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,12}$"); // reference: https://regexr.com/3bfsi
-                if (!(reg_exp.test(edit_attribute_left[value]['value']['value']))){
-                    edit_attribute_left[value]['has_error']['value'] = true;
-                    edit_attribute_left[value]['tooltip_visible']['value'] = true;
-                    edit_attribute_left[value]['tooltip_message']['value'] = "Password must contain minimum 8 characters, a capital alphabet, a lower case alphabet, a number, and a special character";
-                    can_add['value'] = false;
-                } else {
-                    edit_attribute_left[value]['has_error']['value'] = false;
-                }
-            } else if (edit_attribute_left[value]['correspond'] == "user_name"){
-                const reg_exp = new RegExp("([a-zA-Z])([a-zA-Z ]*)([a-zA-Z]+)$");
-                if (!(reg_exp.test(edit_attribute_left[value]['value']['value']))){
-                    edit_attribute_left[value]['has_error']['value'] = true;
-                    edit_attribute_left[value]['tooltip_visible']['value'] = true;
-                    edit_attribute_left[value]['tooltip_message']['value'] = "User name can only contain alphabet and space, and must be at least two chracters";
-                    can_add['value'] = false;
-                } else {
-                    edit_attribute_left[value]['has_error']['value'] = false;
-                }
-            }
+        edit_attribute_left['company_name']['has_error']['value'] = false;
+        edit_attribute_left['company_address']['has_error']['value'] = false;
+
+        if (edit_attribute_left['company_name']['value']['value'].trim() == ""){
+            edit_attribute_left['company_name']['has_error']['value'] = true;
+            edit_attribute_left['company_name']['tooltip_visible']['value'] = true;
+            edit_attribute_left['company_name']['tooltip_message']['value'] = "This field cannot be empty";
+            can_add['value'] = false;
+        }
+
+        if (edit_attribute_left['company_address']['value']['value'].trim() == ""){
+            edit_attribute_left['company_address']['has_error']['value'] = true;
+            edit_attribute_left['company_address']['tooltip_visible']['value'] = true;
+            edit_attribute_left['company_address']['tooltip_message']['value'] = "This field cannot be empty";
+            can_add['value'] = false;
         }
     }
 
     // add the individual into the database
-    const create_new_user = async () => {
+    const create_new_company = async () => {
         await validate_create();
 
         if (can_add.value){
             try {
-                const create_user_response = await axios.post(
-                    "../backend/create_new_user_api.php",
+                const check_duplicate_response = await axios.post(
+                    "../backend/check_company_duplicate_api.php",
                     {
-                        user_name: edit_attribute_left['user_name']['value']['value'],
-                        role_id: edit_attribute_left['user_role']['value']['value'],
-                        password: edit_attribute_left['password']['value']['value']
+                        company_name: "'" + edit_attribute_left['company_name']['value']['value'].trim() + "'",
+                        company_address: "'" + edit_attribute_left['company_address']['value']['value'].trim() + "'"
                     }
                 );
-                
-                new_user_id['value'] = create_user_response.data.user_id;
-                create_success_prompt['value'] = true;
+
+                if (check_duplicate_response.status == 204){
+                    const create_company_response = await axios.post(
+                        "../backend/create_new_company_api.php",
+                        {
+                            type: "create",
+                            company_name: "'" + edit_attribute_left['company_name']['value']['value'].trim() + "'",
+                            company_address: "'" + edit_attribute_left['company_address']['value']['value'].trim() + "'",
+                            company_description: "'" + edit_attribute_left['company_description']['value']['value'].trim() + "'",
+                        }
+                    );
+
+                    if (create_company_response.status == 204){
+                        create_success_prompt['value'] = true;
+                    } else {
+                        alert("An unknown error occur, please try again later");
+                    }
+                } else {
+                    edit_attribute_left['company_name']['has_error']['value'] = true;
+                    edit_attribute_left['company_name']['tooltip_visible']['value'] = true;
+                    edit_attribute_left['company_name']['tooltip_message']['value'] = "Unable to create the following company: there already exists a company with same name and address";
+                    edit_attribute_left['company_address']['has_error']['value'] = true;
+                    edit_attribute_left['company_address']['tooltip_visible']['value'] = true;
+                    edit_attribute_left['company_address']['tooltip_message']['value'] = "Unable to create the following company: there already exists a company with same name and address";
+                }
             } catch (error){
                 alert(error);
             }
@@ -500,13 +508,13 @@
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
             <router-link :to="{name: 'lead_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
-            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">CRM user creation page</div>
-            <button @click="create_prompt = true; create_new_user();" class="text-white font-semibold bg-green-600 hover:bg-green-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Create</button>
+            <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Company creation page</div>
+            <button @click="create_prompt = true; create_new_company();" class="text-white font-semibold bg-green-600 hover:bg-green-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Create</button>
         </div>
 
         <div v-if="create_success_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
             <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
-                <div class="m-4 font-bold text-lg">Successfully created user '{{ edit_attribute_left['user_name']['value']['value'] }}' with user ID: {{ new_user_id }}</div>
+                <div class="m-4 font-bold text-lg">Successfully created company {{ edit_attribute_left['company_name']['value']['value'] }}</div>
                 <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
                     <router-link :to="{name: 'user_page'}" tag="button"><button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button></router-link>
                 </div>
@@ -533,7 +541,7 @@
                                 <label v-if="value['correspond'] != 'conversion_message' || (value['correspond'] == 'conversion_message' && value['changed']['value']== true)" :for="value['correspond'] + '_input'" :class="value['name_class']"><div>{{ value['name'] }}</div></label>
                                 <!-- the input field -->
                                 <div class="relative">
-                                    <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" :pattern="value['pattern']" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
+                                    <input maxlength="25" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @input="value['changed'].value = true" v-if="value['input'] == 'text'" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]"  v-model="value['value'].value" :type="value['input']" :id="value['correspond'] + '_input'"/>
                                     <textarea @input="value['changed'].value = true" @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" v-else-if="((value['input'] == 'textarea' && value['correspond'] != 'conversion_message') || (value['correspond'] == 'conversion_message' && value['changed']['value']== true))" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" v-model="value['value'].value" :id="value['correspond'] + '_input'"></textarea>
                                     <div v-else-if="value['input'] == 'paragraph'" :class="value['input_class']" :id="value['correspond'] + '_input'">{{ value['value'].value }}</div>
                                     <select @mouseover="value['tooltip_visible'].value = css_class_attributes.tooltip_show" @mouseleave="value['tooltip_visible'].value = css_class_attributes.tooltip_hide" @change="select_changed(value)" v-else-if="value['input'] == 'fixed_select'" v-model="value['value']['value']" :class="[value['input_class'], {'shadow-red-600':value['has_error']['value']}]" :id="value['correspond'] + '_input'">
