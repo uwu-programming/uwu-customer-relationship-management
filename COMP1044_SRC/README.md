@@ -33,3 +33,21 @@ htdocs
   |__ backend
   |__ myWebsite
         |__ dist
+
+The backend setting is as follows:
+```php
+$dsn = "mysql";
+$host = "localhost";
+$user = "root";
+$password = "root";
+$dbname = "uwucrm_abb_db";
+```
+
+## User ID and password for login to the website:
+1: Aqua@123 (Super Admin)
+2: Rinne!372 (Admin)
+3: tsUki*7127 (Admin)
+4: HACHI_honey13 (Sales Representative)
+5: KNHare@17 (Sales Representative)
+6: Rizu#1405 (Sales Representative)
+7: MIYAkochi@446 (Sales Representative)
