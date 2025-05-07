@@ -137,7 +137,7 @@ function edit_lead($conn){
         }
 
     } catch (PDOException $error){
-        echo json_encode(array("message" => $error->errorInfo));
+        echo json_encode(array("message" => $update_query));
     }
 }
 

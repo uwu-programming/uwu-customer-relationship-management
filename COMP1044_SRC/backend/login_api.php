@@ -31,7 +31,7 @@ function login_crm($conn){
         $user_id = $data->user_id;
         $password = $data->password;
 
-        $sql_query = "SELECT * FROM crm_user JOIN crm_user_login_info WHERE crm_user.user_id = $user_id";
+        $sql_query = "SELECT * FROM crm_user JOIN crm_user_login_info ON crm_user.user_id = crm_user_login_info.user_id WHERE crm_user.user_id = $user_id";
         $statement = $conn->prepare($sql_query);
         $statement->execute();
     } catch (PDOException $error){
@@ -50,7 +50,7 @@ function login_crm($conn){
 
         }
     } else {
-        
+
     }
 }
 

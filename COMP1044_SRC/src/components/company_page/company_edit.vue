@@ -516,7 +516,7 @@
                     </div>
 
                     <div class="flex flex-col border-pink-700 border-3 rounded-md m-2 h-1/3 bg-rose-100">
-                        <div class="font-bold bg-pink-500 border-b-3 border-pink-700"><div class="flex w-max px-6 text-lg rounded-sm my-2 mx-4 bg-pink-300 border-pink-700 border-3">Contact</div></div>
+                        <div class="font-bold bg-pink-500 border-b-3 border-pink-700"><div class="flex w-max px-6 text-lg rounded-sm my-2 mx-4 bg-pink-300 border-pink-700 border-3">Customer</div></div>
                         <div class="flex flex-col overflow-auto">
                             <div v-for="value in customer_individual">
                                 <router-link v-if="current_crm_user_role <= 2" class="flex px-4 py-2 my-1 mx-2 border-pink-700/70 border-b-2 hover:bg-pink-300" :to="{name: 'customer_edit_page', params: {individual_id: value['individual_id']}}" tag="button">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['last_name'] }}</router-link>

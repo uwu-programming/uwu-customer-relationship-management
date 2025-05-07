@@ -31,7 +31,7 @@ function retrieve_country($conn){
             $sql_query = $sql_query . " WHERE country_name LIKE '%$post_data->filter%'";
         }
 
-        $sql_statement = $conn->prepare($sql_query);
+        $sql_statement = $conn->prepare($sql_query . " ORDER BY country_name");
         $sql_statement->execute();
 
         $result = array();

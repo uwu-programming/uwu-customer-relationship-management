@@ -31,7 +31,7 @@ function retrieve_lead($conn){
         // LEFT JOIN: JOIN, but also consider NULL value (e.g. if TABLE a LEFT JOIN TABLE b, and if a doesn't have value in b, it will give default NULL value)
         // USING: it is like ON, but when joining two SELECT, use USING to combine duplicate column name
         // joining multiple SELECT: SELECT * FROM (FIRST SELECT) tempTableName1 JOIN (SECOND SELECT) tempTableName2 ON / USING (CONDITION) ...
-        $sql_query = "SELECT * FROM (SELECT * FROM individual LEFT JOIN company USING(company_id) JOIN lead_individual USING(individual_id)) t1 LEFT JOIN (SELECT user_id AS lead_owner_user_id, user_name AS lead_owner_name FROM crm_user) t2 USING(lead_owner_user_id) LEFT JOIN (SELECT user_id AS created_by, user_name AS created_by_name FROM crm_user) t3 USING(created_by)";
+        $sql_query = "SELECT * FROM (SELECT * FROM individual LEFT JOIN country USING(country_code) LEFT JOIN company USING(company_id) JOIN lead_individual USING(individual_id)) t1 LEFT JOIN (SELECT user_id AS lead_owner_user_id, user_name AS lead_owner_name FROM crm_user) t2 USING(lead_owner_user_id) LEFT JOIN (SELECT user_id AS created_by, user_name AS created_by_name FROM crm_user) t3 USING(created_by)";
 
         // get FIELD of individual and company TABLE
         $desc_individual_statement = $conn->prepare("DESC individual");
