@@ -488,6 +488,20 @@
         }
     }
 
+    // check login
+    const is_login = ref(false);
+    const check_is_login = async () => {
+        const check_is_login_response = await axios.post(
+            "../backend/check_login_api.php",
+        );
+
+        if (check_is_login_response.status == 204){
+            is_login['value'] = true;
+        } else {
+            is_login['value'] = false;
+        }
+    }
+
     // initialize / update to get data
     const initialize = async () => {
         get_current_crm_user();
@@ -498,16 +512,17 @@
         get_country_option();
         get_relationship_option();
         get_user_role_option();
+        check_is_login();
     }
 
     initialize();
 </script>
 
 <template>
-    <div class="flex flex-col w-max h-max">
+    <div class="flex flex-col w-max h-max" v-if="is_login">
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
-            <router-link :to="{name: 'lead_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
+            <router-link :to="{name: 'company_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
             <div class="text-2xl font-semibold bg-rose-100 px-6 py-1 rounded-full text-pink-800">Company creation page</div>
             <button @click="create_prompt = true; create_new_company();" class="text-white font-semibold bg-green-600 hover:bg-green-800 hover:text-fuchsia-50 mx-4 text-xl px-6 py-1 rounded-full">Create</button>
         </div>
@@ -516,7 +531,7 @@
             <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
                 <div class="m-4 font-bold text-lg">Successfully created company {{ edit_attribute_left['company_name']['value']['value'] }}</div>
                 <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
-                    <router-link :to="{name: 'user_page'}" tag="button"><button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button></router-link>
+                    <router-link :to="{name: 'company_page'}" tag="button"><button @click="create_success_prompt = false" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Ok</button></router-link>
                 </div>
             </div>
         </div>
@@ -566,6 +581,11 @@
 
             </div>
         </div>
+    </div>
+
+    <div v-else class="w-screen h-screen flex flex-col bg-pink-300 justify-center items-center">
+        <div>Unable to acceess the page due to unauthorized access, please log in to continue</div>
+        <router-link class="bg-rose-500 hover:bg-rose-800 font-semibold hover:text-white rounded-full px-6 py-1 m-2" :to="{name: 'login_page'}" tag="button">Login at here</router-link>
     </div>
 </template>
 

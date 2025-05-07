@@ -537,6 +537,20 @@
         value['value']['value'] = response['value'].data[0][value['correspond']];
     }
 
+    // check login
+    const is_login = ref(false);
+    const check_is_login = async () => {
+        const check_is_login_response = await axios.post(
+            "../backend/check_login_api.php",
+        );
+
+        if (check_is_login_response.status == 204){
+            is_login['value'] = true;
+        } else {
+            is_login['value'] = false;
+        }
+    }
+
     // initialize / update to get data
     const initialize = async () => {
         get_current_crm_user();
@@ -544,13 +558,14 @@
         get_individual_drop_list();
         get_individual_add_list();
         retrieve_activity_information();
+        check_is_login();
     }
 
     initialize();
 </script>
 
 <template>
-    <div class="flex flex-col w-max h-max">
+    <div class="flex flex-col w-max h-max" v-if="is_login">
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
             <router-link :to="{name: 'activity_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
@@ -675,6 +690,11 @@
             You don't have permission to view this activity, or this activity is no longer exist
         </div>
 
+    </div>
+
+    <div v-else class="w-screen h-screen flex flex-col bg-pink-300 justify-center items-center">
+        <div>Unable to acceess the page due to unauthorized access, please log in to continue</div>
+        <router-link class="bg-rose-500 hover:bg-rose-800 font-semibold hover:text-white rounded-full px-6 py-1 m-2" :to="{name: 'login_page'}" tag="button">Login at here</router-link>
     </div>
 </template>
 

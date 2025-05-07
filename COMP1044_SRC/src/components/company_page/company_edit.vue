@@ -9,6 +9,7 @@
 
     // current crm user
     const current_crm_user = ref("");
+    const current_crm_user_role = ref("");
 
     // store the response from API request
     const response = ref("");
@@ -44,6 +45,11 @@
     // check which content to load
     const information_content = ref(true);
     const conversion_history_content = ref(false);
+
+    // store each type of individual under this company
+    const contact_individual = ref("");
+    const lead_individual = ref("");
+    const customer_individual = ref("");
 
     // referenceable CSS attribute
     const css_class_attributes = {
@@ -158,6 +164,16 @@
         }
     }
 
+    // get current role
+    const get_current_crm_user_role = async () => {
+        try {
+            const get_current_crm_user_role_response = await axios.post("../backend/get_current_user_api.php");
+            current_crm_user_role['value'] = get_current_crm_user_role_response['data']['user_id'];
+        } catch(error) {
+            alert(error);
+        }
+    }
+
     // get activity option
     const get_activity_option = async () => {
         try {
@@ -195,6 +211,51 @@
             edit_attribute_left['company_name']['value']['value'] = response['value'].data[0]['company_name'];
             edit_attribute_left['company_address']['value']['value'] = response['value'].data[0]['company_address'];
             edit_attribute_left['company_description']['value']['value'] = response['value'].data[0]['company_description'];
+        }
+    }
+
+    // retrieve all individual under this company
+    const retrieve_company_individual = async () => {
+        try {
+            const company_contact_response = await axios.post(
+                "../backend/retrieve_company_individual_api.php",
+                {
+                    company_id: props.company_id,
+                    relationship: "Contact"
+                }
+            );
+
+            contact_individual['value'] = company_contact_response.data;
+        } catch (error){
+            alert(error);
+        }
+
+        try {
+            const company_lead_response = await axios.post(
+                "../backend/retrieve_company_individual_api.php",
+                {
+                    company_id: props.company_id,
+                    relationship: "Lead"
+                }
+            );
+
+            lead_individual['value'] = company_lead_response.data;
+        } catch (error){
+            alert(error);
+        }
+
+        try {
+            const company_customer_response = await axios.post(
+                "../backend/retrieve_company_individual_api.php",
+                {
+                    company_id: props.company_id,
+                    relationship: "Customer"
+                }
+            );
+
+            customer_individual['value'] = company_customer_response.data;
+        } catch (error){
+            alert(error);
         }
     }
 
@@ -310,17 +371,34 @@
         value['value']['value'] = response['value'].data[0][value['correspond']];
     }
 
+    // check login
+    const is_login = ref(false);
+    const check_is_login = async () => {
+        const check_is_login_response = await axios.post(
+            "../backend/check_login_api.php",
+        );
+
+        if (check_is_login_response.status == 204){
+            is_login['value'] = true;
+        } else {
+            is_login['value'] = false;
+        }
+    }
+
     // initialize / update to get data
     const initialize = async () => {
         get_current_crm_user();
+        get_current_crm_user_role();
         retrieve_company();
+        retrieve_company_individual();
+        check_is_login();
     }
 
     initialize();
 </script>
 
 <template>
-    <div class="flex flex-col w-max h-max">
+    <div class="flex flex-col w-max h-max" v-if="is_login">
         <!-- sticky top bar -->
         <div class="flex flex-row items-center justify-between min-w-screen max-w-full h-14 z-5 bg-fuchsia-400 border-b-3 border-pink-700 sticky top-0 shadow-xl">
             <router-link :to="{name: 'company_page'}" tag="button"><div class="w-10 h-10 bg-[url(/src/assets/icon/back-svgrepo-com.svg)] bg-size-[100%] mx-4 rounded-full hover:bg-rose-50"></div></router-link>
@@ -367,7 +445,7 @@
         </div>
 
         <div v-if="success_response" class="flex flex-col w-screen min-h-screen min-w-max overflow-auto items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
-            <div class="flex flex-col w-max pt-10">
+            <div class="flex flex-col w-max pt-10 items-center">
                 <!-- edit part -->
                 <div v-if="information_content" class="flex w-full justify-center">
                     <div class="flex flex-row min-w-max w-max m-4 bg-rose-100 rounded-md justify-center border-3 border-pink-700 shadow-xl">
@@ -413,7 +491,41 @@
 
                     </div>
                 </div>
-                
+
+                <!-- display all individual under this company -->
+                <div class="flex flex-col h-210 w-full m-4 overflow-auto bg-pink-300 border-pink-700 border-3 rounded-md">
+                    <div class="px-4 py-1 font-bold text-lg decoration-2 decoration-pink-700 underline">Individual under this company</div>
+                    
+                    <div class="flex flex-col border-pink-700 border-3 rounded-md m-2 h-1/3 bg-rose-100">
+                        <div class="font-bold bg-pink-500 border-b-3 border-pink-700"><div class="flex w-max px-6 text-lg rounded-sm my-2 mx-4 bg-pink-300 border-pink-700 border-3">Contact</div></div>
+                        <div class="flex flex-col overflow-auto">
+                            <div v-for="value in contact_individual">
+                                <router-link v-if="current_crm_user_role <= 2" class="flex px-4 py-2 my-1 mx-2 border-pink-700/70 border-b-2 hover:bg-pink-300" :to="{name: 'contact_edit_page', params: {individual_id: value['individual_id']}}" tag="button">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['last_name'] }}</router-link>
+                                <router-link v-else class="flex px-4 py-2 my-1 mx-2 border-pink-700/70 border-b-2 hover:bg-pink-300" :to="{name: 'contact_view_page', params: {individual_id: value['individual_id']}}" tag="button">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['last_name'] }}</router-link>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col border-pink-700 border-3 rounded-md m-2 h-1/3 bg-rose-100">
+                        <div class="font-bold bg-pink-500 border-b-3 border-pink-700"><div class="flex w-max px-6 text-lg rounded-sm my-2 mx-4 bg-pink-300 border-pink-700 border-3">Lead</div></div>
+                        <div class="flex flex-col overflow-auto">
+                            <div v-for="value in lead_individual">
+                                <router-link class="flex px-4 py-2 my-1 mx-2 border-pink-700/70 border-b-2 hover:bg-pink-300" :to="{name: 'lead_edit_page', params: {individual_id: value['individual_id']}}" tag="button">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['last_name'] }}</router-link>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col border-pink-700 border-3 rounded-md m-2 h-1/3 bg-rose-100">
+                        <div class="font-bold bg-pink-500 border-b-3 border-pink-700"><div class="flex w-max px-6 text-lg rounded-sm my-2 mx-4 bg-pink-300 border-pink-700 border-3">Contact</div></div>
+                        <div class="flex flex-col overflow-auto">
+                            <div v-for="value in customer_individual">
+                                <router-link v-if="current_crm_user_role <= 2" class="flex px-4 py-2 my-1 mx-2 border-pink-700/70 border-b-2 hover:bg-pink-300" :to="{name: 'customer_edit_page', params: {individual_id: value['individual_id']}}" tag="button">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['last_name'] }}</router-link>
+                                <router-link v-else class="flex px-4 py-2 my-1 mx-2 border-pink-700/70 border-b-2 hover:bg-pink-300" :to="{name: 'customer_view_page', params: {individual_id: value['individual_id']}}" tag="button">{{ value['individual_id'] }}: {{ value['honorifics'] }} {{ value['first_name'] }} {{ value['last_name'] }}</router-link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -421,6 +533,11 @@
             This company is no longer exist
         </div>
 
+    </div>
+
+    <div v-else class="w-screen h-screen flex flex-col bg-pink-300 justify-center items-center">
+        <div>Unable to acceess the page due to unauthorized access, please log in to continue</div>
+        <router-link class="bg-rose-500 hover:bg-rose-800 font-semibold hover:text-white rounded-full px-6 py-1 m-2" :to="{name: 'login_page'}" tag="button">Login at here</router-link>
     </div>
 </template>
 
