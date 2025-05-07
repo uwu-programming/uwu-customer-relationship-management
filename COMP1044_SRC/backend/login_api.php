@@ -31,7 +31,7 @@ function login_crm($conn){
         $user_id = $data->user_id;
         $password = $data->password;
 
-        $sql_query = "SELECT * FROM crm_user WHERE user_id = $user_id AND password_hash = '$password'";
+        $sql_query = "SELECT * FROM crm_user JOIN crm_user_login_info ON crm_user.user_id = crm_user_login_info.user_id WHERE crm_user.user_id = $user_id";
         $statement = $conn->prepare($sql_query);
         $statement->execute();
     } catch (PDOException $error){
@@ -40,15 +40,18 @@ function login_crm($conn){
 
     $result = $statement->fetch(PDO::FETCH_ASSOC);
     if ($result != NULL){
-        // store the logged in user in $_SESSION
-        $_SESSION['user_name'] = $result['user_name'];
-        $_SESSION['user_id'] = $result['user_id'];
-        $_SESSION['user_role'] = $result['role_id'];
-        $current_user = $result['user_id'];
-        echo json_encode(["message" => $_SESSION['user_name'] . "aaa"]);
+        if (hash("sha256", ($password . $result['password_salt'])) == $result['password_hash']){
+            // store the logged in user in $_SESSION
+            $_SESSION['user_name'] = $result['user_name'];
+            $_SESSION['user_id'] = $result['user_id'];
+            $_SESSION['user_role'] = $result['role_id'];
+            http_response_code(204);
+        } else {
+
+        }
+    } else {
+
     }
-    else
-        echo json_encode(["message" => "no, $result"]);
 }
 
 ?>

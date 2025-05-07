@@ -28,8 +28,11 @@ function retrieve_lead($conn){
         $post_data = json_decode(file_get_contents("php://input"));
 
         // the SQL query to get all lead individual
-        $sql_query = "SELECT * FROM individual LEFT JOIN company ON individual.company_id = company.company_id JOIN lead_individual ON individual.individual_id = lead_individual.individual_id";
-        
+        // LEFT JOIN: JOIN, but also consider NULL value (e.g. if TABLE a LEFT JOIN TABLE b, and if a doesn't have value in b, it will give default NULL value)
+        // USING: it is like ON, but when joining two SELECT, use USING to combine duplicate column name
+        // joining multiple SELECT: SELECT * FROM (FIRST SELECT) tempTableName1 JOIN (SECOND SELECT) tempTableName2 ON / USING (CONDITION) ...
+        $sql_query = "SELECT * FROM (SELECT * FROM individual LEFT JOIN country USING(country_code) LEFT JOIN company USING(company_id) JOIN lead_individual USING(individual_id)) t1 LEFT JOIN (SELECT user_id AS lead_owner_user_id, user_name AS lead_owner_name FROM crm_user) t2 USING(lead_owner_user_id) LEFT JOIN (SELECT user_id AS created_by, user_name AS created_by_name FROM crm_user) t3 USING(created_by)";
+
         // get FIELD of individual and company TABLE
         $desc_individual_statement = $conn->prepare("DESC individual");
         $desc_individual_statement->execute();
@@ -48,12 +51,12 @@ function retrieve_lead($conn){
         }
 
         // check if user is an admin
-        if ($current_user_role == 1){
+        if ($current_user_role <= 2){
             // get all users
             
         } else {
             // only get lead that is under this particular user
-            $sql_query = $sql_query . " WHERE lead_individual.user_id = $current_user_id";
+            $sql_query = $sql_query . " WHERE lead_owner_user_id = $current_user_id";
         }
 
         // check if the request asked to filter data
@@ -63,7 +66,7 @@ function retrieve_lead($conn){
             
             if (count((array)$requirement_JSON) > 0){
                 // add WHERE clause for admin
-                if ($current_user_role == 1)
+                if ($current_user_role <= 2)
                     $sql_query = $sql_query . " WHERE";
                 // add syntax for normal user (cause individual_id filter)
                 else
@@ -103,7 +106,7 @@ function retrieve_lead($conn){
                 // since we may pass "Please select an option", we need to do verification first
                 // explode(string $seperator, string $string): seperate $string by $seperator
                 // since we pass the table alongside with field name, we need to explode the string first
-                if (str_contains($post_data->sort_attribute, ".") && $data['Field'] == explode(".", $post_data->sort_attribute)[1]){
+                if (!(str_contains($post_data->sort_attribute, " ")) && $data['Field'] == $post_data->sort_attribute){
                     $sql_query = $sql_query . " ORDER BY $post_data->sort_attribute";
                     if ($post_data->sort_by == "DESC"){
                         $sql_query = $sql_query . " $post_data->sort_by";
@@ -123,6 +126,7 @@ function retrieve_lead($conn){
     while ($row = $statement->fetch(PDO::FETCH_ASSOC)){
         array_push($result, $row);
     }
+
     echo json_encode($result);
 }
 

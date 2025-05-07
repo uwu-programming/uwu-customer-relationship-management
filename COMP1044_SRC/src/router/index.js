@@ -1,7 +1,25 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import login_page from "../views/login_page.vue";
 import lead_page from "../views/lead_page.vue";
-import Lead_edit_page from "../views/lead_edit_page.vue";
+import lead_edit_page from "../views/lead_edit_page.vue";
+import user_page from "../views/user_page.vue";
+import user_edit_page from "../views/user_edit_page.vue";
+import individual_creation_page from "../views/individual_creation_page.vue";
+import contact_page from "../views/contact_page.vue";
+import contact_edit_page from "../views/contact_edit_page.vue";
+import activity_creation_page from "../views/activity_creation_page.vue";
+import activity_edit_page from "../views/activity_edit_page.vue";
+import contact_view_page from "../views/contact_view_page.vue";
+import customer_page from "../views/customer_page.vue";
+import customer_edit_page from "../views/customer_edit_page.vue";
+import customer_view_page from "../views/customer_view_page.vue";
+import activity_page from "../views/activity_page.vue";
+import activity_view_page from "../views/activity_view_page.vue";
+import user_creation_page from "../views/user_creation_page.vue";
+import company_creation_page from "../views/company_creation_page.vue";
+import company_edit_page from "../views/company_edit_page.vue";
+import company_page from "../views/company_page.vue";
+import my_page from "../views/my_page.vue";
 
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -21,8 +39,124 @@ const router = createRouter({
         {
             path: "/lead_edit_page/:individual_id",
             name: "lead_edit_page",
-            component: Lead_edit_page,
+            component: lead_edit_page,
             props: true
+        },
+
+        {
+            path: "/user_page",
+            name: "user_page",
+            component: user_page
+        },
+
+        {
+            path: "/user_edit_page/:user_id",
+            name: "user_edit_page",
+            component: user_edit_page,
+            props: true
+        },
+
+        {
+            path: "/individual_creation_page",
+            name: "individual_creation_page",
+            component: individual_creation_page
+        },
+
+        {
+            path: "/contact_page",
+            name: "contact_page",
+            component: contact_page
+        },
+
+        {
+            path: "/contact_edit_page/:individual_id",
+            name: "contact_edit_page",
+            component: contact_edit_page,
+            props: true
+        },
+
+        {
+            path: "/activity_creation_page",
+            name: "activity_creation_page",
+            component: activity_creation_page
+        },
+
+        {
+            path: "/activity_edit_page/:activity_id",
+            name: "activity_edit_page",
+            component: activity_edit_page,
+            props: true
+        },
+
+        {
+            path: "/contact_view_page/:individual_id",
+            name: "contact_view_page",
+            component: contact_view_page,
+            props: true
+        },
+
+        {
+            path: "/customer_page",
+            name: "customer_page",
+            component: customer_page
+        },
+
+        {
+            path: "/customer_edit_page/:individual_id",
+            name: "customer_edit_page",
+            component: customer_edit_page,
+            props: true
+        },
+
+        {
+            path: "/customer_view_page/:individual_id",
+            name: "customer_view_page",
+            component: customer_view_page,
+            props: true
+        },
+
+        {
+            path: "/activity_page",
+            name: "activity_page",
+            component: activity_page
+        },
+
+        {
+            path: "/activity_view_page/:activity_id",
+            name: "activity_view_page",
+            component: activity_view_page,
+            props: true
+        },
+
+        {
+            path: "/user_creation_page",
+            name: "user_creation_page",
+            component: user_creation_page
+        },
+
+        {
+            path: "/company_creation_page",
+            name: "company_creation_page",
+            component: company_creation_page
+        },
+
+        {
+            path: "/company_edit_page/:company_id",
+            name: "company_edit_page",
+            component: company_edit_page,
+            props: true
+        },
+
+        {
+            path: "/company_page",
+            name: "company_page",
+            component: company_page
+        },
+
+        {
+            path: "/my_page",
+            name: "my_page",
+            component: my_page
         }
     ]
 });
