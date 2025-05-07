@@ -47,10 +47,10 @@ function login_crm($conn){
             $_SESSION['user_role'] = $result['role_id'];
             http_response_code(204);
         } else {
-            http_response_code(400);
+
         }
     } else {
-        http_response_code(400);
+        
     }
 }
 

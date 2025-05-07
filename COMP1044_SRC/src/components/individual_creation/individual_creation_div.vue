@@ -816,6 +816,7 @@
 
     // initialize / update to get data
     const initialize = async () => {
+        check_is_login();
         get_current_crm_user();
         get_gender_option();
         get_honorifics_option();
@@ -823,7 +824,6 @@
         get_company_option();
         get_country_option();
         get_relationship_option();
-        check_is_login();
     }
 
     initialize();

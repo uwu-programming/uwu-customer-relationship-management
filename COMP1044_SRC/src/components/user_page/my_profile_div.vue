@@ -2,19 +2,28 @@
     import axios from 'axios';
     import {ref} from 'vue';
 
+    import { useRouter } from "vue-router";
+
+    const router = useRouter();
+
     // current user
     const current_crm_user = ref("");
+    const current_crm_user_data = ref("");
     const current_crm_user_role = ref("");
 
     // lead data & activity data
     const lead_data = ref("");
     const activity_data = ref("");
 
+    const logout_prompt = ref(false);
+
     // get current crm user
     const get_current_crm_user = async () => {
         try {
             const get_current_crm_user_response = await axios.post("../backend/get_current_user_api.php");
             current_crm_user['value'] = get_current_crm_user_response['data']['user_id'];
+            const get_current_crm_user_data_response = await axios.post("../backend/retrieve_user_data_api.php", {type: "user"});
+            current_crm_user_data['value'] = get_current_crm_user_data_response['data'];
         } catch(error) {
             alert(error);
         }
@@ -73,6 +82,11 @@
         }
     }
 
+    const logout = async () => {
+        await axios.post("../backend/logout_api.php");
+        router.push({name: "login_page"});
+    }
+
     // initialize / update to get data
     const initialize = async () => {
         get_current_crm_user();
@@ -86,12 +100,40 @@
 
 <template>
     <div v-if="is_login">
+        <div v-if="logout_prompt" class="fixed z-8 w-full h-full flex justify-center items-center bg-gray-800/70">
+            <div class="z-8 fixed w-120 h-40 bg-rose-400 flex flex-col justify-center items-center m-4 p-2 border-pink-700 border-3 rounded-md">
+                <div class="m-4 font-bold text-lg">Are you sure you want to logout?</div>
+                <div class="flex flex-row mx-4 mt-4 font-semibold text-2xl text-white">
+                    <button @click="logout()" class="w-28 mx-4 px-6 py-1 bg-green-600 rounded-full hover:text-fuchsia-50 hover:bg-green-800">Yes</button>
+                    <button @click="logout_prompt = false" class="w-28 mx-4 px-6 py-1 bg-red-600 rounded-full hover:text-fuchsia-50 hover:bg-red-800">No</button>
+                </div>
+            </div>
+        </div>
+
         <!-- title -->
         <div class="flex justify-center items-center py-2 font-bold text-2xl border-pink-700 border-b-4 bg-pink-500">
             <span class="py-1 px-6 bg-pink-300 rounded-full">My profile</span>
         </div>
+
+        <div class="flex flex-col justify-center items-center bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500">
+            <div class="flex flex-col w-180 mt-4 bg-rose-100 border-pink-700 border-3 rounded-md">
+                <div class="flex flex-row">
+                    <div class="flex justify-end items-end mx-3 my-2 w-1/5 font-semibold border-pink-700 border-b-1">User ID</div>
+                    <div class="mx-3 my-2 w-4/5 border-pink-700 border-b-1">{{ current_crm_user_data[0]['user_id'] }}</div>
+                </div>
+                <div class="flex flex-row">
+                    <div class="flex justify-end items-end mx-3 my-2 w-1/5 font-semibold border-pink-700 border-b-1">User name</div>
+                    <div class="mx-3 my-2 w-4/5 border-pink-700 border-b-1">{{ current_crm_user_data[0]['user_name'] }}</div>
+                </div>
+                <div class="flex flex-row">
+                    <div class="flex justify-end items-end mx-3 my-2 w-1/5 font-semibold border-pink-700 border-b-1">User role</div>
+                    <div class="mx-3 my-2 w-4/5 border-pink-700 border-b-1">{{ current_crm_user_data[0]['role_name'] }}</div>
+                </div>
+            </div>
+        </div>
+
         <div class="flex min-w-max max-w-screen min-h-min h-screen max-h-screen bg-gradient-to-r bg-linear-to-bl from-violet-500 to-fuchsia-500 overflow-auto justify-center">
-            <div class="m-4 p-2 flex flex-col w-180 border-pink-700 border-3 rounded-md bg-pink-300">
+            <div class="m-4 p-2 flex flex-col min-h-180 w-180 border-pink-700 border-3 rounded-md bg-pink-300">
                 <div class="flex flex-col h-1/2 border-pink-700 rounded-md border-3 bg-rose-100 mb-1">
                     <div class="font-bold bg-pink-500 border-b-3 border-pink-700"><div class="flex w-max px-6 text-lg rounded-sm my-2 mx-4 bg-pink-300 border-pink-700 border-3">My lead</div></div>
                     <div class="flex flex-col overflow-auto last:border-none">
@@ -109,7 +151,7 @@
         </div>
 
         <div class="flex bg-pink-500 border-pink-700 border-t-4 justify-end py-2">
-            <button class="flex py-1 px-4 mx-4 my=2 rounded-full bg-rose-200 hover:bg-rose-700 hover:text-rose-100 text-lg font-bold">Log out</button>
+            <button @click="logout_prompt=true" class="flex py-1 px-4 mx-4 my=2 rounded-full bg-rose-200 hover:bg-rose-700 hover:text-rose-100 text-lg font-bold">Log out</button>
         </div>
     </div>
 

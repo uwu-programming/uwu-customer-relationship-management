@@ -1,8 +1,8 @@
 INSERT INTO user_role
     VALUES
-        (1, "uwu", "yesuwu"),
-        (2, "owo", "partly yes uwu"),
-        (3, "noob", "bad");
+        (1, "Super admin", "All privileges"),
+        (2, "Admin", "Able to assign lead to sales representative"),
+        (3, "Sales representative", "Able to create lead and manage assigned lead");
 
 INSERT INTO crm_user 
     VALUES

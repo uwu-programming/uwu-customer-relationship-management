@@ -30,8 +30,10 @@ function retrieve_user_data($conn){
             
             if ($post_data->type == "lead"){
                 $sql_query = "SELECT * FROM individual LEFT JOIN lead_individual ON individual.individual_id = lead_individual.individual_id LEFT JOIN crm_user ON lead_individual.lead_owner_user_id = crm_user.user_id WHERE crm_user.user_id = $current_user_id";
-            } else {
+            } else if ($post_data->type == "activity"){
                 $sql_query = "SELECT * FROM activity WHERE created_by = $current_user_id ORDER BY end_time DESC";
+            } else {
+                $sql_query = "SELECT * FROM crm_user JOIN user_role ON crm_user.role_id = user_role.role_id WHERE user_id = $current_user_id";
             }
 
             $statement = $conn->prepare($sql_query);

@@ -18,7 +18,7 @@ CREATE TABLE crm_user(
     user_name VARCHAR(255) NOT NULL,
     role_id INT NOT NULL,                               -- reference to the TABLE role
 
-    FOREIGN KEY (role_id) REFERENCES user_role(role_id)
+    FOREIGN KEY (role_id) REFERENCES user_role(role_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- crm_user_login_info: store the login info (password_salt and password_hash)
@@ -66,7 +66,7 @@ CREATE TABLE company(
     company_address VARCHAR(255) NOT NULL,
     company_description TEXT DEFAULT NULL,
 
-    UNIQUE (company_name, company_address)
+    UNIQUE (company_name, company_address) -- make sure no duplicate record
 );
 -- make attribute `company_id` from table `individual` refer to the `company_id` in the table `company`
 ALTER TABLE individual ADD CONSTRAINT FOREIGN KEY (company_id) REFERENCES company(company_id) ON UPDATE SET NULL ON DELETE SET NULL;
@@ -91,7 +91,7 @@ CREATE TABLE activity(
     created_by INT NULL,
 
     FOREIGN KEY (created_by) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT check_time CHECK (start_time <= end_time)
+    CONSTRAINT check_time CHECK (start_time <= end_time) -- make sure end time is later than start time
 );
 
 -- individual_activity_history: record the activity history of each individual
@@ -116,31 +116,4 @@ CREATE TABLE conversion_history(
 
     FOREIGN KEY (user_id) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
--- task: record the plan made by the user
-CREATE TABLE task(
-    task_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    created_by INT NOT NULL,                            -- who created the task (can be admin or sales representative)
-    in_charged_by INT NOT NULL,                         -- who is in charged of the task
-    created_date DATETIME NOT NULL,
-    due_date DATETIME DEFAULT NULL,
-    closed_date DATETIME DEFAULT NULL,
-    task_priority ENUM("Low", "Normal", "High", "Urgent"),
-    task_status ENUM("Not started", "In progress", "Completed", "Cancelled"),
-    task_subject VARCHAR(255) NOT NULL,
-    task_description TEXT DEFAULT NULL,
-
-    FOREIGN KEY (created_by) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (in_charged_by) REFERENCES crm_user(user_id) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
--- task_participant: the participant(s) (individual) of assigned task
-CREATE TABLE task_participant(
-    individual_id INT NOT NULL,
-    task_id INT NOT NULL,
-
-    PRIMARY KEY (individual_id, task_id),
-    FOREIGN KEY (individual_id) REFERENCES individual(individual_id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (task_id) REFERENCES task(task_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
